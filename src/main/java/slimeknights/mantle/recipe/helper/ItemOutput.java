@@ -270,7 +270,16 @@ public abstract class ItemOutput implements Supplier<ItemStack> {
 
     private final boolean nonEmpty;
     private final boolean readCount;
+    /** Loadable used for JSON, which enforces {@link #nonEmpty} */
     private final RecordLoadable<ItemStack> stack;
+    /**
+     * Loadable used for network (de)serialization, which never enforces {@link #nonEmpty}.
+     * Tag outputs resolve their tag lazily, so an output may be empty on the network even though the recipe is valid:
+     * the tag could be filled on the client but not on the server, or left unbound by a datapack. Rejecting those while
+     * encoding fails the entire update_recipes packet, which disconnects every player with an encoder exception. Syncing
+     * the empty output instead keeps the connection alive and only leaves that one recipe without a result.
+     */
+    private final RecordLoadable<ItemStack> networkStack;
     Loadable(boolean nonEmpty, boolean readCount) {
       this.nonEmpty = nonEmpty;
       this.readCount = readCount;
@@ -281,6 +290,7 @@ public abstract class ItemOutput implements Supplier<ItemStack> {
       } else {
         this.stack = readCount ? ItemStackLoadable.OPTIONAL_STACK_NBT : ItemStackLoadable.OPTIONAL_ITEM_NBT;
       }
+      this.networkStack = readCount ? ItemStackLoadable.OPTIONAL_STACK_NBT : ItemStackLoadable.OPTIONAL_ITEM_NBT;
     }
 
     @Override
@@ -330,12 +340,18 @@ public abstract class ItemOutput implements Supplier<ItemStack> {
 
     @Override
     public ItemOutput decode(FriendlyByteBuf buffer, TypedMap context) {
-      return fromStack(stack.decode(buffer, context));
+      // tag outputs are written without the non-empty validation, so read them back leniently to stay symmetrical
+      return fromStack(networkStack.decode(buffer, context));
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer, ItemOutput object) {
-      stack.encode(buffer, object.get());
+      // tag outputs may resolve to an empty stack if their tag is unfilled, see networkStack
+      if (object.getTag() != null) {
+        networkStack.encode(buffer, object.get());
+      } else {
+        stack.encode(buffer, object.get());
+      }
     }
 
 

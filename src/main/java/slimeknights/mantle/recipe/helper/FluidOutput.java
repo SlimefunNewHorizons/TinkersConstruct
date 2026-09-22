@@ -234,7 +234,16 @@ public abstract class FluidOutput implements Supplier<FluidStack> {
     REQUIRED(true);
 
     private final boolean nonEmpty;
+    /** Loadable used for JSON, which enforces {@link #nonEmpty} */
     private final RecordLoadable<FluidStack> stack;
+    /**
+     * Loadable used for network (de)serialization, which never enforces {@link #nonEmpty}.
+     * Tag outputs resolve their tag lazily, so an output may be empty on the network even though the recipe is valid:
+     * the tag could be filled on the client but not on the server, or left unbound by a datapack. Rejecting those while
+     * encoding fails the entire update_recipes packet, which disconnects every player with an encoder exception. Syncing
+     * the empty output instead keeps the connection alive and only leaves that one recipe without a result.
+     */
+    private final RecordLoadable<FluidStack> networkStack;
     Loadable(boolean nonEmpty) {
       this.nonEmpty = nonEmpty;
       // figure out the stack serializer to use based on the two parameters
@@ -244,6 +253,7 @@ public abstract class FluidOutput implements Supplier<FluidStack> {
       } else {
         this.stack = FluidStackLoadable.OPTIONAL_STACK_NBT;
       }
+      this.networkStack = FluidStackLoadable.OPTIONAL_STACK_NBT;
     }
 
     @Override
@@ -267,12 +277,18 @@ public abstract class FluidOutput implements Supplier<FluidStack> {
 
     @Override
     public FluidOutput decode(FriendlyByteBuf buffer, TypedMap context) {
-      return fromStack(stack.decode(buffer, context));
+      // tag outputs are written without the non-empty validation, so read them back leniently to stay symmetrical
+      return fromStack(networkStack.decode(buffer, context));
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer, FluidOutput object) {
-      stack.encode(buffer, object.get());
+      // tag outputs may resolve to an empty stack if their tag is unfilled, see networkStack
+      if (object.getTag() != null) {
+        networkStack.encode(buffer, object.get());
+      } else {
+        stack.encode(buffer, object.get());
+      }
     }
 
 
