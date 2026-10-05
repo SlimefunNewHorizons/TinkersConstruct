@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/DrakesCraft-Labs/TinkersConstruct/tree/codex/port-1.21.11-neoforge">
+  <a href="https://github.com/SlimefunNewHorizons/TinkersConstruct/tree/codex/port-1.21.11-neoforge">
     <img src="banner.svg" alt="Tinkers' Construct — DrakesCraft's unofficial porting project" width="100%">
   </a>
 </p>
@@ -30,12 +30,12 @@ This repository is the **DrakesCraft Labs organization fork** of [SlimeKnights/T
 
 | Track | Target | Status |
 | --- | --- | --- |
-| Default branch: [`1.20.1`](https://github.com/DrakesCraft-Labs/TinkersConstruct/tree/1.20.1) | Minecraft 1.20.1 · Forge | Upstream-based source branch |
-| [DrakesCraft port branch](https://github.com/DrakesCraft-Labs/TinkersConstruct/tree/codex/port-1.21.11-neoforge) | Minecraft 1.21.11 · NeoForge | Migration workspace; not release-ready |
+| Default branch: [`1.20.1`](https://github.com/SlimefunNewHorizons/TinkersConstruct/tree/1.20.1) | Minecraft 1.20.1 · Forge | Upstream-based source branch |
+| [DrakesCraft port branch](https://github.com/SlimefunNewHorizons/TinkersConstruct/tree/codex/port-1.21.11-neoforge) | Minecraft 1.21.11 · NeoForge | Migration workspace; not release-ready |
 | Mantle compatibility for 1.21.11 | Matching Minecraft / NeoForge target | Required before the dependent Tinkers migration can be completed |
 | Mantle packaging inside Tinkers | Fewer separately installed files | Under investigation; no bundling decision is implemented |
 
-The porting branch currently has build-workspace setup, but its source/API migration and matching Mantle dependency are incomplete. **Do not install or distribute artifacts from that branch.** Read the [1.21.11 porting roadmap](https://github.com/DrakesCraft-Labs/TinkersConstruct/blob/codex/port-1.21.11-neoforge/PORTING_1.21.11.md) for scope, milestones, and validation gates.
+The porting branch currently has build-workspace setup, but its source/API migration and matching Mantle dependency are incomplete. **Do not install or distribute artifacts from that branch.** Read the [1.21.11 porting roadmap](https://github.com/SlimefunNewHorizons/TinkersConstruct/blob/codex/port-1.21.11-neoforge/PORTING_1.21.11.md) for scope, milestones, and validation gates.
 
 ## Build from source
 
@@ -70,7 +70,7 @@ JAR signatures from upstream build servers are informational only; follow the up
 
 ## 📄 License & Upstream Attribution
 
-This project is a sovereign fork maintained by [**JackStar6677-1**](https://github.com/JackStar6677-1) under [**DrakesCraft Labs**](https://github.com/DrakesCraft-Labs).
+This project is a sovereign fork maintained by [**JackStar6677-1**](https://github.com/JackStar6677-1) under [**DrakesCraft Labs**](https://github.com/SlimefunNewHorizons).
 
 - **Original Project:** Created by the upstream authors and the open-source community.
 - **DrakesCraft Optimizations:** Modernized for Paper/Purpur 1.21.11+, Java 21, high concurrency, asynchronous safety, and exploit/duplication prevention.
