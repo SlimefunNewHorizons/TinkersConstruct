@@ -56,6 +56,8 @@ public class SearedDuctBlock extends InventoryBlock {
   public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(SmelteryComponentBlockEntity.class, worldIn, pos).ifPresent(te -> te.notifyMasterOfChange(pos, newState));
+      // Mantle's InventoryBlock cannot find the item capability once the block is replaced, so drop the filter item directly
+      BlockEntityHelper.get(DuctBlockEntity.class, worldIn, pos).ifPresent(duct -> dropInventoryItems(worldIn, pos, duct.getItemHandler()));
     }
     super.onRemove(state, worldIn, pos, newState, isMoving);
   }

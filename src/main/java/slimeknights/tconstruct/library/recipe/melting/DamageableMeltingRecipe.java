@@ -5,8 +5,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
@@ -17,6 +15,7 @@ import slimeknights.tconstruct.library.json.field.MergingField.MissingMode;
 import slimeknights.tconstruct.library.json.field.MergingListField;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -41,7 +40,7 @@ public class DamageableMeltingRecipe extends MeltingRecipe {
 
   /** Scales a fluid stack based on the damage */
   private static FluidStack scaleOutput(FluidStack fluid, int damage, int maxDamage, int unitSize) {
-    int amount = fluid.getAmount() * (maxDamage - damage) / maxDamage;
+    int amount = (int)((long)fluid.getAmount() * (maxDamage - damage) / maxDamage);
     // mimimum output is one unit
     if (amount <= unitSize) {
       amount = Math.max(unitSize, 1);
@@ -68,18 +67,19 @@ public class DamageableMeltingRecipe extends MeltingRecipe {
   }
 
   @Override
-  public void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
+  public List<FluidStack> getByproducts(IMeltingContainer inv) {
     ItemStack input = inv.getStack();
     int maxDamage = input.getMaxDamage();
     if (maxDamage <= 0) {
-      super.handleByproducts(inv, handler);
+      return super.getByproducts(inv);
     } else {
-      // fill byproducts until we run out of space or byproducts
+      List<FluidStack> outputs = new ArrayList<>(byproducts.size());
       int itemDamage = input.getDamageValue();
       for (int i = 0; i < byproducts.size(); i++) {
         FluidOutput fluidStack = byproducts.get(i);
-        handler.fill(scaleOutput(fluidStack.get(), itemDamage, maxDamage, i < byproductSizes.size() ? byproductSizes.get(i) : unitSize), FluidAction.EXECUTE);
+        outputs.add(scaleOutput(fluidStack.get(), itemDamage, maxDamage, i < byproductSizes.size() ? byproductSizes.get(i) : unitSize));
       }
+      return outputs;
     }
   }
 

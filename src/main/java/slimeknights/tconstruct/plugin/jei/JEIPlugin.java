@@ -89,6 +89,7 @@ import slimeknights.tconstruct.plugin.jei.material.ShapelessMaterialsExtension;
 import slimeknights.tconstruct.plugin.jei.melting.FoundryCategory;
 import slimeknights.tconstruct.plugin.jei.melting.MeltingCategory;
 import slimeknights.tconstruct.plugin.jei.melting.MeltingFuelHandler;
+import slimeknights.tconstruct.plugin.jei.melting.SmelteryCategory;
 import slimeknights.tconstruct.plugin.jei.modifiers.ModifierBookmarkIngredientRenderer;
 import slimeknights.tconstruct.plugin.jei.modifiers.ModifierIngredientHelper;
 import slimeknights.tconstruct.plugin.jei.modifiers.ModifierRecipeCategory;
@@ -158,6 +159,7 @@ public class JEIPlugin implements IModPlugin {
     registry.addRecipeCategories(new MoldingRecipeCategory(guiHelper));
     // melting and casting
     registry.addRecipeCategories(new MeltingCategory(guiHelper));
+    registry.addRecipeCategories(new SmelteryCategory(guiHelper));
     registry.addRecipeCategories(new AlloyRecipeCategory(guiHelper));
     registry.addRecipeCategories(new EntityMeltingRecipeCategory(guiHelper));
     registry.addRecipeCategories(new FoundryCategory(guiHelper));
@@ -207,6 +209,7 @@ public class JEIPlugin implements IModPlugin {
     // melting
     List<MeltingRecipe> meltingRecipes = RecipeIdMap.getRecipes(access, manager, TinkerRecipeTypes.MELTING.get(), MeltingRecipe.class);
     register.addRecipes(TConstructJEIConstants.MELTING, meltingRecipes);
+    register.addRecipes(TConstructJEIConstants.SMELTERY, meltingRecipes);
     register.addRecipes(TConstructJEIConstants.FOUNDRY, meltingRecipes);
     MeltingFuelHandler.setMeltngFuels(RecipeHelper.getRecipes(manager, TinkerRecipeTypes.FUEL.get(), MeltingFuel.class));
 
@@ -288,7 +291,7 @@ public class JEIPlugin implements IModPlugin {
     registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.searedHeater), RecipeTypes.FUELING);
     addCastingCatalyst(registry, TinkerSmeltery.searedTable, TConstructJEIConstants.CASTING_TABLE, TinkerRecipeTypes.MOLDING_TABLE.get());
     addCastingCatalyst(registry, TinkerSmeltery.searedBasin, TConstructJEIConstants.CASTING_BASIN, TinkerRecipeTypes.MOLDING_BASIN.get());
-    registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.smelteryController), TConstructJEIConstants.MELTING, TConstructJEIConstants.ALLOY, TConstructJEIConstants.ENTITY_MELTING);
+    registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.smelteryController), TConstructJEIConstants.SMELTERY, TConstructJEIConstants.ALLOY, TConstructJEIConstants.ENTITY_MELTING);
 
     // foundry
     registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.scorchedAlloyer), TConstructJEIConstants.ALLOY);

@@ -104,7 +104,7 @@ public class ModifiableArrowItem extends ArrowItem implements IModifiableDisplay
 
   @Override
   public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.getTag(stack);
+    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
     if (nbt != null) {
       ToolStack.verifyTag(this, nbt, getToolDefinition());
     }

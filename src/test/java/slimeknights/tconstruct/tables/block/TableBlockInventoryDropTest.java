@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import slimeknights.tconstruct.shared.block.TableBlock;
 import slimeknights.tconstruct.shared.block.entity.TableBlockEntity;
 import slimeknights.tconstruct.tables.TinkerTables;
+import slimeknights.tconstruct.tables.block.entity.chest.AbstractChestBlockEntity;
+import slimeknights.tconstruct.tables.block.entity.inventory.IChestItemHandler;
 import slimeknights.tconstruct.test.BaseMcTest;
 
 import java.util.List;
@@ -27,9 +29,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Regression test for table inventories vanishing when the block is broken. Table inventories are deliberately not
- * registered as {@code Capabilities.ItemHandler.BLOCK} in {@code TinkerTables#registerCapabilities}, so the
- * capability based drop in Mantle's {@code InventoryBlock#onRemove} finds no handler for them.
+ * Regression test for table and chest inventories vanishing when the block is broken. Mantle's
+ * {@code InventoryBlock#onRemove} looks the item capability up by the block state at the position, which is already the
+ * new block by then, so it never finds a handler; tables additionally do not register the capability at all.
  */
 @SuppressWarnings("deprecation")
 class TableBlockInventoryDropTest extends BaseMcTest {
@@ -41,6 +43,30 @@ class TableBlockInventoryDropTest extends BaseMcTest {
       TinkerTables.tinkerStation.get(), TinkerTables.craftingStation.get(), TinkerTables.partBuilder.get(),
       TinkerTables.modifierWorktable.get(), TinkerTables.tinkersAnvil.get(), TinkerTables.scorchedAnvil.get() }) {
       assertDropsInventory(block);
+    }
+  }
+
+  @Test
+  void chestBlocksDropInventoryWhenBroken() {
+    for (TableBlock block : new TableBlock[] { TinkerTables.castChest.get(), TinkerTables.partChest.get(), TinkerTables.tinkersChest.get() }) {
+      IChestItemHandler handler = mock(IChestItemHandler.class);
+      when(handler.getSlots()).thenReturn(2);
+      when(handler.getStackInSlot(0)).thenReturn(new ItemStack(Items.GOLD_INGOT));
+      when(handler.getStackInSlot(1)).thenReturn(ItemStack.EMPTY);
+      AbstractChestBlockEntity chest = mock(AbstractChestBlockEntity.class);
+      when(chest.getItemHandler()).thenReturn(handler);
+      Level level = mock(Level.class);
+      when(level.getBlockEntity(POS)).thenReturn(chest);
+      ArgumentCaptor<ItemStack> dropped = ArgumentCaptor.forClass(ItemStack.class);
+
+      try (MockedStatic<Containers> containers = Mockito.mockStatic(Containers.class)) {
+        block.onRemove(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState(), false);
+
+        containers.verify(() -> Containers.dropItemStack(eq(level), anyDouble(), anyDouble(), anyDouble(), dropped.capture()), Mockito.atLeastOnce());
+      }
+
+      List<Item> items = dropped.getAllValues().stream().map(ItemStack::getItem).toList();
+      assertThat(items).as("%s drops its inventory", block).contains(Items.GOLD_INGOT);
     }
   }
 
@@ -66,7 +92,8 @@ class TableBlockInventoryDropTest extends BaseMcTest {
     try (MockedStatic<Containers> containers = Mockito.mockStatic(Containers.class)) {
       block.onRemove(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState(), false);
 
-      containers.verify(() -> Containers.dropItemStack(eq(level), anyDouble(), anyDouble(), anyDouble(), dropped.capture()));
+      // dropped once per slot, including empty slots
+      containers.verify(() -> Containers.dropItemStack(eq(level), anyDouble(), anyDouble(), anyDouble(), dropped.capture()), Mockito.atLeastOnce());
     }
 
     List<Item> items = dropped.getAllValues().stream().map(ItemStack::getItem).toList();

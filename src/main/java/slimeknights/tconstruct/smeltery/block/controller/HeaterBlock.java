@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import slimeknights.mantle.util.BlockEntityHelper;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.smeltery.block.entity.HeaterBlockEntity;
 
@@ -25,6 +26,15 @@ public class HeaterBlock extends ControllerBlock {
   @Override
   public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
     return new HeaterBlockEntity(pPos, pState);
+  }
+
+  @Override
+  @Deprecated
+  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (!newState.is(this)) {
+      BlockEntityHelper.get(HeaterBlockEntity.class, level, pos).ifPresent(heater -> dropInventory(level, pos, heater.getItemHandler()));
+    }
+    super.onRemove(state, level, pos, newState, isMoving);
   }
 
   @Override

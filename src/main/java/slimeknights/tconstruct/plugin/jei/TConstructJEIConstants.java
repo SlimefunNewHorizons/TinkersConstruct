@@ -66,6 +66,7 @@ public class TConstructJEIConstants {
 
   // melting
   public static final RecipeType<MeltingRecipe> MELTING = type("melting", MeltingRecipe.class);
+  public static final RecipeType<MeltingRecipe> SMELTERY = type("smeltery", MeltingRecipe.class);
   public static final RecipeType<EntityMeltingRecipe> ENTITY_MELTING = type("entity_melting", EntityMeltingRecipe.class);
   public static final RecipeType<AlloyRecipe> ALLOY = type("alloy", AlloyRecipe.class);
   public static final RecipeType<MeltingRecipe> FOUNDRY = type("foundry", MeltingRecipe.class);

@@ -46,7 +46,7 @@ public class MaterialBlockItem extends BlockItem implements IMaterialItem {
 
   @Override
   public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag tag = ItemStackUtil.getTag(stack);
+    CompoundTag tag = ItemStackUtil.unshareTag(stack);
     if (tag != null) {
       MaterialItem.verifyTag(tag);
     }

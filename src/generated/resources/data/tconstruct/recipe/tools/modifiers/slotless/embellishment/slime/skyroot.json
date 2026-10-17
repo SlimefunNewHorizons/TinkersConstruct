@@ -16,14 +16,22 @@
     "name": "tconstruct:embellishment",
     "value": "tconstruct:skyslime"
   },
-  "tools": {
-    "items": [
-      "tconstruct:slime_helmet",
-      "tconstruct:slimy_chestplate",
-      "tconstruct:slime_leggings",
-      "tconstruct:slime_boots",
-      "tconstruct:slime_wings"
-    ]
-  },
+  "tools": [
+    {
+      "item": "tconstruct:slime_helmet"
+    },
+    {
+      "item": "tconstruct:slimy_chestplate"
+    },
+    {
+      "item": "tconstruct:slime_leggings"
+    },
+    {
+      "item": "tconstruct:slime_boots"
+    },
+    {
+      "item": "tconstruct:slime_wings"
+    }
+  ],
   "variant_formatter": "tconstruct:material"
 }

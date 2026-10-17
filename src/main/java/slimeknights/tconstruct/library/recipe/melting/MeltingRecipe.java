@@ -3,12 +3,11 @@ package slimeknights.tconstruct.library.recipe.melting;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.field.LoadableField;
@@ -18,6 +17,7 @@ import slimeknights.mantle.recipe.helper.FluidOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.recipe.melting.IMeltingContainer.OreRateType;
+import slimeknights.tconstruct.library.recipe.melting.IMeltingContainer.IOreRate;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 import javax.annotation.Nullable;
@@ -50,7 +50,6 @@ public class MeltingRecipe implements IMeltingRecipe {
   @Getter
   protected final int time;
   protected final List<FluidOutput> byproducts;
-  protected List<List<FluidStack>> outputWithByproducts;
 
   public MeltingRecipe(ResourceLocation id, String group, Ingredient input, FluidOutput output, int temperature, int time, List<FluidOutput> byproducts) {
     this(id, group, input, output, temperature, time, byproducts, true);
@@ -112,30 +111,28 @@ public class MeltingRecipe implements IMeltingRecipe {
   }
 
   @Override
-  public void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
-    // fill byproducts until we run out of space or byproducts
-    for (FluidOutput fluid : byproducts) {
-      handler.fill(fluid.copy(), FluidAction.EXECUTE);
-    }
-  }
-
-  /** Scales the output for display in the foundry tab */
-  private Stream<FluidStack> scaleOutput() {
-    return Stream.of(output).map(output -> {
-      // boost for foundry rate, this method is used for the foundry only
-      OreRateType rate = getOreType();
-      if (rate != null) {
-        return output.get().copyWithAmount(Config.COMMON.foundryOreRate.applyOreBoost(rate, output.getAmount()));
-      }
-      return output.get();
-    });
+  public List<FluidStack> getByproducts(IMeltingContainer inv) {
+    return byproducts.stream().map(FluidOutput::copy).toList();
   }
 
   /** Gets the recipe output for foundry display in JEI */
   public List<List<FluidStack>> getOutputWithByproducts() {
-    if (outputWithByproducts == null) {
-      outputWithByproducts = Stream.concat(Stream.of(output), byproducts.stream()).map(fluid -> List.of(fluid.get())).toList();
-    }
-    return outputWithByproducts;
+    return getOutputWithByproducts(Config.COMMON.foundryOreRate);
+  }
+
+  /** Uses the runtime output calculation for an undamaged input with the requested structure's ore rate. */
+  public List<List<FluidStack>> getOutputWithByproducts(IOreRate oreRate) {
+    IMeltingContainer inv = new IMeltingContainer() {
+      @Override
+      public ItemStack getStack() {
+        return ItemStack.EMPTY;
+      }
+
+      @Override
+      public IOreRate getOreRate() {
+        return oreRate;
+      }
+    };
+    return Stream.concat(Stream.of(getOutput(inv)), getByproducts(inv).stream()).map(List::of).toList();
   }
 }

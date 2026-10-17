@@ -48,6 +48,25 @@ public final class ItemStackUtil {
     return data.getUnsafe();
   }
 
+  /**
+   * Gives the stack its own copy of the custom data tag. {@link ItemStack#copy()} shares component values between the
+   * copies, while Tinkers' data is edited in place through {@link #getTag(ItemStack)}, so without this an edit to one
+   * copy (such as adding modifiers to a JEI display copy) changes every stack copied from the same source.
+   * @param stack  Stack to update, typically called from {@link net.minecraft.world.item.Item#verifyComponentsAfterLoad(ItemStack)}
+   * @return  The stack's own tag, or null if it has no custom data
+   */
+  @Nullable
+  public static CompoundTag unshareTag(ItemStack stack) {
+    CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+    if (data == null) {
+      return null;
+    }
+    // CustomData.of copies the tag
+    CustomData copy = CustomData.of(data.getUnsafe());
+    stack.set(DataComponents.CUSTOM_DATA, copy);
+    return copy.getUnsafe();
+  }
+
   public static void setTag(ItemStack stack, @Nullable CompoundTag tag) {
     if (tag == null) {
       stack.remove(DataComponents.CUSTOM_DATA);

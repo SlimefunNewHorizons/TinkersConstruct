@@ -94,6 +94,20 @@ public class ChestBlock extends TabbedTableBlock {
     return super.useItemOn(heldItem, state, worldIn, pos, player, handIn, hit);
   }
 
+  /**
+   * Drops the chest contents straight from the block entity. Mantle's {@link slimeknights.mantle.block.InventoryBlock}
+   * looks the item capability up by the block state at the position, which is already the new block by the time
+   * {@code onRemove} runs, so it never finds the chest inventory.
+   */
+  @Override
+  @Deprecated
+  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (state.getBlock() != newState.getBlock() && level.getBlockEntity(pos) instanceof AbstractChestBlockEntity chest) {
+      dropInventoryItems(state, level, pos, chest.getItemHandler());
+    }
+    super.onRemove(state, level, pos, newState, isMoving);
+  }
+
   @Override
   protected void dropInventoryItems(BlockState state, Level worldIn, BlockPos pos, IItemHandler inventory) {
     if (dropsItems) {

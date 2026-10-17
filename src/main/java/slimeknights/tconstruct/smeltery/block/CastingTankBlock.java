@@ -47,6 +47,16 @@ public class CastingTankBlock extends InventoryBlock implements ITankBlock, Enti
     registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIGHT, 0));
   }
 
+  /** Mantle's {@link InventoryBlock} cannot find the item capability once the block is replaced, so drop from the block entity */
+  @Override
+  @Deprecated
+  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (state.getBlock() != newState.getBlock() && level.getBlockEntity(pos) instanceof CastingTankBlockEntity tank) {
+      InventoryBlock.dropInventoryItems(level, pos, tank.getItemHandler());
+    }
+    super.onRemove(state, level, pos, newState, isMoving);
+  }
+
   @Override
   public BlockState getStateForPlacement(BlockPlaceContext context) {
     return SearedTankBlock.setLightLevel(defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()), context);

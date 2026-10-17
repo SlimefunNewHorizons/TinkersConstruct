@@ -11,6 +11,8 @@ import slimeknights.tconstruct.library.recipe.FluidValues;
 import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
+import java.util.List;
+
 /**
  * Common interface for all melting recipes
  */
@@ -36,12 +38,21 @@ public interface IMeltingRecipe extends ICustomOutputRecipe<IMeltingContainer> {
    */
   int getTime(IMeltingContainer inv);
 
+  /** Gets new instances of the byproducts, including ore, damage, and material cost scaling. */
+  default List<FluidStack> getByproducts(IMeltingContainer inv) {
+    return List.of();
+  }
+
   /**
-   * Adds recipe byproducts into the given inventory, used in the foundry, but not all smelteries
+   * Adds recipe byproducts into the given inventory, used in structures that support byproducts.
    * @param inv      Input inventory
    * @param handler  Fluid handler to fill with the byproduct
    */
-  default void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {}
+  default void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
+    for (FluidStack byproduct : getByproducts(inv)) {
+      handler.fill(byproduct, IFluidHandler.FluidAction.EXECUTE);
+    }
+  }
 
   /* Recipe data */
 

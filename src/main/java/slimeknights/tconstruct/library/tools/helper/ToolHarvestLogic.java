@@ -2,7 +2,6 @@ package slimeknights.tconstruct.library.tools.helper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
@@ -15,7 +14,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -290,11 +288,10 @@ public class ToolHarvestLogic {
       ItemStackUtil.setTag(harvestStack, tag);
     }
 
-    // Armor may supply harvest-only enchantments. Materialize every effective enchantment
-    // on the loot stack for integrations that inspect the component instead of the API.
+    // Armor may supply harvest-only enchantments, those are written to the loot stack.
+    // Enchantments from the tool's own modifiers are not, as the item reports them through getEnchantmentLevel
+    // and getAllEnchantments already, so storing them would count them twice (luck acting as double fortune).
     HarvestEnchantmentsModifierHook.updateHarvestEnchantments(tool, harvestStack, context);
-    EnchantmentHelper.setEnchantments(harvestStack,
-      harvestStack.getAllEnchantments(context.getWorld().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)));
     return harvestStack;
   }
 

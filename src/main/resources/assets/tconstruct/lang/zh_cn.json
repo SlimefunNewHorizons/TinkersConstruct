@@ -3939,6 +3939,8 @@
   "jei.tconstruct.melting.time": "熔炼耗时：%s秒",
   "jei.tconstruct.melting.smeltery": "冶炼炉处理产出：",
   "jei.tconstruct.melting.melter": "熔化炉处理产出：",
+  "jei.tconstruct.melter.title": "熔化炉",
+  "jei.tconstruct.smeltery.title": "冶炼炉",
   "jei.tconstruct.foundry.title": "熔铸炉",
 
   "jei.tconstruct.entity_melting.title": "实体熔炼",

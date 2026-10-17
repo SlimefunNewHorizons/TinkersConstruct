@@ -1,13 +1,10 @@
 package slimeknights.tconstruct.library.recipe.melting;
 
-import com.google.common.collect.Streams;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.helper.FluidOutput;
@@ -18,9 +15,9 @@ import slimeknights.tconstruct.library.json.field.MergingListField;
 import slimeknights.tconstruct.library.recipe.melting.IMeltingContainer.OreRateType;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Extension of melting recipe to boost results of ores
@@ -47,22 +44,13 @@ public class OreMeltingRecipe extends MeltingRecipe {
   }
 
   @Override
-  public void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
-    // fill byproducts until we run out of space or byproducts
+  public List<FluidStack> getByproducts(IMeltingContainer inv) {
+    List<FluidStack> outputs = new ArrayList<>(byproducts.size());
     for (int i = 0; i < byproducts.size(); i++) {
-      handler.fill(Config.COMMON.foundryByproductRate.applyOreBoost(byproductTypes.get(i).orElse(oreType), byproducts.get(i).get(), true), FluidAction.EXECUTE);
+      OreRateType rate = i < byproductTypes.size() ? byproductTypes.get(i).orElse(oreType) : oreType;
+      outputs.add(Config.COMMON.foundryByproductRate.applyOreBoost(rate, byproducts.get(i).get(), true));
     }
-  }
-
-  @Override
-  public List<List<FluidStack>> getOutputWithByproducts() {
-    if (outputWithByproducts == null) {
-      outputWithByproducts = Stream.concat(
-        Stream.of(output).map(output -> Config.COMMON.foundryOreRate.applyOreBoost(oreType, output.get(), false)),
-        Streams.zip(byproducts.stream(), byproductTypes.stream(), (byproduct, rate) -> Config.COMMON.foundryByproductRate.applyOreBoost(rate.orElse(oreType), byproduct.get(), false))
-      ).map(List::of).toList();
-    }
-    return outputWithByproducts;
+    return outputs;
   }
 
   @Override

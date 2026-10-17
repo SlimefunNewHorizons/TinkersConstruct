@@ -84,7 +84,7 @@ class EnchantmentGameplayTest extends ToolItemTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  void harvestStack_materializesFortuneWithoutMutatingHeldTool() {
+  void harvestStack_keepsModifierFortuneAtItsLevelWithoutMutatingHeldTool() {
     addFortune(3);
     RegistryAccess registryAccess = mock(RegistryAccess.class);
     HolderLookup.RegistryLookup<Enchantment> enchantments = mock(HolderLookup.RegistryLookup.class);
@@ -100,7 +100,9 @@ class EnchantmentGameplayTest extends ToolItemTest {
     when(context.getWorld()).thenReturn(level);
 
     ItemStack harvestStack = ToolHarvestLogic.createHarvestStack(testItemStack, ToolStack.from(testItemStack), context);
-    assertThat(harvestStack.getTagEnchantments().getLevel(FORTUNE)).isEqualTo(3);
+    // the modifier reports fortune through the item, storing it on the stack as well would count it twice
+    assertThat(harvestStack.getEnchantmentLevel(FORTUNE)).isEqualTo(3);
+    assertThat(harvestStack.getTagEnchantments().getLevel(FORTUNE)).isZero();
     assertThat(testItemStack.getTagEnchantments().getLevel(FORTUNE)).isZero();
 
     ToolStack.from(harvestStack).setDamage(1);

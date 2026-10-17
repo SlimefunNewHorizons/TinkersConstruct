@@ -278,7 +278,7 @@ public class MeltingModuleInventory implements IItemHandlerModifiable {
    */
   protected boolean tryFillTank(int index, IMeltingRecipe recipe) {
     FluidStack fluid = recipe.getOutput(getModule(index));
-    if (fluidHandler.fill(fluid.copy(), FluidAction.SIMULATE) == fluid.getAmount()) {
+    if (!fluid.isEmpty() && fluidHandler.fill(fluid.copy(), FluidAction.SIMULATE) == fluid.getAmount()) {
       fluidHandler.fill(fluid, FluidAction.EXECUTE);
       return true;
     }
