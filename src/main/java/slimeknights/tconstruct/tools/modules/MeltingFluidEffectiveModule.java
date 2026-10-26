@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules;
 
+import slimeknights.tconstruct.library.utils.HarvestTiers;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.data.loadable.primitive.BooleanLoadable;
@@ -57,7 +58,7 @@ public record MeltingFluidEffectiveModule(IJsonPredicate<BlockState> predicate, 
           FluidStack meltingResult = MeltingRecipeLookup.findResult(state.getBlock(), temperature);
           return (!meltingResult.isEmpty() && (currentFluid.isEmpty() || currentFluid.isFluidEqual(meltingResult)))
                  // tier must also match
-                 && (ignoreTier || !state.is(MiningTierToolHook.getTier(tool).getIncorrectBlocksForDrops()));
+                 && (ignoreTier || !state.is(HarvestTiers.incorrectBlocksForDrops(MiningTierToolHook.getTier(tool))));
         }
       }
     }

@@ -154,7 +154,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
   @Override
   public void readFromTag(CompoundTag nbt) {
     super.readFromTag(nbt);
-    if (nbt.contains(TAG_LAST_FUEL, Tag.TAG_INT_ARRAY)) {
+    if (nbt.getIntArray(TAG_LAST_FUEL).isPresent()) {
       lastPos = NbtUtils.readBlockPos(nbt, TAG_LAST_FUEL).map(pos -> pos.offset(parent.getBlockPos())).orElse(NULL_POS);
     }
   }

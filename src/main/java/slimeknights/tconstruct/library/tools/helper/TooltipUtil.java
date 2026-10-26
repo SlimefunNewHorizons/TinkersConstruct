@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -121,7 +121,7 @@ public class TooltipUtil {
   public static String getDisplayName(ItemStack tool) {
     CompoundTag tag = ItemStackUtil.getTag(tool);
     if (tag != null) {
-      return tag.getString(KEY_NAME);
+      return tag.getStringOr(KEY_NAME, "");
     }
     return "";
   }
@@ -174,7 +174,7 @@ public class TooltipUtil {
       tooltip.add(UNINITIALIZED);
       if (definition.hasMaterials()) {
         CompoundTag nbt = ItemStackUtil.getTag(stack);
-        if (nbt == null || !nbt.contains(ToolStack.TAG_MATERIALS, Tag.TAG_LIST)) {
+        if (nbt == null || !nbt.getList(ToolStack.TAG_MATERIALS).isPresent()) {
           tooltip.add(RANDOM_MATERIALS);
         }
       }
@@ -446,7 +446,7 @@ public class TooltipUtil {
    * @param player     Player instance
    * @param tooltip    Tooltip list
    */
-  public static void addAttribute(Attribute attribute, Operation operation, double amount, @Nullable ResourceLocation id, @Nullable Player player, List<Component> tooltip) {
+  public static void addAttribute(Attribute attribute, Operation operation, double amount, @Nullable Identifier id, @Nullable Player player, List<Component> tooltip) {
     // find value
     boolean showEquals = false;
     if (player != null) {

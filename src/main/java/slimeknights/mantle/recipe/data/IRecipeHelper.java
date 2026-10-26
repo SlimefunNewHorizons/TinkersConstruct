@@ -4,7 +4,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -34,8 +34,8 @@ public interface IRecipeHelper {
    * @param name  Location path
    * @return  Location for the mod
    */
-  default ResourceLocation location(String name) {
-    return ResourceLocation.fromNamespaceAndPath(getModId(), name);
+  default Identifier location(String name) {
+    return Identifier.fromNamespaceAndPath(getModId(), name);
   }
 
   /**
@@ -53,7 +53,7 @@ public interface IRecipeHelper {
    * @return  ID for the item put in your namespace
    */
   @SuppressWarnings("deprecation")  // won't be for long
-  default ResourceLocation id(ItemLike item) {
+  default Identifier id(ItemLike item) {
     return id(BuiltInRegistries.ITEM, item.asItem());
   }
 
@@ -63,7 +63,7 @@ public interface IRecipeHelper {
    * @param value     Registry value
    * @return  ID for the item put in your namespace
    */
-  default <T> ResourceLocation id(Registry<T> registry, T value) {
+  default <T> Identifier id(Registry<T> registry, T value) {
     return location(Objects.requireNonNull(registry.getKey(value)).getPath());
   }
 
@@ -71,17 +71,17 @@ public interface IRecipeHelper {
   /* Location extending with namespace */
 
   /** Wraps the given path under our ID */
-  default ResourceLocation wrap(ResourceLocation location, String prefix, String suffix) {
+  default Identifier wrap(Identifier location, String prefix, String suffix) {
     return location(prefix + location.getPath() + suffix);
   }
 
   /** Prefixes the given path under our ID */
-  default ResourceLocation prefix(ResourceLocation location, String prefix) {
+  default Identifier prefix(Identifier location, String prefix) {
     return location(prefix + location.getPath());
   }
 
   /** Suffixes the given path under our ID */
-  default ResourceLocation suffix(ResourceLocation location, String suffix) {
+  default Identifier suffix(Identifier location, String suffix) {
     return location(location.getPath() + suffix);
   }
 
@@ -95,7 +95,7 @@ public interface IRecipeHelper {
    * @param suffix    Path suffix
    * @return  Location with the given prefix and suffix
    */
-  default ResourceLocation wrap(RegistryObject<?> location, String prefix, String suffix) {
+  default Identifier wrap(RegistryObject<?> location, String prefix, String suffix) {
     return wrap(location.getId(), prefix, suffix);
   }
 
@@ -105,7 +105,7 @@ public interface IRecipeHelper {
    * @param prefix    Path prefix
    * @return  Location with the given prefix
    */
-  default ResourceLocation prefix(RegistryObject<?> location, String prefix) {
+  default Identifier prefix(RegistryObject<?> location, String prefix) {
     return prefix(location.getId(), prefix);
   }
 
@@ -115,7 +115,7 @@ public interface IRecipeHelper {
    * @param suffix    Path suffix
    * @return  Location with the given suffix
    */
-  default ResourceLocation suffix(RegistryObject<?> location, String suffix) {
+  default Identifier suffix(RegistryObject<?> location, String suffix) {
     return suffix(location.getId(), suffix);
   }
 
@@ -129,7 +129,7 @@ public interface IRecipeHelper {
    * @param suffix    Path suffix
    * @return  Location with the given prefix and suffix
    */
-  default ResourceLocation wrap(IdAwareObject location, String prefix, String suffix) {
+  default Identifier wrap(IdAwareObject location, String prefix, String suffix) {
     return wrap(location.getId(), prefix, suffix);
   }
 
@@ -139,7 +139,7 @@ public interface IRecipeHelper {
    * @param prefix    Path prefix
    * @return  Location with the given prefix
    */
-  default ResourceLocation prefix(IdAwareObject location, String prefix) {
+  default Identifier prefix(IdAwareObject location, String prefix) {
     return prefix(location.getId(), prefix);
   }
 
@@ -149,7 +149,7 @@ public interface IRecipeHelper {
    * @param suffix    Path suffix
    * @return  Location with the given suffix
    */
-  default ResourceLocation suffix(IdAwareObject location, String suffix) {
+  default Identifier suffix(IdAwareObject location, String suffix) {
     return suffix(location.getId(), suffix);
   }
 
@@ -163,7 +163,7 @@ public interface IRecipeHelper {
    * @return  Tag instance
    */
   default TagKey<Item> getItemTag(String modId, String name) {
-    return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(modId, name));
+    return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(modId, name));
   }
 
   /**
@@ -173,7 +173,7 @@ public interface IRecipeHelper {
    * @return  Tag instance
    */
   default TagKey<Fluid> getFluidTag(String modId, String name) {
-    return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(modId, name));
+    return TagKey.create(Registries.FLUID, Identifier.fromNamespaceAndPath(modId, name));
   }
 
   /**

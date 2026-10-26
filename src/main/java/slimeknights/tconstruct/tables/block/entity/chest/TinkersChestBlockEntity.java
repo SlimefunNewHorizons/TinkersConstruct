@@ -62,7 +62,7 @@ public class TinkersChestBlockEntity extends AbstractChestBlockEntity {
   public void load(CompoundTag tags) {
     super.load(tags);
     if (tags.contains(TAG_CHEST_COLOR, Tag.TAG_ANY_NUMERIC)) {
-      setColor(tags.getInt(TAG_CHEST_COLOR));
+      setColor(tags.getIntOr(TAG_CHEST_COLOR, 0));
     }
   }
 

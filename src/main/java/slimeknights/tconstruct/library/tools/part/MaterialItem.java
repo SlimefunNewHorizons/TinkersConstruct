@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -37,7 +37,7 @@ public class MaterialItem extends Item implements IMaterialItem {
   /** Gets the material ID for the given NBT compound */
   public static MaterialVariantId getMaterialId(@Nullable CompoundTag nbt) {
     if (nbt != null) {
-      String str = nbt.getString(MATERIAL_TAG);
+      String str = nbt.getStringOr(MATERIAL_TAG, "");
       if (!str.isEmpty()) {
         MaterialVariantId id = MaterialVariantId.tryParse(str);
         if (id != null) {
@@ -56,7 +56,7 @@ public class MaterialItem extends Item implements IMaterialItem {
   @Nullable
   private static Component getName(String baseKey, MaterialVariantId material) {
     // if there is a specific name, use that
-    ResourceLocation location = material.getLocation('.');
+    Identifier location = material.getLocation('.');
     String fullKey = String.format("%s.%s.%s", baseKey, location.getNamespace(), location.getPath());
     if (Util.canTranslate(fullKey)) {
       return Component.translatable(fullKey);

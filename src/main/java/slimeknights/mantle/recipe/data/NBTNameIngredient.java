@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.crafting.StrictNBTIngredient;
 
@@ -17,11 +17,11 @@ import net.neoforged.neoforge.common.crafting.StrictNBTIngredient.Serializer;
  * Ingredient for a NBT sensitive item from another mod, should never be used outside datagen
  */
 public class NBTNameIngredient extends StrictNBTIngredient {
-  private final ResourceLocation name;
+  private final Identifier name;
   @Nullable
   private final CompoundTag nbt;
 
-  protected NBTNameIngredient(ResourceLocation name, @Nullable CompoundTag nbt) {
+  protected NBTNameIngredient(Identifier name, @Nullable CompoundTag nbt) {
     super(ItemStack.EMPTY);
     this.name = name;
     this.nbt = nbt;
@@ -33,7 +33,7 @@ public class NBTNameIngredient extends StrictNBTIngredient {
    * @param nbt   NBT
    * @return  Ingredient
    */
-  public static NBTNameIngredient from(ResourceLocation name, CompoundTag nbt) {
+  public static NBTNameIngredient from(Identifier name, CompoundTag nbt) {
     return new NBTNameIngredient(name, nbt);
   }
 
@@ -42,7 +42,7 @@ public class NBTNameIngredient extends StrictNBTIngredient {
    * @param name  Item name
    * @return  Ingredient
    */
-  public static NBTNameIngredient from(ResourceLocation name) {
+  public static NBTNameIngredient from(Identifier name) {
     return new NBTNameIngredient(name, null);
   }
 

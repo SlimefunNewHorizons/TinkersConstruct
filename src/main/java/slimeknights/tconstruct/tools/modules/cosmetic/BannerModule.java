@@ -7,7 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -77,9 +77,9 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
       if (tooltipKey == TooltipKey.SHIFT) {
         ListTag patterns = tool.getPersistentData().getList(patternKey(modifier.getId()), ListTag.TAG_COMPOUND);
         for (int i = 0; i < patterns.size(); i++) {
-          CompoundTag tag = patterns.getCompound(i);
-          DyeColor dye = DyeColor.byId(tag.getInt(KEY_DYE));
-          ResourceLocation patternId = ResourceLocation.tryParse(tag.getString(KEY_PATTERN));
+          CompoundTag tag = patterns.getCompoundOrEmpty(i);
+          DyeColor dye = DyeColor.byId(tag.getIntOr(KEY_DYE, 0));
+          Identifier patternId = Identifier.tryParse(tag.getStringOr(KEY_PATTERN, ""));
           Holder<BannerPattern> holder = patternId != null && player != null
             ? player.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)
                     .get(ResourceKey.create(Registries.BANNER_PATTERN, patternId)).orElse(null)
@@ -98,12 +98,12 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
   }
 
   /** Gets the key for the cache used in the model */
-  public static ResourceLocation cacheKey(ModifierId modifier) {
+  public static Identifier cacheKey(ModifierId modifier) {
     return modifier.withSuffix("_cache");
   }
 
   /** Gets the key for the pattern list in NBT */
-  public static ResourceLocation patternKey(ModifierId modifier) {
+  public static Identifier patternKey(ModifierId modifier) {
     return modifier.withSuffix("_patterns");
   }
 

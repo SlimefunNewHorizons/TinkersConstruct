@@ -2,7 +2,7 @@ package slimeknights.tconstruct.test;
 
 import com.google.gson.JsonElement;
 import com.google.gson.Gson;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import slimeknights.mantle.data.listener.MergingJsonDataLoader;
 
@@ -38,8 +38,8 @@ public class MergingJsonFileLoader<B> extends JsonFileLoader {
   }
 
   @SuppressWarnings("unchecked")
-  private B createBuilder(ResourceLocation id) {
-    Function<ResourceLocation,B> constructor = (Function<ResourceLocation,B>)readField(dataLoader, "builderConstructor", Function.class);
+  private B createBuilder(Identifier id) {
+    Function<Identifier,B> constructor = (Function<Identifier,B>)readField(dataLoader, "builderConstructor", Function.class);
     return constructor.apply(id);
   }
 
@@ -55,16 +55,16 @@ public class MergingJsonFileLoader<B> extends JsonFileLoader {
     }
   }
 
-  public void loadAndParseFiles(@Nullable String mergeFolder, ResourceLocation... files) {
-    Map<ResourceLocation,B> parsedMap = new HashMap<>();
-    for (Entry<ResourceLocation,JsonElement> entry : loadFilesAsSplashlist(files).entrySet()) {
-      ResourceLocation id = entry.getKey();
+  public void loadAndParseFiles(@Nullable String mergeFolder, Identifier... files) {
+    Map<Identifier,B> parsedMap = new HashMap<>();
+    for (Entry<Identifier,JsonElement> entry : loadFilesAsSplashlist(files).entrySet()) {
+      Identifier id = entry.getKey();
       invoke("parse", parsedMap.computeIfAbsent(id, this::createBuilder), id, entry.getValue());
     }
     if (mergeFolder != null) {
       JsonFileLoader fakeSecondDataPack = new JsonFileLoader(readField(dataLoader, "gson", Gson.class), readField(dataLoader, "folder", String.class) + "/" + mergeFolder);
-      for (Entry<ResourceLocation,JsonElement> entry : fakeSecondDataPack.loadFilesAsSplashlist(files).entrySet()) {
-        ResourceLocation id = entry.getKey();
+      for (Entry<Identifier,JsonElement> entry : fakeSecondDataPack.loadFilesAsSplashlist(files).entrySet()) {
+        Identifier id = entry.getKey();
         invoke("parse", parsedMap.computeIfAbsent(id, this::createBuilder), id, entry.getValue());
       }
     }

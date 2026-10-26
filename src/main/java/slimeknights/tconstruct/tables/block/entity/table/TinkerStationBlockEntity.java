@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +60,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
   private ITinkerStationRecipe lastRecipe;
   /** ID for the cached recipe, as recipes no longer own their IDs in 1.21. */
   @Nullable
-  private ResourceLocation lastRecipeId;
+  private Identifier lastRecipeId;
   /** Result inventory, lazy loads results */
   @Getter
   private final LazyResultContainer craftingResult;
@@ -156,7 +156,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
     result = null;
     this.currentError = null;
 
-    if (!this.level.isClientSide && this.level.getServer() != null) {
+    if (!this.level.isClientSide() && this.level.getServer() != null) {
       RecipeManager manager = this.level.getServer().getRecipeManager();
 
       // first, try the cached recipe
@@ -233,7 +233,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
     // run the recipe, will shrink inputs
     // run both sides for the sake of shift clicking
     this.inventoryWrapper.setPlayer(player);
-    this.lastRecipe.updateInputs(result, inventoryWrapper, !level.isClientSide);
+    this.lastRecipe.updateInputs(result, inventoryWrapper, !level.isClientSide());
     this.inventoryWrapper.setPlayer(null);
 
     // remove the center slot item, just clear it entirely (if you want shrinking you should use the outer slots or ask nicely for a shrink amount hook)
@@ -298,7 +298,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
    */
   public void syncRecipe(Player player) {
     // must have a last recipe and a server level
-    if (this.lastRecipe != null && this.lastRecipeId != null && this.level != null && !this.level.isClientSide && player instanceof ServerPlayer server) {
+    if (this.lastRecipe != null && this.lastRecipeId != null && this.level != null && !this.level.isClientSide() && player instanceof ServerPlayer server) {
       TinkerNetwork.getInstance().sendTo(new UpdateTinkerStationRecipePacket(this.worldPosition, this.lastRecipeId), server);
     }
   }
@@ -307,7 +307,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
    * Updates the recipe from the server
    * @param recipe  New recipe
    */
-  public void updateRecipe(ResourceLocation id, ITinkerStationRecipe recipe) {
+  public void updateRecipe(Identifier id, ITinkerStationRecipe recipe) {
     this.lastRecipe = recipe;
     this.lastRecipeId = id;
     this.craftingResult.clearContent();
@@ -355,7 +355,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
   @Override
   public void load(CompoundTag tags) {
     super.load(tags);
-    if (tags.contains(MATERIAL_TAG, Tag.TAG_STRING)) {
+    if (tags.getString(MATERIAL_TAG).isPresent()) {
       material = Objects.requireNonNullElse(MaterialVariantId.tryParse(tags.getString(MATERIAL_TAG)), IMaterial.UNKNOWN_ID);
       RetexturedHelper.onTextureUpdated(this);
     }

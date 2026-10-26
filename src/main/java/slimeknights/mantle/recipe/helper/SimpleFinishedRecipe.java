@@ -2,13 +2,13 @@ package slimeknights.mantle.recipe.helper;
 
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import javax.annotation.Nullable;
 
 /** Finished recipe implementation for {@link SimpleRecipeSerializer}, use like {@code consumer.accept(new SimpleFinishedRecipe(...))} */
-public record SimpleFinishedRecipe(ResourceLocation getId, RecipeSerializer<?> getType) implements FinishedRecipe {
+public record SimpleFinishedRecipe(Identifier getId, RecipeSerializer<?> getType) implements FinishedRecipe {
   @Override
   public void serializeRecipeData(JsonObject pJson) {}
 
@@ -20,7 +20,7 @@ public record SimpleFinishedRecipe(ResourceLocation getId, RecipeSerializer<?> g
 
   @Nullable
   @Override
-  public ResourceLocation getAdvancementId() {
+  public Identifier getAdvancementId() {
     return null;
   }
 }

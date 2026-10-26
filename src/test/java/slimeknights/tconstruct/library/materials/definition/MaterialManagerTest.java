@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.materials.definition;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +30,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void loadFullMaterial_allStatsPresent() {
-    Map<ResourceLocation,JsonElement> splashList = fileLoader.loadFilesAsSplashlist("full");
+    Map<Identifier,JsonElement> splashList = fileLoader.loadFilesAsSplashlist("full");
 
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
@@ -46,7 +46,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void loadMinimalMaterial_succeedWithDefaults() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("minimal");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("minimal");
 
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
@@ -62,7 +62,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void invalid_skipped() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("invalid");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("invalid");
 
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
@@ -75,8 +75,8 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void failOnMissing() {
-    ResourceLocation materialId = TConstruct.getResource("nonexistant");
-    Map<ResourceLocation, JsonElement> splashList = ImmutableMap.of(materialId, new JsonObject());
+    Identifier materialId = TConstruct.getResource("nonexistant");
+    Map<Identifier, JsonElement> splashList = ImmutableMap.of(materialId, new JsonObject());
 
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
@@ -86,7 +86,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void conditional_conditionPass() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("conditional_pass");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("conditional_pass");
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
     Collection<IMaterial> allMaterials = materialManager.getAllMaterials();
@@ -95,7 +95,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void conditional_conditionFail() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("conditional_fail");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("conditional_fail");
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
     Collection<IMaterial> allMaterials = materialManager.getAllMaterials();
@@ -104,7 +104,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void redirect_toExisting() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("redirect_always", "full");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("redirect_always", "full");
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
     Collection<IMaterial> allMaterials = materialManager.getAllMaterials();
@@ -114,7 +114,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void redirect_toNonexisting() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("redirect_always");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("redirect_always");
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
     Collection<IMaterial> allMaterials = materialManager.getAllMaterials();
@@ -124,7 +124,7 @@ class MaterialManagerTest extends BaseMcTest {
 
   @Test
   void redirect_withMultipleConditions() {
-    Map<ResourceLocation, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("full", "minimal", "redirect_conditional");
+    Map<Identifier, JsonElement> splashList = fileLoader.loadFilesAsSplashlist("full", "minimal", "redirect_conditional");
     materialManager.apply(splashList, mock(ResourceManager.class), mock(ProfilerFiller.class));
 
     Collection<IMaterial> allMaterials = materialManager.getAllMaterials();

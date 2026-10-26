@@ -94,7 +94,7 @@ public class ModifierCrystalItem extends Item {
       ItemStack toolItem = slot.getItem();
       // slot must have a tool, NBT must be valid
       if (modifier != null && !toolItem.isEmpty() && toolItem.is(TinkerTags.Items.MODIFIABLE)) {
-        if (!player.level().isClientSide || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
+        if (!player.level().isClientSide() || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
           ToolStack tool = ToolStack.copyFrom(toolItem);
 
           // add modifier
@@ -127,7 +127,7 @@ public class ModifierCrystalItem extends Item {
       // NBT must be valid
       ModifierId modifier = getModifier(stack);
       if (modifier != null) {
-        if (!player.level().isClientSide || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
+        if (!player.level().isClientSide() || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
           ToolStack original = ToolStack.from(toolItem);
           ToolStack tool = original.copy();
 

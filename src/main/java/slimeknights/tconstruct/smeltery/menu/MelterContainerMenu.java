@@ -3,7 +3,7 @@ package slimeknights.tconstruct.smeltery.menu;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class MelterContainerMenu extends TriggeringBaseContainerMenu<MelterBlockEntity> {
-  public static final ResourceLocation TOOLTIP_FORMAT = TConstruct.getResource("melter");
+  public static final Identifier TOOLTIP_FORMAT = TConstruct.getResource("melter");
 
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Getter
@@ -78,7 +78,7 @@ public class MelterContainerMenu extends TriggeringBaseContainerMenu<MelterBlock
     if (0 <= id && id <= 3 && !player.isSpectator()) {
       ItemStack held = getCarried();
       if (!held.isEmpty()) {
-        if (!player.level().isClientSide && tile != null) {
+        if (!player.level().isClientSide() && tile != null) {
           IFluidHandler tank = id < 2 ? tile.getTank() : tile.getFuelModule().getTank();
           TransferResult result;
           // even means drain fluid, odd means fill

@@ -6,7 +6,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -46,7 +46,7 @@ public class WorldRecipeProvider extends BaseRecipeProvider implements ICommonRe
 
     // does not need green as its the fallback
     for (SlimeType slimeType : SlimeType.TINKER) {
-      ResourceLocation name = location("common/slime/" + slimeType.getSerializedName() + "/congealed");
+      Identifier name = location("common/slime/" + slimeType.getSerializedName() + "/congealed");
       ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TinkerWorld.congealedSlime.get(slimeType))
                          .define('#', slimeType.getSlimeballTag())
                          .pattern("##")
@@ -54,7 +54,7 @@ public class WorldRecipeProvider extends BaseRecipeProvider implements ICommonRe
                          .unlockedBy("has_item", has(slimeType.getSlimeballTag()))
                          .group("tconstruct:congealed_slime")
                          .save(consumer, name);
-      ResourceLocation blockName = location("common/slime/" + slimeType.getSerializedName() + "/slimeblock");
+      Identifier blockName = location("common/slime/" + slimeType.getSerializedName() + "/slimeblock");
       ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TinkerWorld.slime.get(slimeType))
                          .define('#', slimeType.getSlimeballTag())
                          .pattern("###")

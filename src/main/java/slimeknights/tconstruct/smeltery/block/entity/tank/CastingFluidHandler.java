@@ -7,7 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -174,12 +174,12 @@ public class CastingFluidHandler implements IFluidHandler {
 
   /** Reads the tank from Tag */
   public void readFromTag(CompoundTag nbt, HolderLookup.Provider registries) {
-    capacity = nbt.getInt(TAG_CAPACITY);
-    if (nbt.contains(TAG_FLUID, Tag.TAG_COMPOUND)) {
+    capacity = nbt.getIntOr(TAG_CAPACITY, 0);
+    if (nbt.getCompound(TAG_FLUID).isPresent()) {
       setFluid(FluidStack.parseOptional(registries, nbt.getCompound(TAG_FLUID)));
     }
-    if (nbt.contains(TAG_FILTER, Tag.TAG_STRING)) {
-      Fluid fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(nbt.getString(TAG_FILTER)));
+    if (nbt.getString(TAG_FILTER).isPresent()) {
+      Fluid fluid = BuiltInRegistries.FLUID.get(Identifier.parse(nbt.getStringOr(TAG_FILTER, "")));
       if (fluid != null) {
         filter = fluid;
       }

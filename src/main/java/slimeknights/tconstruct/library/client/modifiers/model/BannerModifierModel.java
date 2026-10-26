@@ -9,7 +9,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import slimeknights.mantle.client.model.util.MantleItemLayerModel;
 import slimeknights.mantle.data.loadable.Loadables;
@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /** Modifier model that renders all banner patterns on a tool */
-public record BannerModifierModel(@Nullable ResourceLocation smallPrefix, @Nullable ResourceLocation largePrefix) implements ModifierModel {
+public record BannerModifierModel(@Nullable Identifier smallPrefix, @Nullable Identifier largePrefix) implements ModifierModel {
   public static final RecordLoadable<BannerModifierModel> LOADER = RecordLoadable.create(
     Loadables.RESOURCE_LOCATION.nullableField("prefix", BannerModifierModel::smallPrefix),
     Loadables.RESOURCE_LOCATION.nullableField("prefix_large", BannerModifierModel::largePrefix),
@@ -53,10 +53,10 @@ public record BannerModifierModel(@Nullable ResourceLocation smallPrefix, @Nulla
 
   @Override
   public void addQuads(IToolStackView tool, ModifierEntry modifier, Function<Material, TextureAtlasSprite> spriteGetter, Transformation transforms, boolean isLarge, int startTintIndex, Consumer<Collection<BakedQuad>> quadConsumer, @Nullable ItemLayerPixels pixels) {
-    ResourceLocation prefix = isLarge ? largePrefix : smallPrefix;
+    Identifier prefix = isLarge ? largePrefix : smallPrefix;
     if (prefix != null) {
       IModDataView modData = tool.getPersistentData();
-      ResourceLocation key = BannerModule.patternKey(modifier.getId());
+      Identifier key = BannerModule.patternKey(modifier.getId());
       if (modData.contains(key, CompoundTag.TAG_LIST)) {
         ListTag list = modData.getList(key, ListTag.TAG_COMPOUND);
         List<BakedQuad> quads = new ArrayList<>(list.size());
@@ -64,9 +64,9 @@ public record BannerModifierModel(@Nullable ResourceLocation smallPrefix, @Nulla
         for (int i = 0; i < list.size(); i++) {
           // patterns are stored as short strings for some reason, for consistency we also store as hashes
           // map that back to the pattern
-          CompoundTag tag = list.getCompound(i);
-          ResourceLocation patternId = ResourceLocation.tryParse(tag.getString(BannerModule.KEY_PATTERN));
-          int color = tag.getInt(BannerModule.KEY_COLOR);
+          CompoundTag tag = list.getCompoundOrEmpty(i);
+          Identifier patternId = Identifier.tryParse(tag.getStringOr(BannerModule.KEY_PATTERN, ""));
+          int color = tag.getIntOr(BannerModule.KEY_COLOR, 0);
           if (patternId != null) {
             {
               TextureAtlasSprite sprite = spriteGetter.apply(ModifierModel.blockAtlas(prefix.withSuffix(MaterialRenderInfo.getSuffix(patternId))));

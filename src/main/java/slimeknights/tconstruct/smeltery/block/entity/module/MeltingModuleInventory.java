@@ -347,10 +347,10 @@ public class MeltingModuleInventory implements IItemHandlerModifiable {
       }
     }
 
-    ListTag list = nbt.getList(TAG_ITEMS, Tag.TAG_COMPOUND);
+    ListTag list = nbt.getListOrEmpty(TAG_ITEMS);
     for (int i = 0; i < list.size(); i++) {
-      CompoundTag item = list.getCompound(i);
-      if (item.contains(TAG_SLOT, Tag.TAG_BYTE)) {
+      CompoundTag item = list.getCompoundOrEmpty(i);
+      if (item.getByte(TAG_SLOT).isPresent()) {
         int slot = item.getByte(TAG_SLOT) & 255;
         if (validSlot(slot)) {
           getModule(slot).readFromTag(item, registries);

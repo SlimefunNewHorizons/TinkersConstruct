@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.tools.modules.interaction.sling;
 
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.UseAnim;
 import slimeknights.mantle.client.TooltipKey;
 import slimeknights.mantle.data.loadable.field.RecordField;
 import slimeknights.mantle.data.loadable.primitive.FloatLoadable;
@@ -82,8 +82,8 @@ public interface SlingModule extends ModifierModule, GeneralInteractionModifierH
   }
 
   @Override
-  default UseAnim getUseAction(IToolStackView tool, ModifierEntry modifier) {
-    return ModifierUtil.blockWhileCharging(tool, UseAnim.BOW);
+  default ItemUseAnimation getUseAction(IToolStackView tool, ModifierEntry modifier) {
+    return ModifierUtil.blockWhileCharging(tool, ItemUseAnimation.BOW);
   }
 
   @Override

@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.json.predicate.tool;
 import com.mojang.serialization.Codec;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.data.loadable.LoadableCodec;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
@@ -16,7 +16,7 @@ import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 /** Variant of ItemPredicate for matching Tinker tools using {@link ToolStackItemPredicate} */
 @RequiredArgsConstructor(staticName = "ofTool")
 public class ToolStackItemPredicate implements ItemSubPredicate {
-  public static final ResourceLocation ID = TConstruct.getResource("tool_stack");
+  public static final Identifier ID = TConstruct.getResource("tool_stack");
   public static final Codec<ToolStackItemPredicate> CODEC = new LoadableCodec<>(ToolStackPredicate.LOADER)
     .xmap(ToolStackItemPredicate::new, value -> value.predicate);
   public static final ItemSubPredicate.Type<ToolStackItemPredicate> TYPE = new ItemSubPredicate.Type<>(CODEC);

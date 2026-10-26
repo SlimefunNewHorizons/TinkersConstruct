@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -74,7 +74,7 @@ public class ShapedRetexturedRecipeBuilder {
    * @param consumer Recipe consumer
    * @param location Recipe location
    */
-  public void build(Consumer<FinishedRecipe> consumer, ResourceLocation location) {
+  public void build(Consumer<FinishedRecipe> consumer, Identifier location) {
     this.validate();
     parent.save(base -> consumer.accept(new Result(base)), location);
   }
@@ -102,7 +102,7 @@ public class ShapedRetexturedRecipeBuilder {
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
       return base.getId();
     }
 
@@ -126,7 +126,7 @@ public class ShapedRetexturedRecipeBuilder {
 
     @Nullable
     @Override
-    public ResourceLocation getAdvancementId() {
+    public Identifier getAdvancementId() {
       return base.getAdvancementId();
     }
   }

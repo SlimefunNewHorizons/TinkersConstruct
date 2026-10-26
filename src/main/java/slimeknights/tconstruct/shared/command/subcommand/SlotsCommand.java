@@ -36,7 +36,7 @@ public class SlotsCommand {
    * @param subCommand  Command builder
    */
   public static void register(LiteralArgumentBuilder<CommandSourceStack> subCommand) {
-    subCommand.requires(sender -> sender.hasPermission(MantleCommand.PERMISSION_GAME_COMMANDS))
+    subCommand.requires(sender -> MantleCommand.PERMISSION_GAME_COMMANDS.check(sender.permissions()))
               .then(Commands.argument("targets", EntityArgument.entities())
                             // slots <target> add <slot_type> [<count>]
                             .then(Commands.literal("add")

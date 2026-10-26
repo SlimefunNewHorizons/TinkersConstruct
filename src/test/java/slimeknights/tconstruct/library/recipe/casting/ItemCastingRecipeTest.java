@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -23,7 +23,7 @@ class ItemCastingRecipeTest extends BaseMcTest {
     TypeAwareRecipeSerializer<?> serializer = mock(TypeAwareRecipeSerializer.class);
     doReturn(RecipeType.CRAFTING).when(serializer).getType();
     ItemCastingRecipe recipe = new ItemCastingRecipe(
-      serializer, ResourceLocation.parse("tconstruct:test_casting"), "", Ingredient.EMPTY,
+      serializer, Identifier.parse("tconstruct:test_casting"), "", Ingredient.EMPTY,
       mock(FluidIngredient.class), ItemOutput.fromItem(Items.IRON_INGOT), 1, false, false);
 
     ItemStack first = recipe.assemble(null, (HolderLookup.Provider) RegistryAccessUtil.BUILTIN);

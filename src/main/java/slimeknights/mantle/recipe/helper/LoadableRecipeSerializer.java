@@ -6,7 +6,7 @@ import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -29,7 +29,7 @@ public class LoadableRecipeSerializer<T extends Recipe<?>> implements LoggingRec
   public static final LoadableField<String,Recipe<?>> RECIPE_GROUP = StringLoadable.DEFAULT.defaultField("group", "", Recipe::getGroup);
 
   /** Recipe IDs are owned by RecipeHolder in 1.21 and are not supplied to codecs. */
-  public static final ResourceLocation UNBOUND_ID = Mantle.getResource("unbound_recipe");
+  public static final Identifier UNBOUND_ID = Mantle.getResource("unbound_recipe");
 
   protected final RecordLoadable<T> loadable;
 

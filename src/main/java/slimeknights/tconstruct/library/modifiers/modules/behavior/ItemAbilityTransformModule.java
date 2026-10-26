@@ -84,7 +84,7 @@ public record ItemAbilityTransformModule(ItemAbility action, SoundEvent sound, b
           level.levelEvent(player, eventId, pos, 0);
         }
       }
-      if (!level.isClientSide) {
+      if (!level.isClientSide()) {
         level.setBlock(pos, transformed, Block.UPDATE_ALL_IMMEDIATE);
         if (requireGround) {
           level.destroyBlock(above, true);

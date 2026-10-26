@@ -12,7 +12,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.FastColor.ABGR32;
@@ -42,7 +42,7 @@ import java.util.function.ToIntFunction;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class GreyToSpriteTransformer implements IRecolorSpriteTransformer {
-  public static final ResourceLocation NAME = TConstruct.getResource("grey_to_sprite");
+  public static final Identifier NAME = TConstruct.getResource("grey_to_sprite");
   public static final Deserializer<GreyToSpriteTransformer> DESERIALIZER = new Deserializer<>((builder, json) -> builder.build());
 
   /** Base folder for texture backgrounds */
@@ -182,14 +182,14 @@ public class GreyToSpriteTransformer implements IRecolorSpriteTransformer {
     }
 
     /** Adds a texture to the palette */
-    public Builder addTexture(int grey, ResourceLocation texture, int tint) {
+    public Builder addTexture(int grey, Identifier texture, int tint) {
       checkGrey(grey);
       builder.add(new SpriteMapping(grey, Util.translateColorBGR(tint), texture));
       return this;
     }
 
     /** Adds a texture to the palette */
-    public Builder addTexture(int grey, ResourceLocation texture) {
+    public Builder addTexture(int grey, Identifier texture) {
       return addTexture(grey, texture, -1);
     }
 
@@ -203,7 +203,7 @@ public class GreyToSpriteTransformer implements IRecolorSpriteTransformer {
     }
 
     /** Builds an animated transformer */
-    public AnimatedGreyToSpriteTransformer animated(ResourceLocation metaPath, int frames) {
+    public AnimatedGreyToSpriteTransformer animated(Identifier metaPath, int frames) {
       List<SpriteMapping> list = builder.build();
       if (list.size() < 2) {
         throw new IllegalStateException("Too few colors in palette, must have at least 2");
@@ -223,7 +223,7 @@ public class GreyToSpriteTransformer implements IRecolorSpriteTransformer {
     private final int color;
     /** Path of the sprite relative to the textures folder */
     @Nullable
-    private final ResourceLocation path;
+    private final Identifier path;
 
     /** Loaded image */
     private transient NativeImage image = null;

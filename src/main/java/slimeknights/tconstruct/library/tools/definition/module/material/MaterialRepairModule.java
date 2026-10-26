@@ -6,8 +6,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.equipment.ArmorType;
 import slimeknights.mantle.data.loadable.IAmLoadable;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.mapping.EitherLoadable;
@@ -50,7 +50,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
   }
 
   /** Creates a new module using a constant durability */
-  public static MaterialRepairModule of(MaterialId material, ArmorItem.Type slot, float durabilityFactor) {
+  public static MaterialRepairModule of(MaterialId material, ArmorType slot, float durabilityFactor) {
     return new MaterialRepairModule(material, (int)(ArmorModuleBuilder.MAX_DAMAGE_ARRAY[slot.ordinal()] * durabilityFactor));
   }
 
@@ -111,7 +111,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
     }
 
     /** Gets and caches the repair amount for this module */
-    private int getRepairAmount(@Nullable ResourceLocation toolId) {
+    private int getRepairAmount(@Nullable Identifier toolId) {
       if (repairAmount == -1) {
         repairAmount = getDurability(toolId, material, statType);
       }
@@ -125,7 +125,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
   }
 
   /** Gets the durability for the given stat type */
-  public static int getDurability(@Nullable ResourceLocation toolId, MaterialId material, MaterialStatsId statType) {
+  public static int getDurability(@Nullable Identifier toolId, MaterialId material, MaterialStatsId statType) {
     IMaterialStats stats = MaterialRegistry.getInstance().getMaterialStats(material, statType).orElse(null);
     if (stats instanceof IRepairableMaterialStats repairable) {
       return repairable.durability();
@@ -146,7 +146,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
 
     /** Sets the durability for the piece based on the given factor */
     public ArmorBuilder durabilityFactor(float maxDamageFactor) {
-      for (ArmorItem.Type slotType : ARMOR_TYPES) {
+      for (ArmorType slotType : ARMOR_TYPES) {
         int index = slotType.ordinal();
         durability[index] = (int)(ArmorModuleBuilder.MAX_DAMAGE_ARRAY[index] * maxDamageFactor);
       }
@@ -154,7 +154,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
     }
 
     @Override
-    public MaterialRepairModule build(ArmorItem.Type slot) {
+    public MaterialRepairModule build(ArmorType slot) {
       return new MaterialRepairModule(material, durability[slot.ordinal()]);
     }
   }

@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -106,7 +106,7 @@ public class CastingTankBlockEntity extends TableBlockEntity implements ITankBlo
    */
   public void interact(Player player, InteractionHand hand, boolean clickedTank) {
     // skip client side
-    if (level == null || level.isClientSide) {
+    if (level == null || level.isClientSide()) {
       return;
     }
 
@@ -278,9 +278,9 @@ public class CastingTankBlockEntity extends TableBlockEntity implements ITankBlo
   @Override
   public void load(CompoundTag tag, HolderLookup.Provider registries) {
     tank.setCapacity(getCapacity(getBlockState().getBlock()));
-    tank.setFluid(TankItem.readFluid(registries, tag.getCompound(NBTTags.TANK)));
+    tank.setFluid(TankItem.readFluid(registries, tag.getCompoundOrEmpty(NBTTags.TANK)));
     TankBlockEntity.updateLight(this, tank);
-    lastRedstone = tag.getBoolean(TAG_REDSTONE);
+    lastRedstone = tag.getBooleanOr(TAG_REDSTONE, false);
     super.load(tag, registries);
   }
 

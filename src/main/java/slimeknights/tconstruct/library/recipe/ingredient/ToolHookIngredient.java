@@ -9,7 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
 
 /** Ingredient that only matches tools with a specific hook. */
 public class ToolHookIngredient implements ICustomIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("tool_hook");
+  public static final Identifier ID = TConstruct.getResource("tool_hook");
   private static final JsonCodec<ToolHookIngredient> CODEC_BODY = new JsonCodec<>() {
     @Override
     public ToolHookIngredient deserialize(JsonElement element, DynamicOps<?> ops) {

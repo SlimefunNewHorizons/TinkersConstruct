@@ -1,12 +1,12 @@
 package slimeknights.tconstruct.library.tools.item;
 
+import net.minecraft.world.InteractionResult;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +56,7 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
   /* Shurikening */
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     level.playSound(null, player.getX(), player.getY(), player.getZ(), Sounds.SHURIKEN_THROW.getSound(), SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
     player.getCooldowns().addCooldown(stack.getItem(), 10);
@@ -73,7 +73,7 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
       stack.shrink(1);
     }
 
-    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
   }
 
 

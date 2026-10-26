@@ -1,6 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -179,7 +179,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements IFluidPacke
 		isFlowing[index] = (byte)(flowing ? 2 : 0);
 
 		// send packet to client if it changed
-		if(wasFlowing != flowing && level != null && !level.isClientSide) {
+		if(wasFlowing != flowing && level != null && !level.isClientSide()) {
 			syncFlowToClient(side, flowing);
 		}
 	}
@@ -343,7 +343,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements IFluidPacke
 	 * Sends a fluid update to the client with the current fluid
 	 */
 	public void sendFluidUpdate() {
-		if (level != null && !level.isClientSide) {
+		if (level != null && !level.isClientSide()) {
 			TinkerNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, getFluid()), level, worldPosition);
 		}
 	}
@@ -386,7 +386,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements IFluidPacke
 		}
 
 		// tank
-		CompoundTag tankTag = nbt.getCompound(TAG_TANK);
+		CompoundTag tankTag = nbt.getCompoundOrEmpty(TAG_TANK);
 		tank.readFromNBT(registries, tankTag);
 	}
 }

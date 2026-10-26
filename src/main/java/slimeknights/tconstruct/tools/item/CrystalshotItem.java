@@ -11,7 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -48,8 +48,8 @@ public class CrystalshotItem extends ArrowItem {
     CrystalshotEntity arrow = new CrystalshotEntity(pLevel, pShooter, pStack.copyWithCount(1), weapon);
     String variant = "random";
     CompoundTag tag = ItemStackUtil.getTag(pStack);
-    if (tag != null && tag.contains(TAG_VARIANT, Tag.TAG_STRING)) {
-      variant = tag.getString(TAG_VARIANT);
+    if (tag != null && tag.getString(TAG_VARIANT).isPresent()) {
+      variant = tag.getStringOr(TAG_VARIANT, "");
     }
     if ("random".equals(variant)) {
       variant = RANDOM_VARIANTS.get(pShooter.getRandom().nextInt(RANDOM_VARIANTS.size()));
@@ -128,7 +128,7 @@ public class CrystalshotItem extends ArrowItem {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
       super.readAdditionalSaveData(tag);
-      setVariant(tag.getString(TAG_VARIANT));
+      setVariant(tag.getStringOr(TAG_VARIANT, ""));
     }
   }
 }

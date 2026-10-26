@@ -2,7 +2,7 @@ package slimeknights.mantle.recipe.cooking;
 
 import lombok.Getter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.CookingBookCategory;
@@ -30,7 +30,7 @@ public class SmokingResultRecipe extends SmokingRecipe implements CookingResultR
     SmokingResultRecipe::new);
 
   private final ItemOutput result;
-  public SmokingResultRecipe(ResourceLocation id, String group, CookingBookCategory category, Ingredient ingredient, ItemOutput result, float experience, int cookingTime) {
+  public SmokingResultRecipe(Identifier id, String group, CookingBookCategory category, Ingredient ingredient, ItemOutput result, float experience, int cookingTime) {
     super(group, category, ingredient, ItemStack.EMPTY, experience, cookingTime);
     this.result = result;
   }

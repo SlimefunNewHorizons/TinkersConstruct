@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -50,14 +50,14 @@ public abstract class AbstractCastingBlock extends TableBlock {
 
   @Deprecated
   @Override
-  protected ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTraceResult) {
+  protected InteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTraceResult) {
     if (player.isShiftKeyDown()) {
-      return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
     BlockEntity te = world.getBlockEntity(pos);
     if (te instanceof CastingBlockEntity) {
       ((CastingBlockEntity) te).interact(player, hand);
-      return ItemInteractionResult.SUCCESS;
+      return InteractionResult.SUCCESS;
     }
     return super.useItemOn(stack, state, world, pos, player, hand, rayTraceResult);
   }
@@ -75,7 +75,7 @@ public abstract class AbstractCastingBlock extends TableBlock {
     BlockEntity te = world.getBlockEntity(pos);
     if (te instanceof CastingBlockEntity casting) {
       casting.interact(player, InteractionHand.MAIN_HAND);
-      return InteractionResult.sidedSuccess(world.isClientSide);
+      return InteractionResult.SUCCESS;
     }
     return super.useWithoutItem(state, world, pos, player, hit);
   }

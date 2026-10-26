@@ -3,7 +3,7 @@ package slimeknights.mantle.client.book.data.content;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import static slimeknights.mantle.client.screen.book.Textures.TEX_CRAFTING;
 
 public class ContentCrafting extends PageContent {
-  public static final ResourceLocation ID = Mantle.getResource("crafting");
+  public static final Identifier ID = Mantle.getResource("crafting");
 
   public static final int TEX_SIZE = 256;
   public static final ImageData IMG_CRAFTING_LARGE = new ImageData(TEX_CRAFTING, 0, 0, 183, 114, TEX_SIZE, TEX_SIZE);
@@ -115,7 +115,7 @@ public class ContentCrafting extends PageContent {
     if (StringUtils.isEmpty(recipe)) {
       return;
     }
-    ResourceLocation recipeId = ResourceLocation.tryParse(recipe);
+    Identifier recipeId = Identifier.tryParse(recipe);
     if (recipeId != null) {
       int w = 0, h = 0;
 

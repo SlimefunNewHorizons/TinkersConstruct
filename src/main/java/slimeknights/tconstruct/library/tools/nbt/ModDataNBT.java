@@ -7,7 +7,7 @@ import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.BiFunction;
 
@@ -31,23 +31,23 @@ public class ModDataNBT implements IModDataView {
   }
 
   @Override
-  public <T> T get(ResourceLocation name, BiFunction<CompoundTag,String,T> function) {
+  public <T> T get(Identifier name, BiFunction<CompoundTag,String,T> function) {
     return function.apply(data, name.toString());
   }
 
   @Override
-  public ListTag getList(ResourceLocation name, int type) {
+  public ListTag getList(Identifier name, int type) {
     // save generation of the extra lambda object
-    return data.getList(name.toString(), type);
+    return data.getListOrEmpty(name.toString());
   }
 
   @Override
-  public boolean contains(ResourceLocation name) {
+  public boolean contains(Identifier name) {
     return data.contains(name.toString());
   }
 
   @Override
-  public boolean contains(ResourceLocation name, int type) {
+  public boolean contains(Identifier name, int type) {
     return data.contains(name.toString(), type);
   }
 
@@ -56,7 +56,7 @@ public class ModDataNBT implements IModDataView {
    * @param name  Key name
    * @param nbt   NBT value
    */
-  public void put(ResourceLocation name, Tag nbt) {
+  public void put(Identifier name, Tag nbt) {
     data.put(name.toString(), nbt);
   }
 
@@ -65,7 +65,7 @@ public class ModDataNBT implements IModDataView {
    * @param name  Name
    * @param value  Integer value
    */
-  public void putInt(ResourceLocation name, int value) {
+  public void putInt(Identifier name, int value) {
     data.putInt(name.toString(), value);
   }
 
@@ -74,7 +74,7 @@ public class ModDataNBT implements IModDataView {
    * @param name  Name
    * @param value  Boolean value
    */
-  public void putBoolean(ResourceLocation name, boolean value) {
+  public void putBoolean(Identifier name, boolean value) {
     data.putBoolean(name.toString(), value);
   }
 
@@ -83,7 +83,7 @@ public class ModDataNBT implements IModDataView {
    * @param name  Name
    * @param value  Float value
    */
-  public void putFloat(ResourceLocation name, float value) {
+  public void putFloat(Identifier name, float value) {
     data.putFloat(name.toString(), value);
   }
 
@@ -92,7 +92,7 @@ public class ModDataNBT implements IModDataView {
    * @param name  Name
    * @param value  String value
    */
-  public void putString(ResourceLocation name, String value) {
+  public void putString(Identifier name, String value) {
     data.putString(name.toString(), value);
   }
 
@@ -100,7 +100,7 @@ public class ModDataNBT implements IModDataView {
    * Removes the given key from the NBT
    * @param name  Key to remove
    */
-  public void remove(ResourceLocation name) {
+  public void remove(Identifier name) {
     data.remove(name.toString());
   }
 
@@ -117,7 +117,7 @@ public class ModDataNBT implements IModDataView {
    * @param data  data
    */
   public void copyFrom(CompoundTag data) {
-    this.data.getAllKeys().clear();
+    this.data.keySet().clear();
     this.data.merge(data);
   }
 

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -271,13 +271,13 @@ public class ModifiableArrow extends AbstractArrow implements ToolProjectile, Re
   @Override
   public void readAdditionalSaveData(CompoundTag tag) {
     super.readAdditionalSaveData(tag);
-    if (tag.contains(KEY_STACK, CompoundTag.TAG_COMPOUND)) {
+    if (tag.getCompound(KEY_STACK).isPresent()) {
       setStack(ItemStack.parseOptional(this.registryAccess(), tag.getCompound(KEY_STACK)));
     }
     this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
-    this.dealtDamage = tag.getBoolean(KEY_DEALT_DAMAGE);
-    if (tag.contains(KEY_TASKS, CompoundTag.TAG_LIST)) {
-      this.tasks = Schedule.deserialize(tag.getList(KEY_TASKS, CompoundTag.TAG_COMPOUND));
+    this.dealtDamage = tag.getBooleanOr(KEY_DEALT_DAMAGE, false);
+    if (tag.getList(KEY_TASKS).isPresent()) {
+      this.tasks = Schedule.deserialize(tag.getListOrEmpty(KEY_TASKS));
     }
   }
 }

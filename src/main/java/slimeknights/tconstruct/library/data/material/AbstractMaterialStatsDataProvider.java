@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.PackOutput.Target;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.equipment.ArmorType;
 import slimeknights.mantle.data.GenericDataProvider;
 import slimeknights.tconstruct.library.materials.definition.MaterialId;
 import slimeknights.tconstruct.library.materials.json.MaterialStatJson;
@@ -92,7 +92,7 @@ public abstract class AbstractMaterialStatsDataProvider extends GenericDataProvi
    */
   protected void addArmorStats(MaterialId location, ArmorModuleBuilder<? extends IMaterialStats> statBuilder, IMaterialStats... otherStats) {
     IMaterialStats[] stats = new IMaterialStats[4];
-    for (ArmorItem.Type slotType : ARMOR_TYPES) {
+    for (ArmorType slotType : ARMOR_TYPES) {
       stats[slotType.ordinal()] = statBuilder.build(slotType);
     }
     addMaterialStats(location, stats);
@@ -126,7 +126,7 @@ public abstract class AbstractMaterialStatsDataProvider extends GenericDataProvi
 
     /** Serializes this to JSON */
     public MaterialStatJson serialize() {
-      Map<ResourceLocation,JsonElement> map = new HashMap<>();
+      Map<Identifier,JsonElement> map = new HashMap<>();
       for (IMaterialStats stat : required) {
         map.put(stat.getIdentifier(), encodeStats(stat, stat.getType()));
       }

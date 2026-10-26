@@ -50,7 +50,7 @@ public class SmelteryTank<T extends MantleBlockEntity & ISmelteryTankHandler> im
    */
   public void syncFluids() {
     Level world = parent.getLevel();
-    if (world != null && !world.isClientSide) {
+    if (world != null && !world.isClientSide()) {
       BlockPos pos = parent.getBlockPos();
       TinkerNetwork.getInstance().sendToClientsAround(new SmelteryTankUpdatePacket(pos, fluids), world, pos);
     }
@@ -304,18 +304,18 @@ public class SmelteryTank<T extends MantleBlockEntity & ISmelteryTankHandler> im
 
   /** Reads the tank from NBT */
   public void read(CompoundTag tag, HolderLookup.Provider registries) {
-    ListTag list = tag.getList(TAG_FLUIDS, Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty(TAG_FLUIDS);
     fluids.clear();
     contained = 0;
     for (int i = 0; i < list.size(); i++) {
-      CompoundTag fluidTag = list.getCompound(i);
+      CompoundTag fluidTag = list.getCompoundOrEmpty(i);
       FluidStack fluid = FluidStack.parseOptional(registries, fluidTag);
       if (!fluid.isEmpty()) {
         fluids.add(fluid);
         contained += fluid.getAmount();
       }
     }
-    capacity = tag.getInt(TAG_CAPACITY);
+    capacity = tag.getIntOr(TAG_CAPACITY, 0);
   }
 
 

@@ -19,7 +19,7 @@ import slimeknights.tconstruct.library.tools.stat.ToolStats;
 
 import java.util.Collection;
 import java.util.UUID;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import slimeknights.tconstruct.TConstruct;
 import java.util.function.BiConsumer;
 
@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
  */
 public interface AttributesModifierHook {
   /** UUIDs for armor attributes on held tools */
-  ResourceLocation[] HELD_ARMOR_IDS = new ResourceLocation[]{TConstruct.getResource("held_armor_mainhand"), TConstruct.getResource("held_armor_offhand")};
+  Identifier[] HELD_ARMOR_IDS = new Identifier[]{TConstruct.getResource("held_armor_mainhand"), TConstruct.getResource("held_armor_offhand")};
 
   /**
    * Adds attributes from this modifier's effect. Called whenever the item stack refreshes attributes, typically on equipping and unequipping.
@@ -65,7 +65,7 @@ public interface AttributesModifierHook {
       if (slot.getType() == Type.HAND) {
         // shields and slimestaffs can get armor
         if (tool.hasTag(TinkerTags.Items.ARMOR)) {
-          ResourceLocation id = HELD_ARMOR_IDS[slot.getIndex()];
+          Identifier id = HELD_ARMOR_IDS[slot.getIndex()];
           double value = statsNBT.get(ToolStats.ARMOR);
           if (value != 0) {
             builder.put(Attributes.ARMOR.value(), new AttributeModifier(id.withSuffix("_armor"), value, AttributeModifier.Operation.ADD_VALUE));

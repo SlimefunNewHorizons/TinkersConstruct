@@ -39,7 +39,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
   public static final String TAG_METAL = "metal";
   public ArmoredSlimeEntity(EntityType<? extends ArmoredSlimeEntity> type, Level world) {
     super(type, world);
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       tryAddAttribute(Attributes.ARMOR, new AttributeModifier(slimeknights.tconstruct.TConstruct.getResource("small_armor_bonus"), 3, Operation.ADD_MULTIPLIED_TOTAL));
       tryAddAttribute(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(slimeknights.tconstruct.TConstruct.getResource("small_toughness_bonus"), 3, Operation.ADD_MULTIPLIED_TOTAL));
       tryAddAttribute(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(slimeknights.tconstruct.TConstruct.getResource("small_resistance_bonus"), 3, Operation.ADD_MULTIPLIED_TOTAL));
@@ -144,7 +144,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
     // on death, split into multiple slimes, and let them inherit armor if it did not drop
     int size = this.getSize();
     Level level = level();
-    if (!level.isClientSide && size > 1 && this.isDeadOrDying()) {
+    if (!level.isClientSide() && size > 1 && this.isDeadOrDying()) {
       Component name = this.getCustomName();
       boolean noAi = this.isNoAi();
       boolean invulnerable = this.isInvulnerable();
@@ -203,6 +203,6 @@ public abstract class ArmoredSlimeEntity extends Slime {
   @Override
   public void readAdditionalSaveData(CompoundTag tag) {
     super.readAdditionalSaveData(tag);
-    this.setMetal(tag.getBoolean(TAG_METAL));
+    this.setMetal(tag.getBooleanOr(TAG_METAL, false));
   }
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -52,13 +52,13 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<Disp
     PartBuilderRecycle::new);
 
   @Getter
-  private final ResourceLocation id;
+  private final Identifier id;
   private final Ingredient tool;
   private final Ingredient pattern;
   private final Map<Pattern,ItemOutput> results;
   private final int resultCount;
 
-  public PartBuilderRecycle(ResourceLocation id, Ingredient tool, Ingredient pattern, Map<Pattern,ItemOutput> results) {
+  public PartBuilderRecycle(Identifier id, Ingredient tool, Ingredient pattern, Map<Pattern,ItemOutput> results) {
     this.id = id;
     this.tool = tool;
     this.pattern = pattern;

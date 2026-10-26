@@ -6,7 +6,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -67,12 +66,12 @@ public abstract class AbstractBookItem extends LecternBookItem {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       openScreen(player, hand, stack);
     }
-    return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
   }
 
   /** Called on the client to open the screen when right-clicked in the GUI */
@@ -84,7 +83,7 @@ public abstract class AbstractBookItem extends LecternBookItem {
   public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack held, Slot slot, ClickAction action, Player player, SlotAccess access) {
     // on right-clicking the book with empty held, if this container allows we close and reopen the book page
     if (action == ClickAction.SECONDARY && held.isEmpty() && slot.container == player.getInventory() && slot.allowModification(player) && isValidContainer(player.containerMenu)) {
-      if (player.level().isClientSide) {
+      if (player.level().isClientSide()) {
         player.containerMenu.resumeRemoteUpdates();
         player.closeContainer();
         openScreen(player, slot.getSlotIndex(), stack);

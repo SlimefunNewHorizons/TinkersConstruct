@@ -3,7 +3,7 @@ package slimeknights.tconstruct.tables.recipe;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -34,7 +34,7 @@ public class TinkerStationDamagingRecipe implements ITinkerStationRecipe {
   private static final RecipeResult<LazyToolStack> BROKEN = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "damaging.broken"));
 
   @Getter
-  private final ResourceLocation id;
+  private final Identifier id;
   private final Ingredient ingredient;
   private final int damageAmount;
 

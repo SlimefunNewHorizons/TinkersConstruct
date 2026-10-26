@@ -19,12 +19,12 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.model.CompositeModel;
+import net.minecraft.client.renderer.item.CompositeModel;
 import net.neoforged.neoforge.client.model.geometry.BlockGeometryBakingContext;
 import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
 import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
@@ -47,7 +47,7 @@ public class NBTKeyModel implements IUnbakedGeometry<NBTKeyModel> {
   public static final IGeometryLoader<NBTKeyModel> LOADER = NBTKeyModel::deserialize;
 
   /** Map of statically registered extra textures, used for addon mods */
-  private static final Multimap<ResourceLocation,Pair<String,ResourceLocation>> EXTRA_TEXTURES = HashMultimap.create();
+  private static final Multimap<Identifier,Pair<String,Identifier>> EXTRA_TEXTURES = HashMultimap.create();
 
   /**
    * Registers an extra variant texture for the model with the given key. Note that resource packs can override the extra texture
@@ -56,7 +56,7 @@ public class NBTKeyModel implements IUnbakedGeometry<NBTKeyModel> {
    * @param texture      Texture to use, same format as in resource packs
    */
   @SuppressWarnings("unused")  // API
-  public static void registerExtraTexture(ResourceLocation key, String textureName, ResourceLocation texture) {
+  public static void registerExtraTexture(Identifier key, String textureName, Identifier texture) {
     EXTRA_TEXTURES.put(key, Pair.of(textureName, texture));
   }
 
@@ -64,13 +64,13 @@ public class NBTKeyModel implements IUnbakedGeometry<NBTKeyModel> {
   private final String nbtKey;
   /** Key denoting which extra textures to fetch from the map */
   @Nullable
-  private final ResourceLocation extraTexturesKey;
+  private final Identifier extraTexturesKey;
 
   /** Map of textures for the model */
   private Map<String,Material> textures = Collections.emptyMap();
 
   @Override
-  public void resolveParents(Function<ResourceLocation,UnbakedModel> modelGetter, IGeometryBakingContext owner) {
+  public void resolveParents(Function<Identifier,UnbakedModel> modelGetter, IGeometryBakingContext owner) {
     textures = new HashMap<>();
     // must have a default
     Material defaultTexture = owner.getMaterial("default");
@@ -88,7 +88,7 @@ public class NBTKeyModel implements IUnbakedGeometry<NBTKeyModel> {
     }
     // fetch extra textures
     if (extraTexturesKey != null) {
-      for (Pair<String,ResourceLocation> extra : EXTRA_TEXTURES.get(extraTexturesKey)) {
+      for (Pair<String,Identifier> extra : EXTRA_TEXTURES.get(extraTexturesKey)) {
         String key = extra.getFirst();
         if (!textures.containsKey(key)) {
           textures.put(key, new Material(InventoryMenu.BLOCK_ATLAS, extra.getSecond()));
@@ -147,7 +147,7 @@ public class NBTKeyModel implements IUnbakedGeometry<NBTKeyModel> {
   /** Deserializes this model from JSON */
   public static NBTKeyModel deserialize(JsonObject json, JsonDeserializationContext context) {
     String key = GsonHelper.getAsString(json, "nbt_key");
-    ResourceLocation extraTexturesKey = null;
+    Identifier extraTexturesKey = null;
     if (json.has("extra_textures_key")) {
       extraTexturesKey = JsonHelper.getResourceLocation(json, "extra_textures_key");
     }

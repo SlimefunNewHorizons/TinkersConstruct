@@ -33,7 +33,7 @@ public class UpdateLecternPagePacket implements IThreadsafePacket {
   public void handleThreadsafe(PacketContext context) {
     Player player = context.getSender();
     if (player != null && this.page != null) {
-      Level world = player.getCommandSenderWorld();
+      Level world = player.level();
       BlockEntityHelper.get(LecternBlockEntity.class, world, this.pos).ifPresent(te -> {
         ItemStack stack = te.getBook();
         if (!stack.isEmpty()) {

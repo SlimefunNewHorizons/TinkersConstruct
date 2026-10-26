@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -110,7 +110,7 @@ public class PlatformBlock extends Block implements SimpleWaterloggedBlock {
   }
 
   /** Checks if the block has the given facing property */
-  private static boolean facingConnected(Direction facing, BlockState state, DirectionProperty property) {
+  private static boolean facingConnected(Direction facing, BlockState state, EnumProperty<Direction> property) {
     return !state.hasProperty(property) || state.getValue(property) == facing;
   }
 

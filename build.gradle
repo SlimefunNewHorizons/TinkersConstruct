@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.148'
 }
 
 group = 'slimeknights.tconstruct'
@@ -55,6 +55,23 @@ sourceSets.main {
         exclude 'slimeknights/mantle/recipe/cooking/CookingRecipeBuilder.java'
         exclude 'slimeknights/mantle/recipe/crafting/*Builder.java'
         exclude 'slimeknights/mantle/recipe/helper/SimpleFinishedRecipe.java'
+        exclude 'slimeknights/mantle/client/model/builder/**'
+        // PORT-STAGE (1.21.11): client code is excluded while common code is ported, so javac can run Lombok.
+        // Remove this block once the client packages are ported.
+        exclude { details ->
+            def path = details.relativePath.pathString
+            def keep = ['slimeknights/mantle/client/TooltipKey.java', 'slimeknights/mantle/client/SafeClientAccess.java',
+                        'slimeknights/mantle/client/ResourceColorManager.java', 'slimeknights/mantle/client/book/BookHelper.java',
+                        'slimeknights/tconstruct/library/client/materials/MaterialTooltipCache.java',
+                        'slimeknights/tconstruct/library/client/model/ModelProperties.java',
+                        'slimeknights/tconstruct/library/client/SafeClient.java']
+            return details.file.isFile() && path.contains('/client/') && !keep.contains(path)
+        }
+        exclude 'slimeknights/**/*ClientEvents.java'
+        exclude 'slimeknights/**/ClientEventBase.java'
+        exclude 'slimeknights/tconstruct/shared/TinkerClient.java'
+        exclude 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java'
+        exclude 'slimeknights/mantle/fluid/texture/Client*.java'
         // These integrations have no NeoForge 1.21.1 API artifact yet. They are
         // intentionally isolated while the core port is brought up.
         exclude 'slimeknights/tconstruct/plugin/craftingtweaks/**'
@@ -159,7 +176,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly 'dev.gigaherz.jsonthings:JsonThings-1.21.1:0.13.7'
+    compileOnly "dev.gigaherz.jsonthings:JsonThings-${minecraft_version}:0.17.0"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
@@ -229,6 +246,8 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 21
+    // port in progress: report every error instead of javac's default 100
+    options.compilerArgs.addAll(['-Xmaxerrs', '100000', '-Xmaxwarns', '0', '-XDshould-stop.ifError=FLOW'])
 }
 
 idea.module {

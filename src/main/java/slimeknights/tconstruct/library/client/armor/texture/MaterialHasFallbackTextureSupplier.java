@@ -60,8 +60,8 @@ public class MaterialHasFallbackTextureSupplier implements ArmorTextureSupplier,
   @Override
   public ArmorTexture getArmorTexture(ItemStack stack, TextureType type, RegistryAccess access) {
     CompoundTag tag = slimeknights.tconstruct.library.utils.ItemStackUtil.getTag(stack);
-    if (tag != null && tag.contains(ToolStack.TAG_MATERIALS, Tag.TAG_LIST)) {
-      String material = tag.getList(ToolStack.TAG_MATERIALS, Tag.TAG_STRING).getString(index);
+    if (tag != null && tag.getList(ToolStack.TAG_MATERIALS).isPresent()) {
+      String material = tag.getListOrEmpty(ToolStack.TAG_MATERIALS).getString(index);
       if (!material.isEmpty() && cache.computeIfAbsent(material, this)) {
         return apply.getArmorTexture(stack, type, access);
       }

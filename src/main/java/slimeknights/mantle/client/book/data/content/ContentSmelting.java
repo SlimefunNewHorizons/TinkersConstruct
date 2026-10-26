@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -30,7 +30,7 @@ import java.util.List;
 import static slimeknights.mantle.client.screen.book.Textures.TEX_SMELTING;
 
 public class ContentSmelting extends PageContent {
-  public static final ResourceLocation ID = Mantle.getResource("smelting");
+  public static final Identifier ID = Mantle.getResource("smelting");
 
   private static final NonNullList<ItemStack> FUELS;
 
@@ -98,7 +98,7 @@ public class ContentSmelting extends PageContent {
   public void load() {
     super.load();
 
-    ResourceLocation recipeId = ResourceLocation.tryParse(this.recipe);
+    Identifier recipeId = Identifier.tryParse(this.recipe);
     if (!StringUtils.isEmpty(this.recipe) && recipeId != null) {
       Level level = Minecraft.getInstance().level;
       assert level != null;

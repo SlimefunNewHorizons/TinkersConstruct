@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.recipe.data.ConsumerWrapperBuilder;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
@@ -51,7 +51,7 @@ public class MaterialsConsumerBuilder {
 
   private record Wrapped(FinishedRecipe original, List<MaterialVariantId> materials, String parts, int partCount) implements FinishedRecipe {
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
       return original.getId();
     }
 
@@ -81,7 +81,7 @@ public class MaterialsConsumerBuilder {
 
     @Nullable
     @Override
-    public ResourceLocation getAdvancementId() {
+    public Identifier getAdvancementId() {
       return original.getAdvancementId();
     }
   }

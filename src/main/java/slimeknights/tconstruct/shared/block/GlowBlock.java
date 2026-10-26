@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class GlowBlock extends Block {
 
-  public static final DirectionProperty FACING = BlockStateProperties.FACING;
+  public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
   public GlowBlock(Properties properties) {
     super(properties);
@@ -134,7 +134,7 @@ public class GlowBlock extends Block {
     if (state.getBlock() != this && state.canBeReplaced()) {
       // if the location is valid, place the block directly
       if (this.canSurvive(newState, world, pos)) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
           world.setBlockAndUpdate(pos, newState);
         }
         return true;
@@ -142,7 +142,7 @@ public class GlowBlock extends Block {
         for (Direction direction1 : Direction.values()) {
           newState = this.defaultBlockState().setValue(FACING, direction1);
           if (this.canSurvive(newState, world, pos)) {
-            if (!world.isClientSide) {
+            if (!world.isClientSide()) {
               world.setBlockAndUpdate(pos, newState);
             }
             return true;

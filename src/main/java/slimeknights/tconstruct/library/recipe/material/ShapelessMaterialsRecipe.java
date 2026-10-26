@@ -13,7 +13,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -36,7 +36,7 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
   @Getter
   private final List<MaterialVariantId> extraMaterials;
 
-  public ShapelessMaterialsRecipe(ResourceLocation ignoredId, String group, CraftingBookCategory category, ItemStack result,
+  public ShapelessMaterialsRecipe(Identifier ignoredId, String group, CraftingBookCategory category, ItemStack result,
                                   NonNullList<Ingredient> ingredients, int partCount, List<MaterialVariantId> extraMaterials) {
     super(group, category, result, ingredients);
     this.partCount = partCount;

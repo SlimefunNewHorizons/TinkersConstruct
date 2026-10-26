@@ -46,8 +46,8 @@ public class CreativeSlotItem extends Item {
   @Nullable
   public static SlotType getSlot(ItemStack stack) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
-    if (nbt != null && nbt.contains(NBT_KEY, Tag.TAG_STRING)) {
-      return SlotType.getIfPresent(nbt.getString(NBT_KEY));
+    if (nbt != null && nbt.getString(NBT_KEY).isPresent()) {
+      return SlotType.getIfPresent(nbt.getStringOr(NBT_KEY, ""));
     }
     return null;
   }
@@ -102,7 +102,7 @@ public class CreativeSlotItem extends Item {
   private static boolean handleStackOn(ItemStack stack, ItemStack toolItem, Player player, int amount) {
     SlotType slotType = getSlot(stack);
     if (slotType != null && !toolItem.isEmpty() && toolItem.is(TinkerTags.Items.MODIFIABLE)) {
-      if (!player.level().isClientSide || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
+      if (!player.level().isClientSide() || (player.isCreative() && player.containerMenu == player.inventoryMenu)) {
         if (canApply(player)) {
           ToolStack tool = ToolStack.from(toolItem);
           // do nothing if the tool already has 0 slots and we are removing

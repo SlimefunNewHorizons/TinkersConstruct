@@ -15,7 +15,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientAdvancements;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
@@ -282,7 +282,7 @@ public class BookScreen extends Screen {
   private void renderCover(GuiGraphics graphics, Vector3f coverColor) {
     Font fontRenderer = getFontRenderer();
 
-    ResourceLocation cover = book.appearance.getCoverTexture();
+    Identifier cover = book.appearance.getCoverTexture();
 
     int centerX = this.width / 2 - PAGE_WIDTH_UNSCALED / 2;
     int centerY = this.height / 2 - PAGE_HEIGHT_UNSCALED / 2;
@@ -808,11 +808,11 @@ public class BookScreen extends Screen {
 
   public static class AdvancementCache implements ClientAdvancements.Listener {
 
-    private final HashMap<ResourceLocation, AdvancementProgress> progress = new HashMap<>();
+    private final HashMap<Identifier, AdvancementProgress> progress = new HashMap<>();
 
     @Nullable
     public AdvancementProgress getProgress(String id) {
-      return this.progress.get(ResourceLocation.parse(id));
+      return this.progress.get(Identifier.parse(id));
     }
 
     @Override

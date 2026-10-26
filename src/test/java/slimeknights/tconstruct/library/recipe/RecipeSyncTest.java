@@ -12,7 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
@@ -114,9 +114,9 @@ class RecipeSyncTest extends BaseMcTest {
   }
 
   /** Converts a recipe path into its resource location */
-  private static ResourceLocation idFor(Path root, Path file) {
+  private static Identifier idFor(Path root, Path file) {
     String path = root.relativize(file).toString().replace('\\', '/');
-    return ResourceLocation.fromNamespaceAndPath("tconstruct", path.substring(0, path.length() - ".json".length()));
+    return Identifier.fromNamespaceAndPath("tconstruct", path.substring(0, path.length() - ".json".length()));
   }
 
   @Test
@@ -146,7 +146,7 @@ class RecipeSyncTest extends BaseMcTest {
     int encoded = 0;
     for (Path root : roots) {
       for (Path file : findFiles(root, ".json")) {
-        ResourceLocation id = idFor(root, file);
+        Identifier id = idFor(root, file);
         JsonElement json = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8));
         Recipe<?> recipe;
         try {
@@ -191,7 +191,7 @@ class RecipeSyncTest extends BaseMcTest {
 
     RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
     try {
-      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(ResourceLocation.parse("tconstruct:test_part_swapping"), recipe));
+      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(Identifier.parse("tconstruct:test_part_swapping"), recipe));
     } finally {
       buffer.release();
     }
@@ -205,8 +205,8 @@ class RecipeSyncTest extends BaseMcTest {
   @Test
   void unfilledTagOutputEncodesAsEmpty() {
     RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
-    TagKey<Fluid> fluidTag = TagKey.create(Registries.FLUID, ResourceLocation.parse("tconstruct:test_empty_fluid_tag"));
-    TagKey<Item> itemTag = TagKey.create(Registries.ITEM, ResourceLocation.parse("tconstruct:test_empty_item_tag"));
+    TagKey<Fluid> fluidTag = TagKey.create(Registries.FLUID, Identifier.parse("tconstruct:test_empty_fluid_tag"));
+    TagKey<Item> itemTag = TagKey.create(Registries.ITEM, Identifier.parse("tconstruct:test_empty_item_tag"));
     FluidOutput fluid = FluidOutput.fromTag(fluidTag, 250);
     ItemOutput item = ItemOutput.fromTag(itemTag, 4);
 

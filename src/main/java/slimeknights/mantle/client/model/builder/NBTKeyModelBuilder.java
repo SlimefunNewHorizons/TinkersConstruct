@@ -3,8 +3,8 @@ package slimeknights.mantle.client.model.builder;
 import com.google.gson.JsonObject;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.client.model.generators.template.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import slimeknights.mantle.Mantle;
@@ -14,8 +14,8 @@ import slimeknights.mantle.Mantle;
 @Accessors(fluent = true)
 public class NBTKeyModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
   private String key = null;
-  private ResourceLocation extraTexturesKey = null;
-  public NBTKeyModelBuilder(ResourceLocation loaderId, T parent, ExistingFileHelper existingFileHelper) {
+  private Identifier extraTexturesKey = null;
+  public NBTKeyModelBuilder(Identifier loaderId, T parent, ExistingFileHelper existingFileHelper) {
     super(Mantle.getResource("nbt_key"), parent, existingFileHelper, false);
   }
 

@@ -133,6 +133,6 @@ public class GeneratePackHelper {
    * @return  Clickable text component
    */
   public static MutableComponent getPathComponent(MutableComponent text, String path) {
-    return text.withStyle(style -> style.withUnderlined(true).withClickEvent(new ClickEvent(Action.OPEN_FILE, path)));
+    return text.withStyle(style -> style.withUnderlined(true).withClickEvent(new ClickEvent.OpenFile(path)));
   }
 }

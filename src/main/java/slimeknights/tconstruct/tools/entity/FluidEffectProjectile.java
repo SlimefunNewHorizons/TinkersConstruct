@@ -230,7 +230,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     }
     FluidStack fluid = getFluid();
     Level level = level();
-    if (!level.isClientSide && !fluid.isEmpty()) {
+    if (!level.isClientSide() && !fluid.isEmpty()) {
       FluidEffects recipe = FluidEffectManager.INSTANCE.find(fluid.getFluid());
       if (recipe.hasEntityEffects()) {
         FluidEffectContext.Entity context = buildContext().location(result.getLocation()).target(target);
@@ -272,7 +272,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     // hit the block
     // handle the fluid
     Level level = level();
-    if (!level.isClientSide) {
+    if (!level.isClientSide()) {
       FluidStack fluid = getFluid();
       if (!fluid.isEmpty()) {
         FluidEffects recipe = FluidEffectManager.INSTANCE.find(fluid.getFluid());
@@ -352,8 +352,8 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
   @Override
   protected void readAdditionalSaveData(CompoundTag nbt) {
     super.readAdditionalSaveData(nbt);
-    this.power = nbt.getFloat(KEY_POWER);
-    this.knockback = nbt.getFloat(KEY_KNOCKBACK);
+    this.power = nbt.getFloatOr(KEY_POWER, 0f);
+    this.knockback = nbt.getFloatOr(KEY_KNOCKBACK, 0f);
     this.entityData.set(WATER_INERTIA, nbt.getFloat(KEY_WATER_INERTIA));
     if (nbt.contains(KEY_CANNON)) {
       this.cannon = NbtUtils.readBlockPos(nbt, KEY_CANNON).orElse(null);

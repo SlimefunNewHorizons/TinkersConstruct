@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 
@@ -22,7 +22,7 @@ public class SpriteElement extends SizedBookElement {
     this.sprite = sprite;
   }
 
-  public SpriteElement(int x, int y, float scale, ResourceLocation location) {
+  public SpriteElement(int x, int y, float scale, Identifier location) {
     this(x, y, scale, Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(location));
   }
 

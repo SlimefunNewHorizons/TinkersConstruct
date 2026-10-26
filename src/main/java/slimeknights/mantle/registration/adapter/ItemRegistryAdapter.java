@@ -1,7 +1,7 @@
 package slimeknights.mantle.registration.adapter;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.models.blockstates.PropertyDispatch.TriFunction;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch.TriFunction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.BlockItem;

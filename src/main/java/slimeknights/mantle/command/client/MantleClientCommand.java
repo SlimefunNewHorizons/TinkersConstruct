@@ -10,7 +10,7 @@ import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import slimeknights.mantle.Mantle;
@@ -35,7 +35,7 @@ public class MantleClientCommand {
     REGISTERED_BOOKS = SuggestionProviders.register(Mantle.getResource("registered_books"), (context, builder) ->
       SharedSuggestionProvider.suggestResource(BookLoader.getAllBooks(), builder));
     REGISTERED_BOOK_DOMAINS = SuggestionProviders.register(Mantle.getResource("registered_book_domains"), (context, builder) ->
-      SharedSuggestionProvider.suggest(BookLoader.getAllBooks().stream().map(ResourceLocation::getNamespace).distinct(), builder));
+      SharedSuggestionProvider.suggest(BookLoader.getAllBooks().stream().map(Identifier::getNamespace).distinct(), builder));
 
     // source command suggestions
     ClientSourcesCommand.registerMinecraft("atlases", (context, builder)

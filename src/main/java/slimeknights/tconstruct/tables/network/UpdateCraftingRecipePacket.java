@@ -3,7 +3,7 @@ package slimeknights.tconstruct.tables.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import slimeknights.mantle.network.PacketContext;
@@ -17,21 +17,21 @@ import slimeknights.tconstruct.tables.block.entity.table.CraftingStationBlockEnt
  */
 public class UpdateCraftingRecipePacket implements IThreadsafePacket {
   private final BlockPos pos;
-  private final ResourceLocation recipe;
-  public UpdateCraftingRecipePacket(BlockPos pos, ResourceLocation recipe) {
+  private final Identifier recipe;
+  public UpdateCraftingRecipePacket(BlockPos pos, Identifier recipe) {
     this.pos = pos;
     this.recipe = recipe;
   }
 
   public UpdateCraftingRecipePacket(FriendlyByteBuf buffer) {
     this.pos = buffer.readBlockPos();
-    this.recipe = buffer.readResourceLocation();
+    this.recipe = buffer.readIdentifier();
   }
 
   @Override
   public void encode(FriendlyByteBuf buffer) {
     buffer.writeBlockPos(pos);
-    buffer.writeResourceLocation(recipe);
+    buffer.writeIdentifier(recipe);
   }
 
   @Override

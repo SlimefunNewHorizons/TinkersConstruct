@@ -3,7 +3,7 @@ package slimeknights.mantle.client.screen.book;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import slimeknights.mantle.client.book.data.BookData;
 
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public class ArrowButton extends Button {
 
   /** Shared logic between public method and vanilla method */
   private void renderButton(GuiGraphics graphics, @Nullable BookData bookData) {
-    ResourceLocation texture;
+    Identifier texture;
     if (bookData != null) {
       texture = bookData.appearance.getBookTexture();
     } else {

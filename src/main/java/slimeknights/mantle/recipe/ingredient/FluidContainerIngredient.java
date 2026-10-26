@@ -8,7 +8,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 /** Ingredient that matches a container holding exactly the requested fluid amount. */
 @SuppressWarnings("unused")
 public final class FluidContainerIngredient implements ICustomIngredient {
-  public static final ResourceLocation ID = Mantle.getResource("fluid_container");
+  public static final Identifier ID = Mantle.getResource("fluid_container");
 
   private static final JsonCodec<FluidContainerIngredient> CODEC_BODY = new JsonCodec<>() {
     @Override

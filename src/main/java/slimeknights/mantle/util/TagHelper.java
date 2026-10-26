@@ -31,7 +31,7 @@ public class TagHelper {
   @Deprecated(forRemoval = true)
   public static BlockPos readPos(CompoundTag tag) {
     if (tag.contains("X", Tag.TAG_ANY_NUMERIC) &&tag.contains("Y", Tag.TAG_ANY_NUMERIC) && tag.contains("Z", Tag.TAG_ANY_NUMERIC)) {
-      return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
+      return new BlockPos(tag.getIntOr("X", 0), tag.getIntOr("Y", 0), tag.getIntOr("Z", 0));
     }
     return null;
   }

@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.tools.helper;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -58,7 +58,7 @@ public class DaggerOffhandDamageTest extends ToolItemTest {
         new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, toolStat, AttributeModifier.Operation.ADD_VALUE),
         EquipmentSlotGroup.MAINHAND)
       .add(Attributes.ATTACK_DAMAGE,
-        new AttributeModifier(ResourceLocation.fromNamespaceAndPath("test", "offhand_damage"), 7, AttributeModifier.Operation.ADD_VALUE),
+        new AttributeModifier(Identifier.fromNamespaceAndPath("test", "offhand_damage"), 7, AttributeModifier.Operation.ADD_VALUE),
         EquipmentSlotGroup.OFFHAND)
       .build();
     testItemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);

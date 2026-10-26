@@ -12,7 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.Item;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 /** Ingredient matching an {@link net.minecraft.world.item.InstrumentItem} with a particular instrument. */
 public class InstrumentIngredient implements ICustomIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("instrument");
+  public static final Identifier ID = TConstruct.getResource("instrument");
 
   private final Item item;
   @Nullable
@@ -104,13 +104,13 @@ public class InstrumentIngredient implements ICustomIngredient {
     @Override
     public InstrumentIngredient deserialize(JsonElement element, DynamicOps<?> ops) {
       JsonObject json = element.getAsJsonObject();
-      Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(GsonHelper.getAsString(json, "item")));
+      Item item = BuiltInRegistries.ITEM.get(Identifier.parse(GsonHelper.getAsString(json, "item")));
       ResourceKey<Instrument> instrument = null;
       TagKey<Instrument> ignore = null;
       if (json.has("instrument")) {
-        instrument = ResourceKey.create(Registries.INSTRUMENT, ResourceLocation.parse(GsonHelper.getAsString(json, "instrument")));
+        instrument = ResourceKey.create(Registries.INSTRUMENT, Identifier.parse(GsonHelper.getAsString(json, "instrument")));
       } else if (json.has("ignore")) {
-        ignore = TagKey.create(Registries.INSTRUMENT, ResourceLocation.parse(GsonHelper.getAsString(json, "ignore")));
+        ignore = TagKey.create(Registries.INSTRUMENT, Identifier.parse(GsonHelper.getAsString(json, "ignore")));
       } else {
         throw new JsonSyntaxException("Invalid InstrumentIngredient: must set either 'instrument' or 'ignore'");
       }
@@ -134,26 +134,26 @@ public class InstrumentIngredient implements ICustomIngredient {
   public static final MapCodec<InstrumentIngredient> CODEC = MapCodec.assumeMapUnsafe(CODEC_BODY);
   public static final StreamCodec<RegistryFriendlyByteBuf, InstrumentIngredient> STREAM_CODEC = StreamCodec.of(
     (buffer, ingredient) -> {
-      buffer.writeResourceLocation(BuiltInRegistries.ITEM.getKey(ingredient.item));
+      buffer.writeIdentifier(BuiltInRegistries.ITEM.getKey(ingredient.item));
       if (ingredient.instrument != null) {
         buffer.writeByte(1);
         buffer.writeResourceLocation(ingredient.instrument.location());
       } else if (ingredient.ignore != null) {
         buffer.writeByte(2);
-        buffer.writeResourceLocation(ingredient.ignore.location());
+        buffer.writeIdentifier(ingredient.ignore.location());
       } else {
         buffer.writeByte(0);
       }
     },
     buffer -> {
-      Item item = BuiltInRegistries.ITEM.get(buffer.readResourceLocation());
+      Item item = BuiltInRegistries.ITEM.get(buffer.readIdentifier());
       ResourceKey<Instrument> instrument = null;
       TagKey<Instrument> ignore = null;
       byte type = buffer.readByte();
       if (type == 1) {
-        instrument = ResourceKey.create(Registries.INSTRUMENT, buffer.readResourceLocation());
+        instrument = ResourceKey.create(Registries.INSTRUMENT, buffer.readIdentifier());
       } else if (type == 2) {
-        ignore = TagKey.create(Registries.INSTRUMENT, buffer.readResourceLocation());
+        ignore = TagKey.create(Registries.INSTRUMENT, buffer.readIdentifier());
       }
       return new InstrumentIngredient(item, instrument, ignore);
     });

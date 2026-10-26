@@ -37,7 +37,7 @@ public class ModifiersCommand {
    * @param subCommand  Command builder
    */
   public static void register(LiteralArgumentBuilder<CommandSourceStack> subCommand) {
-    subCommand.requires(sender -> sender.hasPermission(MantleCommand.PERMISSION_GAME_COMMANDS))
+    subCommand.requires(sender -> MantleCommand.PERMISSION_GAME_COMMANDS.check(sender.permissions()))
               .then(Commands.argument("targets", EntityArgument.entities())
                             // modifiers <target> add <modifier> [<level>]
                             .then(Commands.literal("add")

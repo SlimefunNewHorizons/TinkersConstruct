@@ -6,7 +6,7 @@ import net.minecraft.core.HolderOwner;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,7 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 class EnchantmentGameplayTest extends ToolItemTest {
   private static final ModifierId TEST_FORTUNE = new ModifierId("test", "gameplay_fortune");
   private static final ResourceKey<Enchantment> FORTUNE_KEY = ResourceKey.create(
-    Registries.ENCHANTMENT, ResourceLocation.withDefaultNamespace("fortune"));
+    Registries.ENCHANTMENT, Identifier.withDefaultNamespace("fortune"));
   private static final Holder.Reference<Enchantment> FORTUNE = Holder.Reference.createStandAlone(
     new HolderOwner<>() {}, FORTUNE_KEY);
 

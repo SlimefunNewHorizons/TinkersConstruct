@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import slimeknights.mantle.data.loadable.Loadable;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.loadable.mapping.CollectionLoadable;
@@ -59,7 +59,7 @@ public abstract class AbstractPartSpriteProvider {
   /* Builder functions */
 
   /** Adds a given texture to the list to generate */
-  protected PartSpriteInfo.Builder addTexture(ResourceLocation sprite, MaterialStatsId... requiredStats) {
+  protected PartSpriteInfo.Builder addTexture(Identifier sprite, MaterialStatsId... requiredStats) {
     PartSpriteInfo.Builder builder = new PartSpriteInfo.Builder(sprite, requiredStats);
     sprites.add(builder);
     return builder;
@@ -67,12 +67,12 @@ public abstract class AbstractPartSpriteProvider {
 
   /** Adds a given sprite to the list to generate, for the local namespace */
   protected PartSpriteInfo.Builder addTexture(String name, MaterialStatsId... requiredStats) {
-    return addTexture(ResourceLocation.fromNamespaceAndPath(modID, name), requiredStats);
+    return addTexture(Identifier.fromNamespaceAndPath(modID, name), requiredStats);
   }
 
   /** Adds a given sprite to the list to generated, located in the tools folder */
   protected PartSpriteInfo.Builder addSprite(String name, MaterialStatsId... requiredStats) {
-    return addTexture(ResourceLocation.fromNamespaceAndPath(modID, "item/tool/" + name), requiredStats);
+    return addTexture(Identifier.fromNamespaceAndPath(modID, "item/tool/" + name), requiredStats);
   }
 
   /** Adds a sprite for a generic tool part from the parts folder */
@@ -106,7 +106,7 @@ public abstract class AbstractPartSpriteProvider {
   }
 
   /** Create a builder for tool sprites */
-  protected ToolSpriteBuilder buildTool(ResourceLocation name) {
+  protected ToolSpriteBuilder buildTool(Identifier name) {
     ToolSpriteBuilder builder = new ToolSpriteBuilder(name);
     toolSprites.add(builder);
     return builder;
@@ -114,7 +114,7 @@ public abstract class AbstractPartSpriteProvider {
 
   /** Create a builder for tool sprites relative to the default mod ID */
   protected ToolSpriteBuilder buildTool(String name) {
-    return buildTool(ResourceLocation.fromNamespaceAndPath(modID, name));
+    return buildTool(Identifier.fromNamespaceAndPath(modID, name));
   }
 
 
@@ -153,7 +153,7 @@ public abstract class AbstractPartSpriteProvider {
 
     /** Path to the base sprite */
     @Getter
-    private final ResourceLocation path;
+    private final Identifier path;
     /** Stat type of this part */
     @Getter
     private final Set<MaterialStatsId> statTypes;
@@ -172,9 +172,9 @@ public abstract class AbstractPartSpriteProvider {
         return sprites.get(name);
       }
       // determine the path to try for the sprite
-      ResourceLocation fallbackPath = path;
+      Identifier fallbackPath = path;
       if (!name.isEmpty()) {
-        fallbackPath = ResourceLocation.fromNamespaceAndPath(path.getNamespace(), path.getPath() + "_" + name);
+        fallbackPath = Identifier.fromNamespaceAndPath(path.getNamespace(), path.getPath() + "_" + name);
       }
       // if the image exists, fetch it and return it
       NativeImage image = spriteReader.readIfExists(fallbackPath);
@@ -187,12 +187,12 @@ public abstract class AbstractPartSpriteProvider {
     @Accessors(fluent = true)
     @Setter(AccessLevel.PRIVATE)
     public static class Builder {
-      private final ResourceLocation path;
+      private final Identifier path;
       private final Set<MaterialStatsId> statTypes;
       private boolean allowAnimated = true;
       private boolean skipVariants = false;
 
-      private Builder(ResourceLocation path, MaterialStatsId[] requiredStats) {
+      private Builder(Identifier path, MaterialStatsId[] requiredStats) {
         this.path = path;
         this.statTypes = ImmutableSet.copyOf(requiredStats);
       }
@@ -218,7 +218,7 @@ public abstract class AbstractPartSpriteProvider {
   @SuppressWarnings("UnusedReturnValue")
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   protected class ToolSpriteBuilder {
-    private final ResourceLocation name;
+    private final Identifier name;
     private final Map<String, MaterialStatsId[]> parts = new LinkedHashMap<>();
     private boolean hasLarge = false;
     private boolean allowAnimated = true;
@@ -319,7 +319,7 @@ public abstract class AbstractPartSpriteProvider {
     /** Helper to add all parts for a size */
     private void addParts(String path) {
       for (Entry<String,MaterialStatsId[]> entry : parts.entrySet()) {
-        addTexture(ResourceLocation.fromNamespaceAndPath(name.getNamespace(), "item/tool/" + path + "/" + entry.getKey()), entry.getValue())
+        addTexture(Identifier.fromNamespaceAndPath(name.getNamespace(), "item/tool/" + path + "/" + entry.getKey()), entry.getValue())
           .allowAnimated(allowAnimated).skipVariants(skipVariants);
       }
     }

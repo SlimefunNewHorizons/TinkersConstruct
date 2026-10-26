@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -222,7 +222,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
 
   /** Handles the server tick */
   protected void serverTick(Level level, BlockPos pos, BlockState state) {
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       if (errorVisibleFor > 0) {
         errorVisibleFor--;
       }
@@ -288,7 +288,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
    */
   protected void dropItem(ItemStack stack) {
     assert level != null;
-    if (!level.isClientSide && !stack.isEmpty()) {
+    if (!level.isClientSide() && !stack.isEmpty()) {
       double x = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
       double y = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
       double z = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
@@ -306,7 +306,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   public void onLoad() {
     super.onLoad();
     // just to clear out invalid references to the old master/no master, nothing should actually change behavior
-    if (level != null && !level.isClientSide && structure != null) {
+    if (level != null && !level.isClientSide() && structure != null) {
       structure.forEachContained(pos -> {
         if (level.getBlockEntity(pos) instanceof IServantLogic servant) {
           servant.onMasterLoad(this);
@@ -352,7 +352,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
    * Attempts to locate a valid smeltery structure
    */
   protected void checkStructure() {
-    if (level == null || level.isClientSide) {
+    if (level == null || level.isClientSide()) {
       return;
     }
     boolean wasFormed = getBlockState().getValue(ControllerBlock.IN_STRUCTURE);
@@ -454,7 +454,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
    * @param fluid  Fluid
    */
   private void updateDisplayFluid(FluidStack fluid) {
-    if (level != null && level.isClientSide) {
+    if (level != null && level.isClientSide()) {
       // update ourself
       this.displayFluid = fluid.copy();
       this.requestModelDataUpdate();
@@ -583,26 +583,26 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   @Override
   public void load(CompoundTag nbt, HolderLookup.Provider registries) {
     super.load(nbt, registries);
-    if (nbt.contains(TAG_TANK, Tag.TAG_COMPOUND)) {
-      tank.read(nbt.getCompound(TAG_TANK), registries);
+    if (nbt.getCompound(TAG_TANK).isPresent()) {
+      tank.read(nbt.getCompoundOrEmpty(TAG_TANK), registries);
       FluidStack first = tank.getFluidInTank(0);
       if (!first.isEmpty()) {
         updateDisplayFluid(first);
       }
     }
-    if (nbt.contains(TAG_INVENTORY, Tag.TAG_COMPOUND)) {
-      meltingInventory.readFromTag(nbt.getCompound(TAG_INVENTORY), registries);
+    if (nbt.getCompound(TAG_INVENTORY).isPresent()) {
+      meltingInventory.readFromTag(nbt.getCompoundOrEmpty(TAG_INVENTORY), registries);
     }
-    if (nbt.contains(TAG_STRUCTURE, Tag.TAG_COMPOUND)) {
-      setStructure(multiblock.readFromTag(nbt.getCompound(TAG_STRUCTURE), this.worldPosition));
+    if (nbt.getCompound(TAG_STRUCTURE).isPresent()) {
+      setStructure(multiblock.readFromTag(nbt.getCompoundOrEmpty(TAG_STRUCTURE), this.worldPosition));
     }
     // only exists to be sent server to client in update packets
-    if (nbt.contains(TAG_ERROR_POS, Tag.TAG_INT_ARRAY)) {
+    if (nbt.getIntArray(TAG_ERROR_POS).isPresent()) {
       this.errorPos = NbtUtils.readBlockPos(nbt, TAG_ERROR_POS).map(pos -> pos.offset(this.worldPosition)).orElse(null);
     }
     fuelModule.readFromTag(nbt);
-    if (nbt.contains(TAG_TEXTURE, Tag.TAG_STRING)) {
-      texture = RetexturedHelper.getBlock(nbt.getString(TAG_TEXTURE));
+    if (nbt.getString(TAG_TEXTURE).isPresent()) {
+      texture = RetexturedHelper.getBlock(nbt.getStringOr(TAG_TEXTURE, ""));
       RetexturedHelper.onTextureUpdated(this);
     }
   }
@@ -649,6 +649,6 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   /** Handles the unchecked cast for a block entity ticker */
   @Nullable
   public static <HAVE extends HeatingStructureBlockEntity, RET extends BlockEntity> BlockEntityTicker<RET> getTicker(Level level, BlockEntityType<RET> expected, BlockEntityType<HAVE> have) {
-    return BlockEntityHelper.castTicker(expected, have, level.isClientSide ? CLIENT_TICKER : SERVER_TICKER);
+    return BlockEntityHelper.castTicker(expected, have, level.isClientSide() ? CLIENT_TICKER : SERVER_TICKER);
   }
 }

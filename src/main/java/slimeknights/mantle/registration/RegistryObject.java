@@ -1,7 +1,7 @@
 package slimeknights.mantle.registration;
 
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Optional;
@@ -32,7 +32,7 @@ public final class RegistryObject<T> implements Supplier<T> {
     return (T) holder.get();
   }
 
-  public ResourceLocation getId() {
+  public Identifier getId() {
     return holder.getId();
   }
 

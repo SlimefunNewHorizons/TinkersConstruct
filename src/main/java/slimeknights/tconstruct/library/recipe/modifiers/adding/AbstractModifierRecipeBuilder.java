@@ -4,7 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -172,20 +172,20 @@ public abstract class AbstractModifierRecipeBuilder<T extends AbstractModifierRe
    * @param consumer  Consumer instance
    * @param id        Recipe ID
    */
-  public T saveSalvage(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveSalvage(Consumer<FinishedRecipe> consumer, Identifier id) {
     if (maxLevel < minLevel) {
       throw new IllegalStateException("Max level must be greater than min level");
     }
     if (slots == null) {
       throw new IllegalStateException("Must set modifier slots to apply modifier salvage.");
     }
-    ResourceLocation advancementId = buildOptionalAdvancement(id, "modifiers");
+    Identifier advancementId = buildOptionalAdvancement(id, "modifiers");
     consumer.accept(new LoadableFinishedRecipe<>(makeSalvage(id), ModifierSalvage.LOADER, advancementId));
     return (T) this;
   }
 
-  /** Makes the salvage recipe to save in {@link #saveSalvage(Consumer, ResourceLocation)} */
-  protected ModifierSalvage makeSalvage(ResourceLocation id) {
+  /** Makes the salvage recipe to save in {@link #saveSalvage(Consumer, Identifier)} */
+  protected ModifierSalvage makeSalvage(Identifier id) {
     return new ModifierSalvage(id, tools, maxToolSize, result, VALID_LEVEL.range(minLevel, useSalvageMax ? maxLevel : VALID_LEVEL.max()), Objects.requireNonNull(slots));
   }
 }

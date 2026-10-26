@@ -93,8 +93,8 @@ final class ToolDisplayStack {
       for (String key : RENDER_ONLY_TAGS) {
         copyTag(tag, renderOnly, key);
       }
-      CompoundTag persistent = tag.getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA);
-      if (persistent.contains(INVISIBLE_MODIFIERS, Tag.TAG_LIST)) {
+      CompoundTag persistent = tag.getCompoundOrEmpty(ToolStack.TAG_PERSISTENT_MOD_DATA);
+      if (persistent.getList(INVISIBLE_MODIFIERS).isPresent()) {
         CompoundTag renderPersistent = new CompoundTag();
         copyTag(persistent, renderPersistent, INVISIBLE_MODIFIERS);
         renderOnly.put(ToolStack.TAG_PERSISTENT_MOD_DATA, renderPersistent);

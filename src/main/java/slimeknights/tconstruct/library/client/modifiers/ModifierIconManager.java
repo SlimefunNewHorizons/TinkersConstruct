@@ -10,7 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
@@ -37,14 +37,14 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
   /** Icon file to load, has merging behavior but forge prevents multiple mods from loading the same file */
   private static final String ICONS = "tinkering/modifier_icons.json";
   /** First layer of the default icon, will be tinted */
-  private static final ResourceLocation DEFAULT_PAGES = TConstruct.getResource("gui/modifiers/default_pages");
+  private static final Identifier DEFAULT_PAGES = TConstruct.getResource("gui/modifiers/default_pages");
   /** Second layer of the default icon, will be tinted */
-  private static final ResourceLocation DEFAULT_COVER = TConstruct.getResource("gui/modifiers/default_cover");
+  private static final Identifier DEFAULT_COVER = TConstruct.getResource("gui/modifiers/default_cover");
   /** Instance of this manager */
   public static final ModifierIconManager INSTANCE = new ModifierIconManager();
 
   /** Map of icons for each modifier */
-  private static Map<ModifierId,List<ResourceLocation>> modifierIcons = Collections.emptyMap();
+  private static Map<ModifierId,List<Identifier>> modifierIcons = Collections.emptyMap();
 
   /**
    * Initializes this manager, registering it relevant event busses
@@ -62,7 +62,7 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
   @Override
   public void onReloadSafe(ResourceManager manager) {
     // start building the model map
-    Map<ModifierId,List<ResourceLocation>> icons = new HashMap<>();
+    Map<ModifierId,List<Identifier>> icons = new HashMap<>();
 
     // get a list of files from all namespaces
     List<JsonObject> jsonFiles = JsonHelper.getFileInAllDomainsAndPacks(manager, ICONS, null);
@@ -92,7 +92,7 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
             }
           } else if (element.isJsonPrimitive()) {
             // primitive means texture path
-            ResourceLocation path = ResourceLocation.tryParse(element.getAsString());
+            Identifier path = Identifier.tryParse(element.getAsString());
             if (path != null) {
               icons.put(name, Collections.singletonList(path));
             } else {
@@ -120,9 +120,9 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
   public static void renderIcon(GuiGraphics graphics, Modifier modifier, int x, int y, int z, int size) {
     TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
 
-    List<ResourceLocation> icons = modifierIcons.getOrDefault(modifier.getId(), Collections.emptyList());
+    List<Identifier> icons = modifierIcons.getOrDefault(modifier.getId(), Collections.emptyList());
     if (!icons.isEmpty()) {
-      for (ResourceLocation icon : icons) {
+      for (Identifier icon : icons) {
         graphics.blit(x, y, z, size, size, atlas.getSprite(icon));
       }
     } else {

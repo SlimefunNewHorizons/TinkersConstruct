@@ -6,7 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -51,7 +51,7 @@ public class CombatHelper {
   private static final float TO_RADIAN = (float)Math.PI / 180f;
   /** Attribute modifier to disable knockback on a target */
   private static final AttributeModifier ANTI_KNOCKBACK_MODIFIER = new AttributeModifier(
-    ResourceLocation.fromNamespaceAndPath(Mantle.modId, "anti_knockback"), 1f, Operation.ADD_VALUE);
+    Identifier.fromNamespaceAndPath(Mantle.modId, "anti_knockback"), 1f, Operation.ADD_VALUE);
   /** Tool action to disable the base knockback of the weapon. Requires replacing left click behavior of your weapon. */
   public static final ItemAbility NO_BASE_KNOCKBACK = ItemAbility.get("no_base_knockback");
 
@@ -305,7 +305,7 @@ public class CombatHelper {
           }
 
           // damage the tool
-          if (!player.level().isClientSide && !stack.isEmpty() && parent instanceof LivingEntity living) {
+          if (!player.level().isClientSide() && !stack.isEmpty() && parent instanceof LivingEntity living) {
             ItemStack copy = stack.copy();
             stack.hurtEnemy(living, player);
             if (stack.isEmpty()) {

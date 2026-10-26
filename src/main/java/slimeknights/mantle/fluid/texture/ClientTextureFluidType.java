@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer.FogMode;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.fog.FogRenderer.FogMode;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -29,31 +29,31 @@ public class ClientTextureFluidType implements IClientFluidTypeExtensions {
   }
 
   @Override
-  public ResourceLocation getStillTexture() {
+  public Identifier getStillTexture() {
     return FluidTextureManager.getStillTexture(type);
   }
 
   @Override
-  public ResourceLocation getFlowingTexture() {
+  public Identifier getFlowingTexture() {
     return FluidTextureManager.getFlowingTexture(type);
   }
 
   @Nullable
   @Override
-  public ResourceLocation getOverlayTexture() {
+  public Identifier getOverlayTexture() {
     return FluidTextureManager.getOverlayTexture(type);
   }
 
   @Nullable
   @Override
-  public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+  public Identifier getRenderOverlayTexture(Minecraft mc) {
     return FluidTextureManager.getCameraTexture(type);
   }
 
   @Override
   public void renderOverlay(Minecraft mc, PoseStack poseStack) {
     FluidTexture data = FluidTextureManager.getData(type);
-    ResourceLocation camera = data.camera();
+    Identifier camera = data.camera();
     if (camera != null) {
       FluidRenderer.renderCamera(mc, poseStack, camera, data.cameraOpacity(), data.color());
     }

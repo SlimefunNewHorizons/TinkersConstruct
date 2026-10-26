@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -172,8 +172,8 @@ public class MelterBlockEntity extends NameableBlockEntity implements ITankInven
     super.load(tag, registries);
     tank.readFromNBT(registries, tag.getCompound(NBTTags.TANK));
     fuelModule.readFromTag(tag);
-    if (tag.contains(TAG_INVENTORY, Tag.TAG_COMPOUND)) {
-      meltingInventory.readFromTag(tag.getCompound(TAG_INVENTORY), registries);
+    if (tag.getCompound(TAG_INVENTORY).isPresent()) {
+      meltingInventory.readFromTag(tag.getCompoundOrEmpty(TAG_INVENTORY), registries);
     }
   }
 

@@ -31,7 +31,7 @@ public abstract class NameableBlockEntity extends MantleBlockEntity implements I
 	@Override
 	protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
 		super.loadAdditional(tags, registries);
-		if (tags.contains(TAG_CUSTOM_NAME, Tag.TAG_STRING)) {
+		if (tags.getString(TAG_CUSTOM_NAME).isPresent()) {
 			this.customName = Component.Serializer.fromJson(tags.getString(TAG_CUSTOM_NAME), registries);
 		}
 	}

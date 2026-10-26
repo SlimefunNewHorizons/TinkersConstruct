@@ -1,11 +1,12 @@
 package slimeknights.tconstruct.common.recipe;
 
+import slimeknights.tconstruct.TConstruct;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import slimeknights.mantle.data.listener.IEarlySafeManagerReloadListener;
 
 import java.util.ArrayList;
@@ -56,8 +57,8 @@ public class RecipeCacheInvalidator implements IEarlySafeManagerReloadListener {
    * Called when resource managers reload
    * @param event  Reload event
    */
-  public static void onReloadListenerReload(AddReloadListenerEvent event) {
-    event.addListener(INSTANCE);
+  public static void onReloadListenerReload(AddServerReloadListenersEvent event) {
+    event.addListener(TConstruct.getResource("recipe_cache_invalidator"), INSTANCE);
   }
 
   /** Logic to respond properly to late running of the client */

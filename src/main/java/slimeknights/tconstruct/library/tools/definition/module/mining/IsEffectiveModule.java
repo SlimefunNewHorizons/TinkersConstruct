@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.definition.module.mining;
 
+import slimeknights.tconstruct.library.utils.HarvestTiers;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,6 +45,6 @@ public record IsEffectiveModule(IJsonPredicate<BlockState> predicate, boolean ig
 
   @Override
   public boolean isToolEffective(IToolStackView tool, BlockState state) {
-    return predicate.matches(state) && (ignoreTier || !state.is(MiningTierToolHook.getTier(tool).getIncorrectBlocksForDrops()));
+    return predicate.matches(state) && (ignoreTier || !state.is(HarvestTiers.incorrectBlocksForDrops(MiningTierToolHook.getTier(tool))));
   }
 }

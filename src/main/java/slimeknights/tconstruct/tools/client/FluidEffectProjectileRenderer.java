@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import slimeknights.mantle.client.render.FluidCuboid;
@@ -40,7 +40,7 @@ public class FluidEffectProjectileRenderer extends EntityRenderer<FluidEffectPro
   }
 
   @Override
-  public ResourceLocation getTextureLocation(FluidEffectProjectile pEntity) {
+  public Identifier getTextureLocation(FluidEffectProjectile pEntity) {
     return InventoryMenu.BLOCK_ATLAS;
   }
 }

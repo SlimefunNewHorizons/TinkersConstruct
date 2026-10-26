@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.tools.item;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +32,7 @@ public abstract class ToolItemTest extends BaseMcTest {
     TagFixture.init();
     if (tool == null) {
       tool = new ModifiableItem(new Item.Properties().stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition());
-      Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("test", "toolcore"), tool);
+      Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "toolcore"), tool);
     }
     setupTierSorting();
     // ModifierStatsBuilder.disableFilter();

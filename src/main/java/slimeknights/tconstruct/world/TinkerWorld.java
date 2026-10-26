@@ -217,7 +217,7 @@ public final class TinkerWorld extends TinkerModule {
       } else {
         properties.sound(SoundType.GRASS).offsetType(OffsetType.XYZ);
       }
-      return properties.replaceable().instabreak().noCollission().pushReaction(PushReaction.DESTROY);
+      return properties.replaceable().instabreak().noCollision().pushReaction(PushReaction.DESTROY);
     };
     slimeFern = BLOCKS.registerEnum(FoliageType.values(), "slime_fern", type -> new SlimeTallGrassBlock(props.apply(type), type), BLOCK_ITEM);
     slimeTallGrass = BLOCKS.registerEnum(FoliageType.values(), "slime_tall_grass", type -> new SlimeTallGrassBlock(props.apply(type), type), BLOCK_ITEM);

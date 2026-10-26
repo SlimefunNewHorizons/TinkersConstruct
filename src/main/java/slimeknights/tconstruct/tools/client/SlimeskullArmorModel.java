@@ -6,14 +6,14 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.model.PiglinHeadModel;
-import net.minecraft.client.model.SkullModel;
-import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.model.object.skull.PiglinHeadModel;
+import net.minecraft.client.model.object.skull.SkullModel;
+import net.minecraft.client.model.object.skull.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.WalkAnimationState;
@@ -55,7 +55,7 @@ public class SlimeskullArmorModel extends MultilayerArmorModel {
 
   /** Head to render under the helmet */
   @Nullable
-  private ResourceLocation headTexture;
+  private Identifier headTexture;
   /** Tint color for the head */
   private int headColor = -1;
   /** Texture for the head */
@@ -72,7 +72,7 @@ public class SlimeskullArmorModel extends MultilayerArmorModel {
     MaterialId materialId = MaterialIdNBT.from(stack).getMaterial(0).getId();
     if (!materialId.equals(IMaterial.UNKNOWN_ID)) {
       SkullModelBase skull = getHeadModel(materialId);
-      ResourceLocation texture = HEAD_TEXTURES.get(materialId);
+      Identifier texture = HEAD_TEXTURES.get(materialId);
       if (skull != null && texture != null) {
         headModel = skull;
         headTexture = texture;
@@ -138,15 +138,15 @@ public class SlimeskullArmorModel extends MultilayerArmorModel {
   /** Map of all skull factories */
   private static final Map<MaterialId,Function<EntityModelSet,? extends SkullModelBase>> HEAD_MODEL_FACTORIES = new HashMap<>();
   /** Map of texture for the skull textures */
-  private static final Map<MaterialId,ResourceLocation> HEAD_TEXTURES = new HashMap<>();
+  private static final Map<MaterialId,Identifier> HEAD_TEXTURES = new HashMap<>();
 
   /** Registers a head model and texture, using the default skull model */
-  public static void registerHeadModel(MaterialId materialId, ModelLayerLocation headModel, ResourceLocation texture) {
+  public static void registerHeadModel(MaterialId materialId, ModelLayerLocation headModel, Identifier texture) {
     registerHeadModel(materialId, modelSet -> new SkullModel(modelSet.bakeLayer(headModel)), texture);
   }
 
   /** Registers a head model and texture, using the piglin skull model */
-  public static void registerPiglinHeadModel(MaterialId materialId, ModelLayerLocation headModel, ResourceLocation texture) {
+  public static void registerPiglinHeadModel(MaterialId materialId, ModelLayerLocation headModel, Identifier texture) {
     registerHeadModel(materialId, modelSet -> new PiglinHeadModel(modelSet.bakeLayer(headModel)), texture);
   }
 
@@ -156,7 +156,7 @@ public class SlimeskullArmorModel extends MultilayerArmorModel {
   }
 
   /** Registers a head model and texture, using a custom skull model */
-  public static void registerHeadModel(MaterialId materialId, Function<EntityModelSet,? extends SkullModelBase> headFunction, ResourceLocation texture) {
+  public static void registerHeadModel(MaterialId materialId, Function<EntityModelSet,? extends SkullModelBase> headFunction, Identifier texture) {
     if (HEAD_MODEL_FACTORIES.containsKey(materialId)) {
       throw new IllegalArgumentException("Duplicate head model " + materialId);
     }

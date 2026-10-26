@@ -2,7 +2,7 @@ package slimeknights.mantle.recipe.cooking;
 
 import lombok.Getter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.BlastingRecipe;
@@ -30,7 +30,7 @@ public class BlastingResultRecipe extends BlastingRecipe implements CookingResul
     BlastingResultRecipe::new);
 
   private final ItemOutput result;
-  public BlastingResultRecipe(ResourceLocation id, String group, CookingBookCategory category, Ingredient ingredient, ItemOutput result, float experience, int cookingTime) {
+  public BlastingResultRecipe(Identifier id, String group, CookingBookCategory category, Ingredient ingredient, ItemOutput result, float experience, int cookingTime) {
     super(group, category, ingredient, ItemStack.EMPTY, experience, cookingTime);
     this.result = result;
   }

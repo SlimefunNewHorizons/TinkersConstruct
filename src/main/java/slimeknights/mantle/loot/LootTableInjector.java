@@ -3,7 +3,7 @@ package slimeknights.mantle.loot;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.bus.api.EventPriority;
 import slimeknights.mantle.Mantle;
@@ -38,8 +38,8 @@ public enum LootTableInjector implements IEarlyReloadListener {
 
   /** Initializes the loot table injector */
   public static void init() {
-    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddReloadListenerEvent.class, event -> {
-      event.addListener(INSTANCE);
+    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddServerReloadListenersEvent.class, event -> {
+      event.addListener(Mantle.getResource("loot_table_injector"), INSTANCE);
       INSTANCE.context = event.getConditionContext();
     });
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, LootTableLoadEvent.class, INSTANCE::lootTableLoad);
@@ -48,14 +48,14 @@ public enum LootTableInjector implements IEarlyReloadListener {
   /** Condition context for preventing load */
   private IContext context = IContext.EMPTY;
   /** Map of injections to use on loot table load */
-  private Map<ResourceLocation,LootTableInjection> injections = Collections.emptyMap();
+  private Map<Identifier,LootTableInjection> injections = Collections.emptyMap();
 
   @Override
   public void onResourceManagerReload(ResourceManager manager) {
     long time = System.nanoTime();
-    Map<ResourceLocation,LootTableInjection.Builder> builders = new HashMap<>();
+    Map<Identifier,LootTableInjection.Builder> builders = new HashMap<>();
     int loaded = 0;
-    for (Entry<ResourceLocation,Resource> entry : manager.listResources(FOLDER, loc -> loc.getPath().endsWith(".json")).entrySet()) {
+    for (Entry<Identifier,Resource> entry : manager.listResources(FOLDER, loc -> loc.getPath().endsWith(".json")).entrySet()) {
       try (Reader reader = entry.getValue().openAsReader()) {
         JsonObject json = GsonHelper.fromJson(JsonHelper.DEFAULT_GSON, reader, JsonObject.class);
         if (json != null) {

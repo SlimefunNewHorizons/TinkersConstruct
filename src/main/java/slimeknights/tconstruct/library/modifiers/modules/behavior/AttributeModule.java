@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.modifiers.modules.behavior;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -50,7 +50,7 @@ import java.util.function.Supplier;
 /**
  * Module to add an attribute to a tool.
  */
-public record AttributeModule(String unique, Attribute attribute, Operation operation, ToolFormula formula, ResourceLocation[] slotIds, TooltipStyle tooltipStyle, ModifierCondition<IToolStackView> condition) implements AttributesModifierHook, ModifierModule, EquipmentChangeModifierHook, TooltipModifierHook, ConditionalModule<IToolStackView> {
+public record AttributeModule(String unique, Attribute attribute, Operation operation, ToolFormula formula, Identifier[] slotIds, TooltipStyle tooltipStyle, ModifierCondition<IToolStackView> condition) implements AttributesModifierHook, ModifierModule, EquipmentChangeModifierHook, TooltipModifierHook, ConditionalModule<IToolStackView> {
   /** Default variables */
   private static final String[] VARIABLES = { "level" };
   /** Loader for the variables */
@@ -71,13 +71,13 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
     (unique, attribute, operation, amount, slots, tooltipStyle, condition) -> new AttributeModule(unique, attribute, operation, amount, slotsToIds(unique, slots), tooltipStyle, condition));
 
   /** Gets the UUID from a name */
-  public static ResourceLocation getId(String name, EquipmentSlot slot) {
+  public static Identifier getId(String name, EquipmentSlot slot) {
     return TConstruct.getResource("attribute/" + name.replace('.', '/') + "/" + slot.getName());
   }
 
   /** Converts a list of slots to an array of UUIDs at each index */
-  public static ResourceLocation[] slotsToIds(String name, Collection<EquipmentSlot> slots) {
-    ResourceLocation[] slotIds = new ResourceLocation[EquipmentSlot.values().length];
+  public static Identifier[] slotsToIds(String name, Collection<EquipmentSlot> slots) {
+    Identifier[] slotIds = new Identifier[EquipmentSlot.values().length];
     for (EquipmentSlot slot : slots) {
       slotIds[slot.getFilterFlag()] = getId(name, slot);
     }
@@ -85,7 +85,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   }
 
   /** Maps the UUID array to a set for serializing */
-  public static Set<EquipmentSlot> idsToSlots(ResourceLocation[] ids) {
+  public static Set<EquipmentSlot> idsToSlots(Identifier[] ids) {
     Set<EquipmentSlot> set = EnumSet.noneOf(EquipmentSlot.class);
     for (EquipmentSlot slot : EquipmentSlot.values()) {
       if (ids[slot.getFilterFlag()] != null) {
@@ -101,14 +101,14 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
 
   /** Gets the UUID for this slot */
   @Nullable
-  private ResourceLocation getId(EquipmentSlot slot) {
+  private Identifier getId(EquipmentSlot slot) {
     return slotIds[slot.getFilterFlag()];
   }
 
   /** Creates an attribute for the given slot */
   @Nullable
   private AttributeModifier createModifier(IToolStackView tool, ModifierEntry modifier, EquipmentSlot slot) {
-    ResourceLocation id = getId(slot);
+    Identifier id = getId(slot);
     if (id != null) {
       return new AttributeModifier(id, formula.apply(tool, modifier), operation);
     }
@@ -145,7 +145,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   @Override
   public void onUnequip(IToolStackView tool, ModifierEntry modifier, EquipmentChangeContext context) {
     if (condition.matches(tool, modifier)) {
-      ResourceLocation id = getId(context.getChangedSlot());
+      Identifier id = getId(context.getChangedSlot());
       if (id != null) {
         AttributeInstance instance = context.getEntity().getAttribute(net.minecraft.core.registries.BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute));
         if (instance != null) {
@@ -156,7 +156,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   }
 
   /** Adds the tooltip for the given attribute */
-  public static void addTooltip(Modifier modifier, Attribute attribute, Operation operation, TooltipStyle tooltipStyle, float amount, @Nullable ResourceLocation id, @Nullable Player player, List<Component> tooltip) {
+  public static void addTooltip(Modifier modifier, Attribute attribute, Operation operation, TooltipStyle tooltipStyle, float amount, @Nullable Identifier id, @Nullable Player player, List<Component> tooltip) {
     switch (tooltipStyle) {
       case ATTRIBUTE -> TooltipUtil.addAttribute(attribute, operation, amount, id, player, tooltip);
       case BOOST -> TooltipModifierHook.addFlatBoost(modifier, Component.translatable(attribute.getDescriptionId()), amount, tooltip);
@@ -233,7 +233,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
     /**
      * Sets the unique string using a resource location
      */
-    public Builder uniqueFrom(ResourceLocation id) {
+    public Builder uniqueFrom(Identifier id) {
       return unique(id.getNamespace() + ".modifier." + id.getPath());
     }
 

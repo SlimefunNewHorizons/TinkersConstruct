@@ -8,7 +8,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -106,7 +106,7 @@ public abstract class AbstractMaterialContent extends PageContent {
   }
 
   /** Gets the page type ID */
-  public abstract ResourceLocation getId();
+  public abstract Identifier getId();
 
   /** Given an index 0-3, return the stat type to show at that index */
   @Nullable
@@ -299,7 +299,7 @@ public abstract class AbstractMaterialContent extends PageContent {
 
 
   /** Gets the tooltip for a material category */
-  protected static TinkerItemElement makeCategoryIcon(ItemStack item, ResourceLocation name) {
+  protected static TinkerItemElement makeCategoryIcon(ItemStack item, Identifier name) {
     TinkerItemElement element = new TinkerItemElement(item);
     name = name.withPrefix("material.category.");
     element.tooltip = List.of(

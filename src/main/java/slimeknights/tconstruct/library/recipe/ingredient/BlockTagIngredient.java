@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,11 +28,11 @@ import java.util.stream.Stream;
 /** Item ingredient matching items with a block form in the given tag */
 @RequiredArgsConstructor
 public class BlockTagIngredient implements ICustomIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("block_tag");
+  public static final Identifier ID = TConstruct.getResource("block_tag");
   public static final MapCodec<BlockTagIngredient> CODEC = TagKey.codec(Registries.BLOCK).fieldOf("tag")
     .xmap(BlockTagIngredient::new, ingredient -> ingredient.tag);
   public static final StreamCodec<RegistryFriendlyByteBuf,BlockTagIngredient> STREAM_CODEC = StreamCodec.composite(
-    ResourceLocation.STREAM_CODEC, ingredient -> ingredient.tag.location(),
+    Identifier.STREAM_CODEC, ingredient -> ingredient.tag.location(),
     id -> new BlockTagIngredient(TagKey.create(Registries.BLOCK, id)));
   public static final IngredientType<BlockTagIngredient> TYPE = new IngredientType<>(CODEC, STREAM_CODEC);
 

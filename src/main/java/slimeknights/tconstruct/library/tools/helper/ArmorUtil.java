@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.tools.helper;
 
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 
 
@@ -120,8 +120,8 @@ public class ArmorUtil {
     return damage;
   }
 
-  private static final ResourceLocation DIAMOND_ARMOR = ResourceLocation.withDefaultNamespace("textures/models/armor/diamond_layer_1.png");
-  private static final ResourceLocation DIAMOND_LEGGINGS = ResourceLocation.withDefaultNamespace("textures/models/armor/diamond_layer_2.png");
+  private static final Identifier DIAMOND_ARMOR = Identifier.withDefaultNamespace("textures/models/armor/diamond_layer_1.png");
+  private static final Identifier DIAMOND_LEGGINGS = Identifier.withDefaultNamespace("textures/models/armor/diamond_layer_2.png");
 
   /**
    * We override the armor model to not use the "vanilla" texture in favor of our own system that fetches the texture from NBT.
@@ -129,7 +129,7 @@ public class ArmorUtil {
    * Since we don't end up using that texture, bypass the error by just returning a vanilla texture.
    * We would just use our system, but it notably supports returning no texture to not render (would still lead to errors) and requires unneeded stack parsing, so faster to just use an arbitrary texture we know exists.
    */
-  public static ResourceLocation getDummyArmorTexture(EquipmentSlot slot) {
+  public static Identifier getDummyArmorTexture(EquipmentSlot slot) {
     return slot == EquipmentSlot.LEGS ? DIAMOND_LEGGINGS : DIAMOND_ARMOR;
   }
 }

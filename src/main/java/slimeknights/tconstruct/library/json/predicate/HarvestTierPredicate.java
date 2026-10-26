@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.library.json.predicate;
 
-import net.minecraft.world.item.Tier;
+import slimeknights.tconstruct.library.utils.HarvestTiers;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.state.BlockState;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
@@ -8,12 +9,12 @@ import slimeknights.mantle.data.predicate.block.BlockPredicate;
 import slimeknights.tconstruct.library.json.TinkerLoadables;
 
 /** Block predicate matching anything minable by the given tier */
-public record HarvestTierPredicate(Tier tier) implements BlockPredicate {
+public record HarvestTierPredicate(ToolMaterial tier) implements BlockPredicate {
   public static final RecordLoadable<HarvestTierPredicate> LOADER = RecordLoadable.create(TinkerLoadables.TIER.requiredField("tier", HarvestTierPredicate::tier), HarvestTierPredicate::new);
 
   @Override
   public boolean matches(BlockState state) {
-    return !state.is(tier.getIncorrectBlocksForDrops());
+    return !state.is(HarvestTiers.incorrectBlocksForDrops(tier));
   }
 
   @Override

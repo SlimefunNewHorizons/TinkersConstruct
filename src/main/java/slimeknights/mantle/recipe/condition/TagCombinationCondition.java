@@ -7,7 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import slimeknights.mantle.Mantle;
@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 public record TagCombinationCondition<T>(List<TagKey<T>> match, @Nullable TagKey<T> ignore) implements ICondition {
-  public static final ResourceLocation ID = Mantle.getResource("tag_combination_filled");
+  public static final Identifier ID = Mantle.getResource("tag_combination_filled");
 
   public TagCombinationCondition {
     if (match.isEmpty()) {
@@ -86,15 +86,15 @@ public record TagCombinationCondition<T>(List<TagKey<T>> match, @Nullable TagKey
     return false;
   }
 
-  private static final Codec<List<ResourceLocation>> MATCH_CODEC = Codec.withAlternative(
-    ResourceLocation.CODEC.listOf(), ResourceLocation.CODEC.xmap(List::of, values -> values.get(0)));
+  private static final Codec<List<Identifier>> MATCH_CODEC = Codec.withAlternative(
+    Identifier.CODEC.listOf(), Identifier.CODEC.xmap(List::of, values -> values.get(0)));
   public static final MapCodec<TagCombinationCondition<?>> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    ResourceLocation.CODEC.optionalFieldOf("registry", Registries.ITEM.location()).forGetter(value -> value.match.get(0).registry().location()),
+    Identifier.CODEC.optionalFieldOf("registry", Registries.ITEM.location()).forGetter(value -> value.match.get(0).registry().location()),
     MATCH_CODEC.fieldOf("match").forGetter(value -> value.match.stream().map(TagKey::location).toList()),
-    ResourceLocation.CODEC.optionalFieldOf("ignore").forGetter(value -> Optional.ofNullable(value.ignore).map(TagKey::location))
+    Identifier.CODEC.optionalFieldOf("ignore").forGetter(value -> Optional.ofNullable(value.ignore).map(TagKey::location))
   ).apply(instance, TagCombinationCondition::fromCodec));
 
-  private static TagCombinationCondition<?> fromCodec(ResourceLocation registryId, List<ResourceLocation> matches, Optional<ResourceLocation> ignore) {
+  private static TagCombinationCondition<?> fromCodec(Identifier registryId, List<Identifier> matches, Optional<Identifier> ignore) {
     ResourceKey<Registry<Object>> registry = ResourceKey.createRegistryKey(registryId);
     return new TagCombinationCondition<>(matches.stream().map(id -> TagKey.create(registry, id)).toList(), ignore.map(id -> TagKey.create(registry, id)).orElse(null));
   }

@@ -2,11 +2,11 @@ package slimeknights.tconstruct.plugin.jsonthings;
 
 import dev.gigaherz.jsonthings.things.serializers.FlexItemType;
 import dev.gigaherz.jsonthings.things.serializers.IItemSerializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -104,7 +104,7 @@ public class FlexItemTypes {
 
     /* Registries a cast item that shows a part cost in the tooltip */
     register("part_cast", data -> {
-      ResourceLocation partId = JsonHelper.getResourceLocation(data, "part");
+      Identifier partId = JsonHelper.getResourceLocation(data, "part");
       return (props, builder) -> new FlexPartCastItem(props, builder, Lazy.of(() -> Loadables.ITEM.fromKey(partId, "part")));
     });
 
@@ -113,9 +113,9 @@ public class FlexItemTypes {
 
     /* Simple armor type with a flat texture */
     register("basic_armor", data -> {
-      ResourceLocation name = JsonHelper.getResourceLocation(data, "texture_name");
+      Identifier name = JsonHelper.getResourceLocation(data, "texture_name");
       SoundEvent sound = Loadables.SOUND_EVENT.getOrDefault(data, "equip_sound", SoundEvents.ARMOR_EQUIP_GENERIC.value());
-      ArmorItem.Type slot = TinkerLoadables.ARMOR_SLOT.getIfPresent(data, "slot");
+      ArmorType slot = TinkerLoadables.ARMOR_SLOT.getIfPresent(data, "slot");
       return (IToolItemFactory<ModifiableArmorItem>)(props, builder) -> {
         DummyArmorMaterial material = new DummyArmorMaterial(name, sound);
         return add(ARMOR_ITEMS, new ModifiableArmorItem(material.getArmorMaterial(), slot, props, ToolDefinition.create(builder.getRegistryName())));
@@ -125,9 +125,9 @@ public class FlexItemTypes {
     /* Layered armor type, used for golden, dyeable, etc */
     Loadable<List<ArmorTextureSupplier>> ARMOR_TEXTURES = ArmorTextureSupplier.LOADER.list(1);
     register("multilayer_armor", data -> {
-      ResourceLocation name = JsonHelper.getResourceLocation(data, "model_name");
+      Identifier name = JsonHelper.getResourceLocation(data, "model_name");
       SoundEvent sound = Loadables.SOUND_EVENT.getOrDefault(data, "equip_sound", SoundEvents.ARMOR_EQUIP_GENERIC.value());
-      ArmorItem.Type slot = TinkerLoadables.ARMOR_SLOT.getIfPresent(data, "slot");
+      ArmorType slot = TinkerLoadables.ARMOR_SLOT.getIfPresent(data, "slot");
       return (IToolItemFactory<MultilayerArmorItem>)(props, builder) -> {
         DummyArmorMaterial material = new DummyArmorMaterial(name, sound);
         return add(ARMOR_ITEMS, new MultilayerArmorItem(material.getArmorMaterial(), slot, props, ToolDefinition.create(builder.getRegistryName()), name));

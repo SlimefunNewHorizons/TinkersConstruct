@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class AlloyerContainerMenu extends TriggeringBaseContainerMenu<AlloyerBlockEntity> {
-  public static final ResourceLocation TOOLTIP_FORMAT = TConstruct.getResource("alloyer");
+  public static final Identifier TOOLTIP_FORMAT = TConstruct.getResource("alloyer");
 
   @Getter
   private boolean hasFuelSlot = false;
@@ -41,7 +41,7 @@ public class AlloyerContainerMenu extends TriggeringBaseContainerMenu<AlloyerBlo
     if (alloyer != null) {
       // refresh cache of neighboring tanks
       Level world = alloyer.getLevel();
-      if (world != null && world.isClientSide) {
+      if (world != null && world.isClientSide()) {
         MixerAlloyTank alloyTank = alloyer.getAlloyTank();
         for (Direction direction : Direction.values()) {
           if (direction != Direction.DOWN) {
@@ -76,7 +76,7 @@ public class AlloyerContainerMenu extends TriggeringBaseContainerMenu<AlloyerBlo
   public boolean clickMenuButton(Player player, int id) {
     ItemStack held = getCarried();
     if (id >= 0 && !held.isEmpty() && !player.isSpectator()) {
-      if (!player.level().isClientSide && tile != null) {
+      if (!player.level().isClientSide() && tile != null) {
         int index = id / 2;
         IFluidHandler handler;
         // first index is the internal tank

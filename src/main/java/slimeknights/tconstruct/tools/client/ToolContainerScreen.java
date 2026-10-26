@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -33,8 +33,8 @@ import static slimeknights.tconstruct.tools.menu.ToolContainerMenu.UI_START;
 
 /** Screen for a tool inventory */
 public class ToolContainerScreen extends AbstractContainerScreen<ToolContainerMenu> implements IScreenWithFluidTank {
-  /** The ResourceLocation containing the chest GUI texture. */
-  private static final ResourceLocation TEXTURE = TConstruct.getResource("textures/gui/tool_inventory.png");
+  /** The Identifier containing the chest GUI texture. */
+  private static final Identifier TEXTURE = TConstruct.getResource("textures/gui/tool_inventory.png");
 
   /** Slot background for 3x3 crafting grid */
   private static final ElementScreen CRAFTING_SLOTS = new ElementScreen(TEXTURE, 176, 74, 54, 54, 256, 256);
@@ -188,7 +188,7 @@ public class ToolContainerScreen extends AbstractContainerScreen<ToolContainerMe
 
     // prepare pattern drawing
     assert this.minecraft != null;
-    Function<ResourceLocation,TextureAtlasSprite> spriteGetter = this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+    Function<Identifier,TextureAtlasSprite> spriteGetter = this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
 
     // draw slot patterns for all empty slots
     int start = menu.getToolInventoryStart();

@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.data.recipe;
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.data.loadable.common.NBTLoadable;
@@ -21,7 +21,7 @@ public record CraftingNBTWrapper(FinishedRecipe recipe, CompoundTag nbt) impleme
   }
 
   @Override
-  public ResourceLocation getId() {
+  public Identifier getId() {
     return recipe.getId();
   }
 
@@ -38,7 +38,7 @@ public record CraftingNBTWrapper(FinishedRecipe recipe, CompoundTag nbt) impleme
 
   @Nullable
   @Override
-  public ResourceLocation getAdvancementId() {
+  public Identifier getAdvancementId() {
     return recipe.getAdvancementId();
   }
 

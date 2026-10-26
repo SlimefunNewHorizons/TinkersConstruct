@@ -6,7 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.data.loadable.Loadables;
@@ -44,7 +44,7 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
   /** Message to display if there are no matching modifiers on the tool */
   public static final Component NO_MATCHES = TConstruct.makeTranslation("recipe", "modifier_set_worktable.empty");
   /** Logic to fetch a list of strings from the persistent data */
-  public static final BiFunction<CompoundTag, String, ListTag> LIST_GETTER = (tag, name) -> tag.getList(name, Tag.TAG_STRING);
+  public static final BiFunction<CompoundTag, String, ListTag> LIST_GETTER = (tag, name) -> tag.getListOrEmpty(name);
   /** Loader instance */
   public static final RecordLoadable<ModifierSetWorktableRecipe> LOADER = RecordLoadable.create(
     ContextKey.ID.requiredField(),
@@ -63,7 +63,7 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
   /** Description to display when valid */
   private final Component description;
   /** Key of the set to fill with modifier names */
-  private final ResourceLocation dataKey;
+  private final Identifier dataKey;
   /** Predicate of modifiers to support in this recipe */
   private final IJsonPredicate<ModifierId> modifierPredicate;
   /** Filter of modifiers to display */
@@ -75,7 +75,7 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
   /** Cached list of modifiers shown in JEI */
   private List<ModifierEntry> filteredModifiers = null;
 
-  public ModifierSetWorktableRecipe(ResourceLocation id, ResourceLocation dataKey, List<SizedIngredient> inputs, Ingredient toolRequirement, IJsonPredicate<ModifierId> modifierPredicate, boolean addToSet, boolean allowTraits) {
+  public ModifierSetWorktableRecipe(Identifier id, Identifier dataKey, List<SizedIngredient> inputs, Ingredient toolRequirement, IJsonPredicate<ModifierId> modifierPredicate, boolean addToSet, boolean allowTraits) {
     super(id, toolRequirement, inputs);
     this.dataKey = dataKey;
     this.addToSet = addToSet;
@@ -145,12 +145,12 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
   }
 
   /** Gets the set of modifiers in persistent data at the given key */
-  public static Set<ModifierId> getModifierSet(IModDataView modData, ResourceLocation key) {
+  public static Set<ModifierId> getModifierSet(IModDataView modData, Identifier key) {
     return modData.get(key, LIST_GETTER).stream().map(tag -> ModifierId.tryParse(tag.getAsString())).filter(Objects::nonNull).collect(Collectors.toSet());
   }
 
-  /** Checks if the given modifier is in the set. Faster to use {@link #getModifierSet(IModDataView, ResourceLocation)} for multiple consecutive queries */
-  public static boolean isInSet(IModDataView modData, ResourceLocation key, ModifierId modifier) {
+  /** Checks if the given modifier is in the set. Faster to use {@link #getModifierSet(IModDataView, Identifier)} for multiple consecutive queries */
+  public static boolean isInSet(IModDataView modData, Identifier key, ModifierId modifier) {
     if (!modData.contains(key, Tag.TAG_LIST)) {
       return false;
     }

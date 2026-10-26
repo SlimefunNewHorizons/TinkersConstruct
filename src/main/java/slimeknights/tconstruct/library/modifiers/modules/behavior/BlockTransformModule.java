@@ -72,7 +72,7 @@ public interface BlockTransformModule extends ModifierModule, BlockInteractionMo
     // if we made a successful transform, client can stop early
     EquipmentSlot slotType = source.getSlot(context.getHand());
     if (didTransform) {
-      if (world.isClientSide) {
+      if (world.isClientSide()) {
         return InteractionResult.SUCCESS;
       }
 
@@ -108,7 +108,7 @@ public interface BlockTransformModule extends ModifierModule, BlockInteractionMo
             totalTransformed++;
             didTransform = true;
 
-            if (world.isClientSide) {
+            if (world.isClientSide()) {
               break;
             }
 
@@ -130,7 +130,7 @@ public interface BlockTransformModule extends ModifierModule, BlockInteractionMo
     }
 
     // if anything happened, return success
-    return didTransform ? InteractionResult.sidedSuccess(world.isClientSide) : InteractionResult.PASS;
+    return didTransform ? InteractionResult.SUCCESS : InteractionResult.PASS;
   }
 
   /** Applies this transformation */

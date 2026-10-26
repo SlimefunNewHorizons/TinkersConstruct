@@ -7,7 +7,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * Extension of the vanilla ingredient to display materials on items and support matching by materials
  */
 public class MaterialIngredient extends NestedIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("material");
+  public static final Identifier ID = TConstruct.getResource("material");
   private static final JsonCodec<MaterialIngredient> CODEC_BODY = new JsonCodec<>() {
     @Override
     public MaterialIngredient deserialize(com.google.gson.JsonElement element, DynamicOps<?> ops) {

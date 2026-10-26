@@ -14,7 +14,7 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
 import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
@@ -47,7 +47,7 @@ public enum FallbackModelLoader implements IGeometryLoader<FallbackModelLoader.B
       if (entry.has("fallback_mod_id")) {
         modId = GsonHelper.getAsString(entry, "fallback_mod_id");
       } else if (entry.has("loader")) {
-        ResourceLocation loader = ResourceLocation.parse(GsonHelper.getAsString(entry, "loader"));
+        Identifier loader = Identifier.parse(GsonHelper.getAsString(entry, "loader"));
         modId = loader.getNamespace();
       }
 
@@ -79,7 +79,7 @@ public enum FallbackModelLoader implements IGeometryLoader<FallbackModelLoader.B
     }
 
     @Override
-    public void resolveParents(Function<ResourceLocation,UnbakedModel> modelGetter, IGeometryBakingContext context) {
+    public void resolveParents(Function<Identifier,UnbakedModel> modelGetter, IGeometryBakingContext context) {
       model.resolveParents(modelGetter);
     }
   }

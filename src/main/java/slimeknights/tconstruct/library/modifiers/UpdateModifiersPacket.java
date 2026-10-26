@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import slimeknights.mantle.network.PacketContext;
@@ -104,22 +104,22 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     ImmutableMap.Builder<Enchantment,Modifier> enchantmentBuilder = ImmutableMap.builder();
     size = buffer.readVarInt();
     for (int i = 0; i < size; i++) {
-      ResourceLocation enchantmentId = buffer.readResourceLocation();
+      Identifier enchantmentId = buffer.readIdentifier();
       Enchantment enchantment = enchantments.get(enchantmentId);
       if (enchantment == null) {
         throw new DecoderException("Unknown enchantment " + enchantmentId);
       }
       enchantmentBuilder.put(
         enchantment,
-        getModifier(modifiers, new ModifierId(buffer.readResourceLocation())));
+        getModifier(modifiers, new ModifierId(buffer.readIdentifier())));
     }
     enchantmentMap = enchantmentBuilder.build();
     ImmutableMap.Builder<TagKey<Enchantment>, Modifier> enchantmentTagBuilder = ImmutableMap.builder();
     size = buffer.readVarInt();
     for (int i = 0; i < size; i++) {
       enchantmentTagBuilder.put(
-        TagKey.create(Registries.ENCHANTMENT, buffer.readResourceLocation()),
-        getModifier(modifiers, new ModifierId(buffer.readResourceLocation())));
+        TagKey.create(Registries.ENCHANTMENT, buffer.readIdentifier()),
+        getModifier(modifiers, new ModifierId(buffer.readIdentifier())));
     }
     enchantmentTagMappings = enchantmentTagBuilder.build();
   }
@@ -130,8 +130,8 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     // write modifiers
     buffer.writeVarInt(modifiers.size());
     for (ComposableModifier modifier : modifiers) {
-      ResourceLocation id = modifier.getId();
-      buffer.writeResourceLocation(id);
+      Identifier id = modifier.getId();
+      buffer.writeIdentifier(id);
       try {
         ComposableModifier.LOADER.encode(buffer, modifier);
       } catch (RuntimeException e) {
@@ -143,8 +143,8 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     // write redirects
     buffer.writeVarInt(redirects.size());
     for (Entry<ModifierId,ModifierId> entry : redirects.entrySet()) {
-      buffer.writeResourceLocation(entry.getKey());
-      buffer.writeResourceLocation(entry.getValue());
+      buffer.writeIdentifier(entry.getKey());
+      buffer.writeIdentifier(entry.getValue());
     }
     GenericTagUtil.encodeTags(buffer, Modifier::getId, this.tags);
 
@@ -152,17 +152,17 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     var enchantments = ((RegistryFriendlyByteBuf)buffer).registryAccess().registryOrThrow(Registries.ENCHANTMENT);
     buffer.writeVarInt(enchantmentMap.size());
     for (Entry<Enchantment,Modifier> entry : enchantmentMap.entrySet()) {
-      ResourceLocation enchantmentId = enchantments.getKey(entry.getKey());
+      Identifier enchantmentId = enchantments.getKey(entry.getKey());
       if (enchantmentId == null) {
         throw new IllegalArgumentException("Unregistered enchantment " + entry.getKey());
       }
-      buffer.writeResourceLocation(enchantmentId);
-      buffer.writeResourceLocation(entry.getValue().getId());
+      buffer.writeIdentifier(enchantmentId);
+      buffer.writeIdentifier(entry.getValue().getId());
     }
     buffer.writeVarInt(enchantmentTagMappings.size());
     for (Entry<TagKey<Enchantment>, Modifier> entry : enchantmentTagMappings.entrySet()) {
-      buffer.writeResourceLocation(entry.getKey().location());
-      buffer.writeResourceLocation(entry.getValue().getId());
+      buffer.writeIdentifier(entry.getKey().location());
+      buffer.writeIdentifier(entry.getValue().getId());
     }
   }
 

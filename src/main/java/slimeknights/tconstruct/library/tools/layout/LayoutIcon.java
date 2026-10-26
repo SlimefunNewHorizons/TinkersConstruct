@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
@@ -74,7 +74,7 @@ public abstract class LayoutIcon {
         return new ItemStackIcon(stack);
       }
       case PATTERN: {
-        Pattern pattern = new Pattern(buffer.readResourceLocation());
+        Pattern pattern = new Pattern(buffer.readIdentifier());
         return new PatternIcon(pattern);
       }
     }
@@ -136,7 +136,7 @@ public abstract class LayoutIcon {
     @Override
     public void write(FriendlyByteBuf buffer) {
       buffer.writeEnum(Type.PATTERN);
-      buffer.writeResourceLocation(pattern);
+      buffer.writeIdentifier(pattern);
     }
 
     @Override
@@ -164,7 +164,7 @@ public abstract class LayoutIcon {
         return new PatternIcon(pattern);
       }
       if (object.has("item")) {
-        var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(GsonHelper.getAsString(object, "item")));
+        var item = BuiltInRegistries.ITEM.get(Identifier.parse(GsonHelper.getAsString(object, "item")));
         if (item == null) throw new JsonSyntaxException("Unknown layout icon item " + object.get("item"));
         ItemStack stack = new ItemStack(item, GsonHelper.getAsInt(object, "count", 1));
         if (object.has("nbt")) {

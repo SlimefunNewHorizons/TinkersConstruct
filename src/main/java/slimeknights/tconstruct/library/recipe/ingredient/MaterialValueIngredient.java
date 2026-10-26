@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 @Getter
 @RequiredArgsConstructor
 public class MaterialValueIngredient implements ICustomIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("material_value");
+  public static final Identifier ID = TConstruct.getResource("material_value");
   private static final LoadableField<IJsonPredicate<MaterialVariantId>,MaterialValueIngredient> MATERIAL_FIELD =
     new MaterialPredicateField<>("material", ingredient -> ingredient.material);
   private static final JsonCodec<MaterialValueIngredient> CODEC_BODY = new JsonCodec<>() {

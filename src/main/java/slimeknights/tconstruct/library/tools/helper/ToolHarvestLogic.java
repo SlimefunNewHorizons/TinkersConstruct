@@ -249,7 +249,7 @@ public class ToolHarvestLogic {
     }*/
 
     // client can run normal block breaking
-    if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) {
+    if (player.level().isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
       return false;
     }
 
@@ -358,7 +358,7 @@ public class ToolHarvestLogic {
       return false;
     }
 
-    if (!worldIn.isClientSide && worldIn instanceof ServerLevel) {
+    if (!worldIn.isClientSide() && worldIn instanceof ServerLevel) {
       Direction sideHit = entityLiving instanceof Player p ? BlockSideHitListener.getSideHit(p) : Direction.UP;
       boolean isEffective = IsEffectiveToolHook.isEffective(tool, state);
       boolean canHarvest = entityLiving instanceof ServerPlayer sp && !sp.isCreative() && state.canHarvestBlock(worldIn, pos, sp);

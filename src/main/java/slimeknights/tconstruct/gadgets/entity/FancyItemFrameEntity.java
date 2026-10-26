@@ -10,7 +10,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
@@ -63,9 +63,9 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
       BlockState state = level.getBlockState(behind);
       if (!state.isAir()) {
         var hit = Util.createTraceResult(behind, direction, false);
-        ItemInteractionResult itemResult = state.useItemOn(player.getItemInHand(hand), level, player, hand, hit);
+        InteractionResult itemResult = state.useItemOn(player.getItemInHand(hand), level, player, hand, hit);
         InteractionResult result = itemResult.result();
-        if (!result.consumesAction() && itemResult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
+        if (!result.consumesAction() && itemResult == InteractionResult.TRY_WITH_EMPTY_HAND) {
           result = state.useWithoutItem(level, player, hit);
         }
         if (result.consumesAction()) {
@@ -75,7 +75,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
     }
     boolean hadItem = !getItem().isEmpty();
     InteractionResult result = super.interact(player, hand);
-    if (!level().isClientSide && hadItem && result.consumesAction()) {
+    if (!level().isClientSide() && hadItem && result.consumesAction()) {
       setRotation(getRotation() + 1);
     }
     return result;
@@ -92,7 +92,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
       // diamond winds down every 30 seconds, but does not go past 0, makes a full timer 3:30
       if (rotationTimer >= 300) {
         rotationTimer = 0;
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
           int curRotation = getRotation();
           if (curRotation > 0) {
             this.setRotation(curRotation - 1);
@@ -102,7 +102,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
       return;
     }
     // for gold and reversed gold, only increment timer serverside
-    if (!level.isClientSide) {
+    if (!level.isClientSide()) {
       if (doesRotate(frameId)) {
         rotationTimer++;
         if (rotationTimer >= 20) {
@@ -127,7 +127,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
   public void setItem(ItemStack stack, boolean updateComparator) {
     super.setItem(stack, updateComparator);
     // spinning frames reset to 0 on changing item
-    if (updateComparator && !level().isClientSide && doesRotate(getFrameId())) {
+    if (updateComparator && !level().isClientSide() && doesRotate(getFrameId())) {
       setRotation(0, false);
     }
   }
@@ -147,7 +147,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
     if (FrameType.hasMoreRotations(id)) {
       // diamond caps at 16, while the others circle around
       if (id == FrameType.DIAMOND.getId()) {
-        if (!level().isClientSide && updateComparator) {
+        if (!level().isClientSide() && updateComparator) {
           // play a sound as diamond is special
           this.playSound(Sounds.ITEM_FRAME_CLICK.getSound(), 1.0f, 1.0f);
         }
@@ -247,11 +247,11 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
   @Override
   public void readAdditionalSaveData(CompoundTag compound) {
     super.readAdditionalSaveData(compound);
-    setRotation(compound.getByte("ItemRotation"), false);
-    int frameId = compound.getInt(TAG_VARIANT);
+    setRotation(compound.getByteOr("ItemRotation", (byte) 0), false);
+    int frameId = compound.getIntOr(TAG_VARIANT, 0);
     this.entityData.set(VARIANT, frameId);
     if (doesRotate(frameId)) {
-      rotationTimer = compound.getInt(TAG_ROTATION_TIMER);
+      rotationTimer = compound.getIntOr(TAG_ROTATION_TIMER, 0);
     }
   }
 

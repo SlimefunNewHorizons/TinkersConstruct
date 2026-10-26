@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.tools.helper;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -33,7 +33,7 @@ class ToolHarvestLogicTest extends ToolItemTest {
     MaterialItemFixture.init();
     if (pickaxeTool == null) {
       pickaxeTool = new ModifiableItem(new Item.Properties().stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition());
-      Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("test", "pickaxe"), pickaxeTool);
+      Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "pickaxe"), pickaxeTool);
     }
   }
 
@@ -79,7 +79,7 @@ class ToolHarvestLogicTest extends ToolItemTest {
   void calcSpeed_effective_withMiningModifier() {
     float modifier = 2f;
 
-    ToolDefinition definition = new ToolDefinition(new ResourceLocation("test", "mining_tool"));
+    ToolDefinition definition = new ToolDefinition(new Identifier("test", "mining_tool"));
     definition.setData(ToolDefinitionDataBuilder
                          .builder()
                          .module(new IsEffectiveModule(BlockPredicate.set(Blocks.COBBLESTONE), true))
@@ -91,7 +91,7 @@ class ToolHarvestLogicTest extends ToolItemTest {
                          .build());
 
     ModifiableItem toolWithMiningModifier = new ModifiableItem(new Item.Properties(), definition);
-    Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("test", "tool_with_mining_modifier"), toolWithMiningModifier);
+    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "tool_with_mining_modifier"), toolWithMiningModifier);
     ItemStack tool = buildTestTool(toolWithMiningModifier);
 
     // boosted by correct block

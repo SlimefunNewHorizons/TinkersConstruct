@@ -3,7 +3,7 @@ package slimeknights.mantle.recipe.condition;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -13,14 +13,14 @@ import slimeknights.mantle.loot.MantleLoot;
 
 /** Inverted form of {@link TagEmptyCondition} as filled is way more common a desire than empty. */
 public class TagFilledCondition<T> extends TagCondition<T> implements LootItemCondition {
-  public static final ResourceLocation ID = Mantle.getResource("tag_filled");
+  public static final Identifier ID = Mantle.getResource("tag_filled");
   public static final MapCodec<TagFilledCondition<?>> CODEC = TagCondition.codec(TagFilledCondition::new);
 
   public TagFilledCondition(TagKey<T> tag) {
     super(tag);
   }
 
-  public TagFilledCondition(ResourceKey<? extends Registry<T>> registry, ResourceLocation name) {
+  public TagFilledCondition(ResourceKey<? extends Registry<T>> registry, Identifier name) {
     this(TagKey.create(registry, name));
   }
 

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import slimeknights.mantle.util.RetexturedHelper;
@@ -91,15 +91,15 @@ public class DuctBlockEntity extends SmelteryFluidIO implements MenuProvider {
   @Override
   public void load(CompoundTag tags, HolderLookup.Provider registries) {
     super.load(tags, registries);
-    if (tags.contains(TAG_ITEM, Tag.TAG_COMPOUND)) {
-      itemHandler.readFromNBT(tags.getCompound(TAG_ITEM), registries);
+    if (tags.getCompound(TAG_ITEM).isPresent()) {
+      itemHandler.readFromNBT(tags.getCompoundOrEmpty(TAG_ITEM), registries);
     }
   }
 
   @Override
   public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
     super.handleUpdateTag(tag, registries);
-    if (level != null && level.isClientSide) {
+    if (level != null && level.isClientSide()) {
       updateFluid();
     }
   }

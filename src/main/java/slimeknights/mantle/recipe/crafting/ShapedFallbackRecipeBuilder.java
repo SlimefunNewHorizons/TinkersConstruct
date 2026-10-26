@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.recipe.MantleRecipes;
 
@@ -20,14 +20,14 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(staticName = "fallback")
 public class ShapedFallbackRecipeBuilder {
   private final ShapedRecipeBuilder base;
-  private final List<ResourceLocation> alternatives = new ArrayList<>();
+  private final List<Identifier> alternatives = new ArrayList<>();
 
   /**
    * Adds a single alternative to this recipe. Any matching alternative causes this recipe to fail
    * @param location  Alternative
    * @return  Builder instance
    */
-  public ShapedFallbackRecipeBuilder addAlternative(ResourceLocation location) {
+  public ShapedFallbackRecipeBuilder addAlternative(Identifier location) {
     this.alternatives.add(location);
     return this;
   }
@@ -37,7 +37,7 @@ public class ShapedFallbackRecipeBuilder {
    * @param locations  Alternative list
    * @return  Builder instance
    */
-  public ShapedFallbackRecipeBuilder addAlternatives(Collection<ResourceLocation> locations) {
+  public ShapedFallbackRecipeBuilder addAlternatives(Collection<Identifier> locations) {
     this.alternatives.addAll(locations);
     return this;
   }
@@ -55,16 +55,16 @@ public class ShapedFallbackRecipeBuilder {
    * @param consumer  Recipe consumer
    * @param id        Recipe ID
    */
-  public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void build(Consumer<FinishedRecipe> consumer, Identifier id) {
     base.save(base -> consumer.accept(new Result(base, alternatives)), id);
   }
 
-  private record Result(FinishedRecipe base, List<ResourceLocation> alternatives) implements FinishedRecipe {
+  private record Result(FinishedRecipe base, List<Identifier> alternatives) implements FinishedRecipe {
     @Override
     public void serializeRecipeData(JsonObject json) {
       base.serializeRecipeData(json);
       json.add("alternatives", alternatives.stream()
-                                           .map(ResourceLocation::toString)
+                                           .map(Identifier::toString)
                                            .collect(JsonArray::new, JsonArray::add, JsonArray::addAll));
     }
 
@@ -74,7 +74,7 @@ public class ShapedFallbackRecipeBuilder {
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
       return base.getId();
     }
 
@@ -86,7 +86,7 @@ public class ShapedFallbackRecipeBuilder {
 
     @Nullable
     @Override
-    public ResourceLocation getAdvancementId() {
+    public Identifier getAdvancementId() {
       return base.getAdvancementId();
     }
   }

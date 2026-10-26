@@ -1,5 +1,6 @@
 package slimeknights.mantle.fluid.transfer;
 
+import slimeknights.mantle.Mantle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -8,7 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.JsonOps;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -20,7 +21,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -46,7 +47,7 @@ public class FluidContainerTransferManager extends SimpleJsonResourceReloadListe
   public static final String FOLDER = "mantle/fluid_transfer";
   /** GSON instance */
   public static final Gson GSON = (new GsonBuilder())
-    .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+    .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
     .registerTypeHierarchyAdapter(IFluidContainerTransfer.class, TRANSFER_LOADERS)
     .setPrettyPrinting()
     .disableHtmlEscaping()
@@ -83,8 +84,8 @@ public class FluidContainerTransferManager extends SimpleJsonResourceReloadListe
 
   /** For internal use only */
   public void init() {
-    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddReloadListenerEvent.class, e -> {
-      e.addListener(this);
+    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddServerReloadListenersEvent.class, e -> {
+      e.addListener(Mantle.getResource("fluid_container_transfer"), this);
       this.context = e.getConditionContext();
     });
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, OnDatapackSyncEvent.class, e -> JsonHelper.syncPackets(e, MantleNetwork.INSTANCE, new FluidContainerTransferPacket(this.getContainerItems())));
@@ -92,7 +93,7 @@ public class FluidContainerTransferManager extends SimpleJsonResourceReloadListe
 
   /** Loads transfer from JSON */
   @Nullable
-  private IFluidContainerTransfer loadFluidTransfer(ResourceLocation key, JsonObject json) {
+  private IFluidContainerTransfer loadFluidTransfer(Identifier key, JsonObject json) {
     try {
       if (!json.has("conditions") || ICondition.LIST_CODEC.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonArray(json, "conditions"))
           .getOrThrow(JsonSyntaxException::new).stream().allMatch(condition -> condition.test(context))) {
@@ -105,7 +106,7 @@ public class FluidContainerTransferManager extends SimpleJsonResourceReloadListe
   }
 
   @Override
-  protected void apply(Map<ResourceLocation,JsonElement> splashList, ResourceManager manager, ProfilerFiller profiler) {
+  protected void apply(Map<Identifier,JsonElement> splashList, ResourceManager manager, ProfilerFiller profiler) {
     long time = System.nanoTime();
     this.transfers = splashList.entrySet().stream()
                                .map(entry -> loadFluidTransfer(entry.getKey(), entry.getValue().getAsJsonObject()))

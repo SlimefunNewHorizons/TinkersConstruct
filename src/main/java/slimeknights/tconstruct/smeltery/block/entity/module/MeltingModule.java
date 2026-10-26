@@ -80,7 +80,7 @@ public class MeltingModule implements IMeltingContainer, ContainerData {
   public void setStack(ItemStack newStack) {
     // send a slot update to the client when items change, so we can update the TESR
     Level world = parent.getLevel();
-    if (slotIndex != -1 && world != null && !world.isClientSide && !ItemStack.matches(stack, newStack)) {
+    if (slotIndex != -1 && world != null && !world.isClientSide() && !ItemStack.matches(stack, newStack)) {
       TinkerNetwork.getInstance().sendToClientsAround(new InventorySlotSyncPacket(newStack, slotIndex, parent.getBlockPos()), world, parent.getBlockPos());
     }
 
@@ -227,9 +227,9 @@ public class MeltingModule implements IMeltingContainer, ContainerData {
   public void readFromTag(CompoundTag nbt, HolderLookup.Provider registries) {
     stack = ItemStack.parseOptional(registries, nbt);
     if (!stack.isEmpty()) {
-      currentTime = nbt.getInt(TAG_CURRENT_TIME);
-      requiredTime = nbt.getInt(TAG_REQUIRED_TIME);
-      requiredTemp = nbt.getInt(TAG_REQUIRED_TEMP);
+      currentTime = nbt.getIntOr(TAG_CURRENT_TIME, 0);
+      requiredTime = nbt.getIntOr(TAG_REQUIRED_TIME, 0);
+      requiredTemp = nbt.getIntOr(TAG_REQUIRED_TEMP, 0);
     }
   }
 

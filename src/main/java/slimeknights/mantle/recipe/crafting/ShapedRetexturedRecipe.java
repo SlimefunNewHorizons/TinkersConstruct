@@ -13,7 +13,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -38,7 +38,7 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
   private final Ingredient texture;
   private final boolean matchAll;
 
-  protected ShapedRetexturedRecipe(ResourceLocation ignoredId, String group, CraftingBookCategory category, int width, int height,
+  protected ShapedRetexturedRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
                                    NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification,
                                    Ingredient texture, boolean matchAll) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), result, showNotification);

@@ -3,7 +3,7 @@ package slimeknights.tconstruct.common.data.tags;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -65,7 +65,7 @@ public class EntityTypeTagProvider extends EntityTypeTagsProvider {
     this.tag(TinkerTags.EntityTypes.ENDERFERENCE_ARROW_BLACKLIST).addTag(TRIDENTS);
     // prevent dummy from healing you with necrotic
     this.tag(NECROTIC_BLACKLIST)
-      .addOptional(ResourceLocation.fromNamespaceAndPath("dummmmmmy", "target_dummy"))
+      .addOptional(Identifier.fromNamespaceAndPath("dummmmmmy", "target_dummy"))
       .addOptionalTag(commonResource(NECROTIC_BLACKLIST.location().getPath()));
 
     // melting

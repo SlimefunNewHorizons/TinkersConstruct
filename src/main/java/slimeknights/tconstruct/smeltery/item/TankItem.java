@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -58,7 +58,7 @@ public class TankItem extends BlockTooltipItem {
   private static boolean isFilled(ItemStack stack) {
     // has a container if not empty
     CompoundTag nbt = ItemStackUtil.getTag(stack);
-    return nbt != null && nbt.contains(NBTTags.TANK, Tag.TAG_COMPOUND);
+    return nbt != null && nbt.getCompound(NBTTags.TANK).isPresent();
   }
 
   @Override
@@ -117,7 +117,7 @@ public class TankItem extends BlockTooltipItem {
           // update held tank and slot item if something changed
           if (result != null) {
             // play sound
-            if (player.level().isClientSide) {
+            if (player.level().isClientSide()) {
               player.playSound(result.getSound());
             }
             // update stack
@@ -185,7 +185,7 @@ public class TankItem extends BlockTooltipItem {
         TransferResult result = FluidTransferHelper.interactWithStack(tank, held, TransferDirection.AUTO);
         if (result != null) {
           // play sound
-          if (player.level().isClientSide) {
+          if (player.level().isClientSide()) {
             player.playSound(result.getSound());
           }
           // update tank
@@ -258,11 +258,11 @@ public class TankItem extends BlockTooltipItem {
 
   /** Gets the serialized fluid stack from a tank tag, accepting both supported layouts. */
   private static CompoundTag unwrapFluidTag(CompoundTag nbt) {
-    return nbt.contains(FLUID_TAG, Tag.TAG_COMPOUND) ? nbt.getCompound(FLUID_TAG) : nbt;
+    return nbt.getCompound(FLUID_TAG).isPresent() ? nbt.getCompound(FLUID_TAG) : nbt;
   }
 
   /** Creates a stack with the given fluid and amount, not validated. */
-  private static ItemStack setTank(ItemLike item, ResourceLocation fluid, int amount) {
+  private static ItemStack setTank(ItemLike item, Identifier fluid, int amount) {
     Fluid value = BuiltInRegistries.FLUID.get(fluid);
     return value == null ? new ItemStack(item) : setTank(new ItemStack(item), new FluidStack(value, amount));
   }
@@ -294,7 +294,7 @@ public class TankItem extends BlockTooltipItem {
     if (nbt != null) {
       // the NBT stores the fluid of a single tank; scale it to represent the whole stack,
       // matching the scaled capacity (like ScaledFluidTank#readFromNBT did before 1.21)
-      FluidStack fluid = readFluid(RegistryAccessUtil.BUILTIN, nbt.getCompound(NBTTags.TANK));
+      FluidStack fluid = readFluid(RegistryAccessUtil.BUILTIN, nbt.getCompoundOrEmpty(NBTTags.TANK));
       if (!fluid.isEmpty()) {
         fluid.setAmount(fluid.getAmount() * scale);
       }
@@ -310,12 +310,12 @@ public class TankItem extends BlockTooltipItem {
    */
   public static String getSubtype(ItemStack stack) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
-    if (nbt != null && nbt.contains(NBTTags.TANK, Tag.TAG_COMPOUND)) {
-      CompoundTag tank = unwrapFluidTag(nbt.getCompound(NBTTags.TANK));
-      if (tank.contains("id", Tag.TAG_STRING)) {
-        return tank.getString("id");
+    if (nbt != null && nbt.getCompound(NBTTags.TANK).isPresent()) {
+      CompoundTag tank = unwrapFluidTag(nbt.getCompoundOrEmpty(NBTTags.TANK));
+      if (tank.getString("id").isPresent()) {
+        return tank.getStringOr("id", "");
       }
-      return tank.getString("FluidName");
+      return tank.getStringOr("FluidName", "");
     }
     return "";
   }
@@ -336,7 +336,7 @@ public class TankItem extends BlockTooltipItem {
         tank = TankType.FUEL_TANK;
         gauge = TankType.FUEL_GAUGE;
       }
-      ResourceLocation fluidName = holder.key().location();
+      Identifier fluidName = holder.key().location();
       output.accept(setTank(TinkerSmeltery.searedLantern, fluidName, FluidValues.LANTERN_CAPACITY));
       output.accept(fillTank(TinkerSmeltery.searedTank, tank, fluidName));
       output.accept(fillTank(TinkerSmeltery.searedTank, gauge, fluidName));
@@ -352,7 +352,7 @@ public class TankItem extends BlockTooltipItem {
   }
 
   /** Fills a tank stack with the given fluid */
-  public static ItemStack fillTank(EnumObject<TankType,? extends ItemLike> tank, TankType type, ResourceLocation fluid) {
+  public static ItemStack fillTank(EnumObject<TankType,? extends ItemLike> tank, TankType type, Identifier fluid) {
     return setTank(tank.get(type), fluid, type.getCapacity());
   }
 }

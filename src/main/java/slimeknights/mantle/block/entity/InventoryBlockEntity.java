@@ -193,7 +193,7 @@ public abstract class InventoryBlockEntity extends NameableBlockEntity implement
   protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
     super.loadAdditional(tags, registries);
     if (saveSizeToNBT) {
-      this.resizeInternal(tags.getInt(TAG_INVENTORY_SIZE));
+      this.resizeInternal(tags.getIntOr(TAG_INVENTORY_SIZE, 0));
     }
     this.readInventoryFromNBT(tags, registries);
   }
@@ -235,12 +235,12 @@ public abstract class InventoryBlockEntity extends NameableBlockEntity implement
    * Reads an inventory from the tag. Overwrites current content
    */
   public void readInventoryFromNBT(CompoundTag tag, HolderLookup.Provider registries) {
-    ListTag list = tag.getList(TAG_ITEMS, Tag.TAG_COMPOUND);
+    ListTag list = tag.getListOrEmpty(TAG_ITEMS);
 
     int limit = this.getMaxStackSize();
     ItemStack stack;
     for (int i = 0; i < list.size(); ++i) {
-      CompoundTag itemTag = list.getCompound(i);
+      CompoundTag itemTag = list.getCompoundOrEmpty(i);
       int slot = itemTag.getByte(TAG_SLOT) & 255;
       if (slot < this.inventory.size()) {
         stack = ItemStack.parseOptional(registries, itemTag);

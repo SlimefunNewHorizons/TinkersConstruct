@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import slimeknights.mantle.block.entity.IRetexturedBlockEntity;
 import slimeknights.mantle.util.RetexturedHelper;
 import slimeknights.tconstruct.shared.block.entity.TableBlockEntity;
@@ -45,7 +45,7 @@ public abstract class RetexturedTableBlockEntity extends TableBlockEntity implem
 
   private void textureUpdated() {
     // update the texture in BE data
-    if (level != null && level.isClientSide) {
+    if (level != null && level.isClientSide()) {
       Block normalizedTexture = texture == Blocks.AIR ? null : texture;
       ModelData data = getModelData();
       if (data.get(RetexturedHelper.BLOCK_PROPERTY) != normalizedTexture) {
@@ -77,8 +77,8 @@ public abstract class RetexturedTableBlockEntity extends TableBlockEntity implem
   @Override
   public void load(CompoundTag tags) {
     super.load(tags);
-    if (tags.contains(TAG_TEXTURE, Tag.TAG_STRING)) {
-      texture = RetexturedHelper.getBlock(tags.getString(TAG_TEXTURE));
+    if (tags.getString(TAG_TEXTURE).isPresent()) {
+      texture = RetexturedHelper.getBlock(tags.getStringOr(TAG_TEXTURE, ""));
       textureUpdated();
     }
   }

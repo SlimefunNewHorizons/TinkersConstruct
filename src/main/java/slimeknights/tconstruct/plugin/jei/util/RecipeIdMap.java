@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.plugin.jei.util;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 /** Keeps the holder-owned recipe IDs attached to recipes expanded for JEI display. */
 public final class RecipeIdMap {
-  private static final Map<Object,ResourceLocation> RECIPE_IDS = new IdentityHashMap<>();
+  private static final Map<Object,Identifier> RECIPE_IDS = new IdentityHashMap<>();
 
   private RecipeIdMap() {}
 
@@ -30,7 +30,7 @@ public final class RecipeIdMap {
 
   /** Gets the real data pack ID for a recipe registered with JEI. */
   @Nullable
-  public static ResourceLocation getRecipeId(Object recipe, @Nullable ResourceLocation fallback) {
+  public static Identifier getRecipeId(Object recipe, @Nullable Identifier fallback) {
     return RECIPE_IDS.getOrDefault(recipe, fallback);
   }
 

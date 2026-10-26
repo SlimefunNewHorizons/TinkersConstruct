@@ -53,7 +53,7 @@ public class EquipmentChangeWatcher {
   private static void onPlayerTick(PlayerTickEvent.Post event) {
     // only run for client side players every 5 ticks
     Player player = event.getEntity();
-    if (player.level().isClientSide) {
+    if (player.level().isClientSide()) {
       CLIENT_WATCHERS.computeIfAbsent(player, PlayerLastEquipment::new).update();
     }
   }

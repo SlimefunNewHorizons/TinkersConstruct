@@ -3,7 +3,7 @@ package slimeknights.mantle.recipe.cooking;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.datafixers.util.Function7;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.CookingBookCategory;
@@ -59,9 +59,9 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
 
 
   /**
-   * Sets the type of {@link #save(Consumer, ResourceLocation)} for the sake of {@link net.neoforged.neoforge.common.crafting.ConditionalRecipe}.
-   * Note you can also just directly use {@link #saveSmelting(Consumer, ResourceLocation)}, {@link #saveBlasting(Consumer, ResourceLocation)},
-   * {@link #saveSmoking(Consumer, ResourceLocation)}, and {@link #saveCampfire(Consumer, ResourceLocation)} directly.
+   * Sets the type of {@link #save(Consumer, Identifier)} for the sake of {@link net.neoforged.neoforge.common.crafting.ConditionalRecipe}.
+   * Note you can also just directly use {@link #saveSmelting(Consumer, Identifier)}, {@link #saveBlasting(Consumer, Identifier)},
+   * {@link #saveSmoking(Consumer, Identifier)}, and {@link #saveCampfire(Consumer, Identifier)} directly.
    */
   public T type(CookingType type) {
     this.type = type;
@@ -99,32 +99,32 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
 
   /** Helper to save a recipe */
   @SuppressWarnings("unchecked")
-  private <R extends Recipe<?>> T save(Consumer<FinishedRecipe> consumer, ResourceLocation id, RecordLoadable<R> loadable, Function7<ResourceLocation,String,CookingBookCategory,Ingredient,ItemOutput,Float,Integer,R> constructor, int cookingTime) {
+  private <R extends Recipe<?>> T save(Consumer<FinishedRecipe> consumer, Identifier id, RecordLoadable<R> loadable, Function7<Identifier,String,CookingBookCategory,Ingredient,ItemOutput,Float,Integer,R> constructor, int cookingTime) {
     if (ingredient == Ingredient.EMPTY) {
       throw new IllegalStateException("Ingredient must be set");
     }
-    ResourceLocation advancementID = buildOptionalAdvancement(id, "cooking");
+    Identifier advancementID = buildOptionalAdvancement(id, "cooking");
     consumer.accept(new LoadableFinishedRecipe<>(constructor.apply(id, group, category, ingredient, result, experience, cookingTime), loadable, advancementID));
     return (T) this;
   }
 
   /** Saves the smelting recipe */
-  public T saveSmelting(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveSmelting(Consumer<FinishedRecipe> consumer, Identifier id) {
     return save(consumer, id, SmeltingResultRecipe.LOADABLE, SmeltingResultRecipe::new, cookingTime);
   }
 
   /** Saves the blasting recipe */
-  public T saveBlasting(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveBlasting(Consumer<FinishedRecipe> consumer, Identifier id) {
     return save(consumer, id, BlastingResultRecipe.LOADABLE, BlastingResultRecipe::new, cookingTime / 2);
   }
 
   /** Saves the smoking recipe */
-  public T saveSmoking(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveSmoking(Consumer<FinishedRecipe> consumer, Identifier id) {
     return save(consumer, id, SmokingResultRecipe.LOADABLE, SmokingResultRecipe::new, cookingTime / 2);
   }
 
   /** Saves the campfire recipe */
-  public T saveCampfire(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveCampfire(Consumer<FinishedRecipe> consumer, Identifier id) {
     return save(consumer, id, CampfireResultRecipe.LOADABLE, CampfireResultRecipe::new, cookingTime * 3);
   }
 
@@ -134,7 +134,7 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(Consumer<FinishedRecipe> consumer, Identifier id) {
     switch (type) {
       case SMELTING -> saveSmelting(consumer, id);
       case BLASTING -> saveBlasting(consumer, id);
@@ -143,6 +143,6 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
     }
   }
 
-  /** Helper to change the cooking type in {@link #save(Consumer, ResourceLocation)} for the sake of {@link net.neoforged.neoforge.common.crafting.ConditionalRecipe} */
+  /** Helper to change the cooking type in {@link #save(Consumer, Identifier)} for the sake of {@link net.neoforged.neoforge.common.crafting.ConditionalRecipe} */
   public enum CookingType { SMELTING, BLASTING, SMOKING, CAMPFIRE }
 }

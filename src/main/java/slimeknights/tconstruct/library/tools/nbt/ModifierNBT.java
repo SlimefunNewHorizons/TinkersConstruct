@@ -235,7 +235,7 @@ public class ModifierNBT implements Iterable<ModifierEntry> {
 
     ImmutableList.Builder<ModifierEntry> builder = ImmutableList.builder();
     for (int i = 0; i < listNBT.size(); i++) {
-      ModifierEntry entry = ModifierEntry.readFromNBT(listNBT.getCompound(i));
+      ModifierEntry entry = ModifierEntry.readFromNBT(listNBT.getCompoundOrEmpty(i));
       if (entry != ModifierEntry.EMPTY) {
         builder.add(entry);
       }

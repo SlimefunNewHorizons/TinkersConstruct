@@ -1,6 +1,6 @@
 package slimeknights.tconstruct.tools;
 
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -39,7 +39,7 @@ class MobLootToolEncodingTest extends BaseMcTest {
     // of a network NBT string into a UTFDataFormatException.
     assertThatThrownBy(() -> {
       MaterialVariantId.create(ANCIENT, "远古");
-    }).isInstanceOf(ResourceLocationException.class);
+    }).isInstanceOf(IdentifierException.class);
     assertThat(MaterialVariantId.create(ANCIENT, "head").toString()).isEqualTo("tconstruct:ancient#head");
     assertThat(MaterialId.tryParse("tconstruct:ancient#头")).isNull();
   }

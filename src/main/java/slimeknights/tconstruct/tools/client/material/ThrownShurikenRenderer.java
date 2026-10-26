@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -37,7 +37,7 @@ public class ThrownShurikenRenderer<T extends Projectile & ToolProjectile> exten
   }
 
   @Override
-  public ResourceLocation getTextureLocation(T pEntity) {
+  public Identifier getTextureLocation(T pEntity) {
     return InventoryMenu.BLOCK_ATLAS;
   }
 }

@@ -1,6 +1,6 @@
 package slimeknights.mantle;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
@@ -200,11 +200,11 @@ public class Mantle {
         LivingEntityPredicate.LOADER.register(getResource("mob_type"), MobTypePredicate.LOADER);
         LivingEntityPredicate.LOADER.register(getResource("has_enchantment"), HasEnchantmentEntityPredicate.LOADER);
         // register mob types
-        MobTypePredicate.MOB_TYPES.register(ResourceLocation.parse("undefined"), MobTypePredicate.UNDEFINED);
-        MobTypePredicate.MOB_TYPES.register(ResourceLocation.parse("undead"), MobTypePredicate.UNDEAD);
-        MobTypePredicate.MOB_TYPES.register(ResourceLocation.parse("arthropod"), MobTypePredicate.ARTHROPOD);
-        MobTypePredicate.MOB_TYPES.register(ResourceLocation.parse("illager"), MobTypePredicate.ILLAGER);
-        MobTypePredicate.MOB_TYPES.register(ResourceLocation.parse("water"), MobTypePredicate.WATER);
+        MobTypePredicate.MOB_TYPES.register(Identifier.parse("undefined"), MobTypePredicate.UNDEFINED);
+        MobTypePredicate.MOB_TYPES.register(Identifier.parse("undead"), MobTypePredicate.UNDEAD);
+        MobTypePredicate.MOB_TYPES.register(Identifier.parse("arthropod"), MobTypePredicate.ARTHROPOD);
+        MobTypePredicate.MOB_TYPES.register(Identifier.parse("illager"), MobTypePredicate.ILLAGER);
+        MobTypePredicate.MOB_TYPES.register(Identifier.parse("water"), MobTypePredicate.WATER);
 
         // damage predicates
         // simple
@@ -243,8 +243,8 @@ public class Mantle {
    * @param name  Name
    * @return  Resource location instance
    */
-  public static ResourceLocation getResource(String name) {
-    return ResourceLocation.fromNamespaceAndPath(modId, name);
+  public static Identifier getResource(String name) {
+    return Identifier.fromNamespaceAndPath(modId, name);
   }
 
   /**
@@ -252,8 +252,8 @@ public class Mantle {
    * @param name  Name
    * @return  Resource location instance
    */
-  public static ResourceLocation commonResource(String name) {
-    return ResourceLocation.fromNamespaceAndPath(COMMON, name);
+  public static Identifier commonResource(String name) {
+    return Identifier.fromNamespaceAndPath(COMMON, name);
   }
 
   /**

@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class InventoryModuleTest extends BaseMcTest {
-  private static final ResourceLocation KEY = ResourceLocation.fromNamespaceAndPath("test", "inventory");
+  private static final Identifier KEY = Identifier.fromNamespaceAndPath("test", "inventory");
   private final InventoryModule inventory = InventoryModule.builder().key(KEY).flatSlots(2);
   private IToolStackView tool;
   private ModifierEntry modifier;

@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -83,14 +83,14 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
 
   private static Fluid resolveTag(String name, Set<String> visited) throws IOException {
     if (!visited.add(name)) return Fluids.EMPTY;
-    ResourceLocation id = ResourceLocation.parse(name);
+    Identifier id = Identifier.parse(name);
     Path tag = DATA.resolve(id.getNamespace() + "/tags/fluid/" + id.getPath() + ".json");
     if (!Files.exists(tag)) return Fluids.EMPTY;
     JsonArray values = JsonParser.parseString(Files.readString(tag)).getAsJsonObject().getAsJsonArray("values");
     for (JsonElement element : values) {
       String value = element.isJsonPrimitive() ? element.getAsString() : element.getAsJsonObject().get("id").getAsString();
       Fluid fluid = value.startsWith("#") ? resolveTag(value.substring(1), visited)
-        : BuiltInRegistries.FLUID.get(ResourceLocation.parse(value));
+        : BuiltInRegistries.FLUID.get(Identifier.parse(value));
       if (fluid != Fluids.EMPTY) return fluid;
     }
     return Fluids.EMPTY;
@@ -125,7 +125,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
     }
   }
 
-  private static Recipe<?> roundTrip(ResourceLocation id, Recipe<?> recipe) {
+  private static Recipe<?> roundTrip(Identifier id, Recipe<?> recipe) {
     var buffer = registryBuffer();
     try {
       RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(id, recipe));
@@ -136,7 +136,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
   }
 
   private static void assertFluid(FluidStack actual, JsonObject expected, int amount) {
-    assertThat(actual.getFluid()).isSameAs(BuiltInRegistries.FLUID.get(ResourceLocation.parse(expected.get("fluid").getAsString())));
+    assertThat(actual.getFluid()).isSameAs(BuiltInRegistries.FLUID.get(Identifier.parse(expected.get("fluid").getAsString())));
     assertThat(actual.getAmount()).isEqualTo(amount);
   }
 
@@ -162,7 +162,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
     Level level = mock(Level.class);
     RecipeManager manager = mock(RecipeManager.class);
     when(level.getRecipeManager()).thenReturn(manager);
-    RecipeHolder<IMeltingRecipe> holder = new RecipeHolder<>(ResourceLocation.parse("tconstruct:test_machine_output"), recipe);
+    RecipeHolder<IMeltingRecipe> holder = new RecipeHolder<>(Identifier.parse("tconstruct:test_machine_output"), recipe);
     when(manager.getRecipeFor(TinkerRecipeTypes.MELTING.get(), module, level)).thenReturn(Optional.of(holder));
     machine.setLevel(level);
     machine.getMeltingInventory().setStackInSlot(0, stack.copy());
@@ -174,7 +174,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
     assertThat(machine.getMeltingInventory().getStackInSlot(0).isEmpty()).as("successful melting consumes the input").isTrue();
 
     Map<Fluid,Integer> expected = new LinkedHashMap<>();
-    expected.put(BuiltInRegistries.FLUID.get(ResourceLocation.parse(result.get("fluid").getAsString())), amount);
+    expected.put(BuiltInRegistries.FLUID.get(Identifier.parse(result.get("fluid").getAsString())), amount);
     if (foundry) {
       for (FluidStack byproduct : byproducts) {
         if (!byproduct.isEmpty()) expected.merge(byproduct.getFluid(), byproduct.getAmount(), Integer::sum);
@@ -288,7 +288,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
           }
           if (type.equals("tconstruct:entity_melting")) json.add("entity", JsonParser.parseString("{\"type\":\"minecraft:pig\"}"));
           Recipe<?> parsed = Recipe.CODEC.parse(ops, json).getOrThrow();
-          ResourceLocation id = ResourceLocation.fromNamespaceAndPath("tconstruct", recipes.relativize(file).toString().replace('\\', '/').replace(".json", ""));
+          Identifier id = Identifier.fromNamespaceAndPath("tconstruct", recipes.relativize(file).toString().replace('\\', '/').replace(".json", ""));
           for (Recipe<?> recipe : List.of(parsed, roundTrip(id, parsed))) {
             if (recipe instanceof IMeltingRecipe melting) {
               assertMelting(melting, json, type);

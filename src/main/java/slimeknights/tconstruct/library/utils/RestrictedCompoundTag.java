@@ -103,7 +103,7 @@ public class RestrictedCompoundTag {
     if (restrictedKeys.contains(name)) {
       return new CompoundTag();
     }
-    return tag.getCompound(name);
+    return tag.getCompoundOrEmpty(name);
   }
 
   /**
@@ -115,7 +115,7 @@ public class RestrictedCompoundTag {
     if (restrictedKeys.contains(name)) {
       return new ListTag();
     }
-    return tag.getList(name, type);
+    return tag.getListOrEmpty(name);
   }
 
 

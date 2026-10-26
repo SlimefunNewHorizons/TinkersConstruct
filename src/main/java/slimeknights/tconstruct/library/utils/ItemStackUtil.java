@@ -78,15 +78,15 @@ public final class ItemStackUtil {
   @Nullable
   public static CompoundTag getTagElement(ItemStack stack, String key) {
     CompoundTag tag = getTag(stack);
-    return tag != null && tag.contains(key, Tag.TAG_COMPOUND) ? tag.getCompound(key) : null;
+    return tag != null && tag.getCompound(key).isPresent() ? tag.getCompound(key) : null;
   }
 
   public static CompoundTag getOrCreateTagElement(ItemStack stack, String key) {
     CompoundTag tag = getOrCreateTag(stack);
-    if (!tag.contains(key, Tag.TAG_COMPOUND)) {
+    if (!tag.getCompound(key).isPresent()) {
       tag.put(key, new CompoundTag());
     }
-    return tag.getCompound(key);
+    return tag.getCompoundOrEmpty(key);
   }
 
   public static void removeTagKey(ItemStack stack, String key) {
@@ -166,7 +166,7 @@ public final class ItemStackUtil {
     int count = 0;
     if (tag instanceof CompoundTag compound) {
       // copy the keys first, the loop may replace values
-      for (String key : new ArrayList<>(compound.getAllKeys())) {
+      for (String key : new ArrayList<>(compound.keySet())) {
         Tag value = compound.get(key);
         if (value instanceof StringTag string) {
           String text = string.getAsString();

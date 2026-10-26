@@ -2,7 +2,7 @@ package slimeknights.mantle.data.loadable.common;
 
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import slimeknights.mantle.data.loadable.Loadable;
 import slimeknights.mantle.data.loadable.mapping.EnumMapLoadable;
@@ -16,9 +16,9 @@ public enum DisplayContextLoadable implements ResourceLocationLoadable<ItemDispl
   INSTANCE;
 
   @Override
-  public ItemDisplayContext fromKey(ResourceLocation name, String key, TypedMap context) {
+  public ItemDisplayContext fromKey(Identifier name, String key, TypedMap context) {
     for (ItemDisplayContext value : ItemDisplayContext.values()) {
-      if (ResourceLocation.parse(value.getSerializedName()).equals(name)) {
+      if (Identifier.parse(value.getSerializedName()).equals(name)) {
         return value;
       }
     }
@@ -26,8 +26,8 @@ public enum DisplayContextLoadable implements ResourceLocationLoadable<ItemDispl
   }
 
   @Override
-  public ResourceLocation getKey(ItemDisplayContext object) {
-    return ResourceLocation.parse(object.getSerializedName());
+  public Identifier getKey(ItemDisplayContext object) {
+    return Identifier.parse(object.getSerializedName());
   }
 
   @Override

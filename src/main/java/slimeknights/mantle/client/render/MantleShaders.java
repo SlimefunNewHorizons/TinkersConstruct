@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 /** Handles any custom shaders registered by Mantle. */
-@EventBusSubscriber(modid = Mantle.modId, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Mantle.modId, value = Dist.CLIENT)
 public class MantleShaders {
   @Nullable
   @Getter

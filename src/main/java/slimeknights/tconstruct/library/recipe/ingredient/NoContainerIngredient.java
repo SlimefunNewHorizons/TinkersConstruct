@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.recipe.ingredient;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 /** Ingredient matching an item with no container item, used to ensure NBT fluid items are empty */
 public class NoContainerIngredient extends NestedIngredient {
-  public static final ResourceLocation ID = TConstruct.getResource("no_container");
+  public static final Identifier ID = TConstruct.getResource("no_container");
   public static final MapCodec<NoContainerIngredient> CODEC = Ingredient.CODEC_NONEMPTY.fieldOf("match")
     .xmap(NoContainerIngredient::new, ingredient -> ingredient.nested);
   public static final StreamCodec<RegistryFriendlyByteBuf,NoContainerIngredient> STREAM_CODEC = StreamCodec.composite(

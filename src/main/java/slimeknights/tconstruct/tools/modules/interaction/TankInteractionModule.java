@@ -68,7 +68,7 @@ public record TankInteractionModule(@Nullable InteractionSource source) implemen
     }
 
     // only the server needs to deal with actually handling stuff
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       Player player = context.getPlayer();
       boolean sneaking = player != null && player.isShiftKeyDown();
       FluidStack fluidStack = TANK_HELPER.getFluid(tool);
@@ -104,6 +104,6 @@ public record TankInteractionModule(@Nullable InteractionSource source) implemen
         world.playSound(null, target, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
       }
     }
-    return InteractionResult.sidedSuccess(world.isClientSide);
+    return InteractionResult.SUCCESS;
   }
 }

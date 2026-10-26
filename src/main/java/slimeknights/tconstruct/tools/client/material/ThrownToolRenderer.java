@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.inventory.InventoryMenu;
 import slimeknights.tconstruct.library.TinkerItemDisplays;
 import slimeknights.tconstruct.tools.entity.ThrownTool;
@@ -35,7 +35,7 @@ public class ThrownToolRenderer<T extends AbstractArrow & ToolProjectile> extend
   }
 
   @Override
-  public ResourceLocation getTextureLocation(T entity) {
+  public Identifier getTextureLocation(T entity) {
     return InventoryMenu.BLOCK_ATLAS;
   }
 }

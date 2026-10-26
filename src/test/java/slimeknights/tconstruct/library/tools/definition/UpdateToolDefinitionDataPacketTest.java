@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.tools.definition;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.ItemAbilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,8 +48,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class UpdateToolDefinitionDataPacketTest extends BaseMcTest {
-  private static final ResourceLocation EMPTY_ID = new ResourceLocation("test", "empty");
-  private static final ResourceLocation FILLED_ID = new ResourceLocation("test", "filled");
+  private static final Identifier EMPTY_ID = new Identifier("test", "empty");
+  private static final Identifier FILLED_ID = new Identifier("test", "filled");
 
   @BeforeAll
   static void initialize() {
@@ -97,7 +97,7 @@ class UpdateToolDefinitionDataPacketTest extends BaseMcTest {
     UpdateToolDefinitionDataPacket decoded = new UpdateToolDefinitionDataPacket(buffer);
 
     // parse results
-    Map<ResourceLocation,ToolDefinitionData> parsedMap = decoded.getDataMap();
+    Map<Identifier,ToolDefinitionData> parsedMap = decoded.getDataMap();
     assertThat(parsedMap).hasSize(2);
 
     // first validate empty

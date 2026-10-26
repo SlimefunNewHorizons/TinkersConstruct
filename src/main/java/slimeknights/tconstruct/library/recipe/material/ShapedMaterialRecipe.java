@@ -12,7 +12,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -43,7 +43,7 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
   private MaterialValueIngredient material;
   private final List<MaterialVariantId> extraMaterials;
 
-  public ShapedMaterialRecipe(ResourceLocation ignoredId, String group, CraftingBookCategory category, int width, int height,
+  public ShapedMaterialRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
                               NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification,
                               List<MaterialVariantId> extraMaterials) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), result, showNotification);
@@ -56,7 +56,7 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
   }
 
   @Deprecated(forRemoval = true)
-  public ShapedMaterialRecipe(ResourceLocation id, String group, CraftingBookCategory category, int width, int height,
+  public ShapedMaterialRecipe(Identifier id, String group, CraftingBookCategory category, int width, int height,
                               NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification) {
     this(id, group, category, width, height, ingredients, result, showNotification, List.of());
   }

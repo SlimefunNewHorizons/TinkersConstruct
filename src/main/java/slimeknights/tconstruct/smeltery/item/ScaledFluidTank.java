@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -92,13 +92,13 @@ public class ScaledFluidTank extends FluidTank {
     // scale the fluid on reading from NBT; as each instance should store the fluid relative to stack size 1
     FluidStack fluid = FluidStack.parseOptional(registries, nbt);
     // Preserve tanks written before 1.20.5, which used FluidName/Amount/Tag.
-    if (fluid.isEmpty() && nbt.contains("FluidName", Tag.TAG_STRING)) {
-      ResourceLocation id = ResourceLocation.tryParse(nbt.getString("FluidName"));
+    if (fluid.isEmpty() && nbt.getString("FluidName").isPresent()) {
+      Identifier id = Identifier.tryParse(nbt.getStringOr("FluidName", ""));
       Fluid legacyFluid = id == null ? Fluids.EMPTY : BuiltInRegistries.FLUID.get(id);
       if (legacyFluid != null && legacyFluid != Fluids.EMPTY) {
         fluid = new FluidStack(legacyFluid, nbt.getInt("Amount"));
-        if (nbt.contains("Tag", Tag.TAG_COMPOUND)) {
-          FluidStackUtil.setTag(fluid, nbt.getCompound("Tag"));
+        if (nbt.getCompound("Tag").isPresent()) {
+          FluidStackUtil.setTag(fluid, nbt.getCompoundOrEmpty("Tag"));
         }
       }
     }

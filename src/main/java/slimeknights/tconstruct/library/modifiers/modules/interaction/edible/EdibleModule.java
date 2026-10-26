@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.interaction.edible;
 
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.loadable.record.SingletonLoader;
@@ -86,8 +86,8 @@ public enum EdibleModule implements ModifierModule, GeneralInteractionModifierHo
   }
 
   @Override
-  public UseAnim getUseAction(IToolStackView tool, ModifierEntry modifier) {
-    return UseAnim.EAT;
+  public ItemUseAnimation getUseAction(IToolStackView tool, ModifierEntry modifier) {
+    return ItemUseAnimation.EAT;
   }
 
   @Override
@@ -122,7 +122,7 @@ public enum EdibleModule implements ModifierModule, GeneralInteractionModifierHo
 
   @Override
   public void onUsingTick(IToolStackView tool, ModifierEntry modifier, LivingEntity entity, int useDuration, int timeLeft, ModifierEntry activeModifier) {
-    if (modifier != activeModifier && !entity.level().isClientSide) {
+    if (modifier != activeModifier && !entity.level().isClientSide()) {
       StatsNBT stats = tool.getStats();
       if (stats.getInt(HUNGER) > 0) {
         int useTime = useDuration - timeLeft;
@@ -137,7 +137,7 @@ public enum EdibleModule implements ModifierModule, GeneralInteractionModifierHo
 
   @Override
   public void beforeReleaseUsing(IToolStackView tool, ModifierEntry modifier, LivingEntity entity, int useDuration, int timeLeft, ModifierEntry activeModifier) {
-    if (!entity.level().isClientSide && !tool.isBroken() && entity instanceof Player player && player.canEat(false)) {
+    if (!entity.level().isClientSide() && !tool.isBroken() && entity instanceof Player player && player.canEat(false)) {
       StatsNBT stats = tool.getStats();
       if (stats.getInt(HUNGER) > 0 && useDuration - timeLeft == stats.getInt(EAT_DURATION)) {
         eat(tool, player, Util.getSlotType(entity.getUsedItemHand()));

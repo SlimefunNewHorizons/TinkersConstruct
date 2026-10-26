@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.tools.capability.fluid;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class ToolFluidCapability extends FluidModifierHookIterator<ModifierEntry> implements IFluidHandlerItem {
   /** Boolean key to set in volatile mod data to enable the fluid capability */
-  public static final ResourceLocation TOTAL_TANKS = TConstruct.getResource("total_tanks");
+  public static final Identifier TOTAL_TANKS = TConstruct.getResource("total_tanks");
 
   /** Modifier hook instance to make an inventory modifier */
   public static final ModuleHook<FluidModifierHook> HOOK = ModifierHooks.register(TConstruct.getResource("fluid"), FluidModifierHook.class, FluidModifierHookMerger::new, new FluidModifierHook() {

@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.tools.capability;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import slimeknights.mantle.registration.object.IdAwareObject;
 import slimeknights.tconstruct.TConstruct;
@@ -49,7 +49,7 @@ public class TinkerDataCapability {
   public static class TinkerDataKey<T> implements IdAwareObject {
     /** Name for debug */
     @Getter
-    private final ResourceLocation id;
+    private final Identifier id;
 
     @Override
     public String toString() {
@@ -60,13 +60,13 @@ public class TinkerDataCapability {
   /** Extension key that can automatically create an instance if missing */
   public static class ComputableDataKey<T> extends TinkerDataKey<T> implements Function<TinkerDataKey<?>, T> {
     private final Supplier<T> constructor;
-    private ComputableDataKey(ResourceLocation name, Supplier<T> constructor) {
+    private ComputableDataKey(Identifier name, Supplier<T> constructor) {
       super(name);
       this.constructor = constructor;
     }
 
     /** Creates a new instance */
-    public static <T> ComputableDataKey<T> of(ResourceLocation name, Supplier<T> constructor) {
+    public static <T> ComputableDataKey<T> of(Identifier name, Supplier<T> constructor) {
       return new ComputableDataKey<>(name, constructor);
     }
 

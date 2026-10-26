@@ -26,7 +26,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -137,7 +137,7 @@ import static slimeknights.mantle.Mantle.commonResource;
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
   /** Recipes that are meant as jokes and tend to confuse players, so are hidden */
-  private static final ResourceLocation[] EASTER_EGG_RECIPES = {
+  private static final Identifier[] EASTER_EGG_RECIPES = {
     TConstruct.getResource("tables/tinkers_forge"),
     TConstruct.getResource("tables/scorched_forge"),
     TConstruct.getResource("tables/seared_forge_material"),
@@ -146,7 +146,7 @@ public class JEIPlugin implements IModPlugin {
   public static IModIdHelper modIdHelper;
 
   @Override
-  public ResourceLocation getPluginUid() {
+  public Identifier getPluginUid() {
     return TConstructJEIConstants.PLUGIN;
   }
 

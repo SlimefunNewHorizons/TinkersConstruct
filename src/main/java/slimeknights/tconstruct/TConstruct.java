@@ -3,7 +3,7 @@ package slimeknights.tconstruct;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
@@ -57,7 +57,7 @@ import java.util.function.Supplier;
  */
 
 @Mod(TConstruct.MOD_ID)
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class TConstruct {
 
   public static final String MOD_ID = "tconstruct";
@@ -131,8 +131,8 @@ public class TConstruct {
    * @return  Location for tinkers
    */
   @SuppressWarnings("removal")
-  public static ResourceLocation getResource(String name) {
-    return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+  public static Identifier getResource(String name) {
+    return Identifier.fromNamespaceAndPath(MOD_ID, name);
   }
 
   /**

@@ -132,7 +132,7 @@ public class FaucetBlockEntity extends MantleBlockEntity {
    */
   public void activate() {
     // don't run on client
-    if (level == null || level.isClientSide) {
+    if (level == null || level.isClientSide()) {
       return;
     }
     // already pouring? we want to start
@@ -352,16 +352,16 @@ public class FaucetBlockEntity extends MantleBlockEntity {
   public void load(CompoundTag compound, HolderLookup.Provider registries) {
     super.load(compound, registries);
 
-    faucetState = FaucetState.fromIndex(compound.getByte(TAG_STATE));
-    stopPouring = compound.getBoolean(TAG_STOP);
-    lastRedstoneState = compound.getBoolean(TAG_LAST_REDSTONE);
+    faucetState = FaucetState.fromIndex(compound.getByteOr(TAG_STATE, (byte) 0));
+    stopPouring = compound.getBooleanOr(TAG_STOP, false);
+    lastRedstoneState = compound.getBooleanOr(TAG_LAST_REDSTONE, false);
     // fluids
-    if (compound.contains(TAG_DRAINED, Tag.TAG_COMPOUND)) {
+    if (compound.getCompound(TAG_DRAINED).isPresent()) {
       drained = FluidStack.parseOptional(registries, compound.getCompound(TAG_DRAINED));
     } else {
       drained = FluidStack.EMPTY;
     }
-    if (compound.contains(TAG_RENDER_FLUID, Tag.TAG_COMPOUND)) {
+    if (compound.getCompound(TAG_RENDER_FLUID).isPresent()) {
       renderFluid = FluidStack.parseOptional(registries, compound.getCompound(TAG_RENDER_FLUID));
     } else {
       renderFluid = FluidStack.EMPTY;

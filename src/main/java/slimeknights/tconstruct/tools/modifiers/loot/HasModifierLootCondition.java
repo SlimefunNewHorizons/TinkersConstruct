@@ -2,7 +2,7 @@ package slimeknights.tconstruct.tools.modifiers.loot;
 
 import com.mojang.serialization.MapCodec;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -16,7 +16,7 @@ import slimeknights.tconstruct.tools.TinkerModifiers;
 /** Condition to check if a held tool has the given modifier */
 @RequiredArgsConstructor
 public class HasModifierLootCondition implements LootItemCondition {
-  public static final MapCodec<HasModifierLootCondition> CODEC = ResourceLocation.CODEC
+  public static final MapCodec<HasModifierLootCondition> CODEC = Identifier.CODEC
     .xmap(id -> new HasModifierLootCondition(new ModifierId(id)), condition -> condition.modifier)
     .fieldOf("modifier");
   private final ModifierId modifier;

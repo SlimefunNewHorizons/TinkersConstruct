@@ -1,16 +1,16 @@
 package slimeknights.tconstruct.library.utils;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
  * Helper for use with our extensions of resource location for some type safety in IDs.
- * Note we left {@link ResourceLocation#withPath(String)} and alike as returning {@link ResourceLocation} as there is not much use extending an ID.
+ * Note we left {@link Identifier#withPath(String)} and alike as returning {@link Identifier} as there is not much use extending an ID.
  * @see IdParser
  */
-public abstract class ResourceId extends ResourceLocation {
+public abstract class ResourceId extends Identifier {
   /** Compatibility token retained for the typed ID subclasses. */
   protected static final class Dummy {}
 
@@ -18,7 +18,7 @@ public abstract class ResourceId extends ResourceLocation {
     super(namespace, path);
   }
 
-  public ResourceId(ResourceLocation location) {
+  public ResourceId(Identifier location) {
     this(location.getNamespace(), location.getPath(), null);
   }
 
@@ -27,7 +27,7 @@ public abstract class ResourceId extends ResourceLocation {
   }
 
   public ResourceId(String location) {
-    this(ResourceLocation.parse(location));
+    this(Identifier.parse(location));
   }
 
 
@@ -39,8 +39,8 @@ public abstract class ResourceId extends ResourceLocation {
    * @return  ID, or null if invalid
    */
   @Nullable
-  protected static <T extends ResourceLocation> T tryParse(String string, BiFunction<String,String,T> constructor) {
-    ResourceLocation location = ResourceLocation.tryParse(string);
+  protected static <T extends Identifier> T tryParse(String string, BiFunction<String,String,T> constructor) {
+    Identifier location = Identifier.tryParse(string);
     return location == null ? null : constructor.apply(location.getNamespace(), location.getPath());
   }
 
@@ -51,7 +51,7 @@ public abstract class ResourceId extends ResourceLocation {
    * @return  ID, or null if invalid
    */
   @Nullable
-  protected static <T extends ResourceLocation> T tryBuild(String namespace, String path, BiFunction<String,String,T> constructor) {
+  protected static <T extends Identifier> T tryBuild(String namespace, String path, BiFunction<String,String,T> constructor) {
     if (isValidNamespace(namespace) && isValidPath(path)) {
       return constructor.apply(namespace, path);
     }

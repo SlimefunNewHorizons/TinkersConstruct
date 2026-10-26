@@ -3,7 +3,7 @@ package slimeknights.tconstruct.fluids.item;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.tconstruct.library.utils.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -21,7 +21,7 @@ import slimeknights.tconstruct.TConstruct;
  */
 @Deprecated(forRemoval = true)
 public class EmptyPotionTransfer extends EmptyFluidWithNBTTransfer {
-  public static final ResourceLocation ID = TConstruct.getResource("empty_potion");
+  public static final Identifier ID = TConstruct.getResource("empty_potion");
   public EmptyPotionTransfer(Ingredient input, ItemOutput filled, FluidOutput fluid) {
     super(input, filled, fluid);
   }

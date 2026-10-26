@@ -18,7 +18,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.component.ItemLore;
 import slimeknights.mantle.client.book.repository.BookRepository;
@@ -144,7 +144,7 @@ public class IngredientData implements IDataElement {
         JsonPrimitive primitive = json.getAsJsonPrimitive();
 
         if(primitive.isString()) {
-          Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(primitive.getAsString()));
+          Item item = BuiltInRegistries.ITEM.get(Identifier.parse(primitive.getAsString()));
           return SizedIngredient.fromItems(item);
         }
       }

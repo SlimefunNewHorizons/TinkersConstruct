@@ -2,8 +2,8 @@ package slimeknights.mantle.client.model.builder;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.client.model.generators.template.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import slimeknights.mantle.Mantle;
@@ -15,7 +15,7 @@ import java.util.List;
 /** Builder for {@link slimeknights.mantle.client.model.FallbackModelLoader} */
 public class FallbackModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
   private final List<DomainModel<T>> models = new ArrayList<>();
-  public FallbackModelBuilder(ResourceLocation loaderId, T parent, ExistingFileHelper existingFileHelper) {
+  public FallbackModelBuilder(Identifier loaderId, T parent, ExistingFileHelper existingFileHelper) {
     super(Mantle.getResource("fallback"), parent, existingFileHelper, false);
   }
 

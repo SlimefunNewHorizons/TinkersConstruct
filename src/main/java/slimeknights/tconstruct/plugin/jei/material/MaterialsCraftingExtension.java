@@ -8,7 +8,7 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -72,7 +72,7 @@ public class MaterialsCraftingExtension<T extends CraftingRecipe & MaterialsCraf
 
   /** Sets the recipe in the builder */
   public static void setRecipe(IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper,
-                               ResourceLocation recipeId, CraftingRecipe recipe, List<ItemStack> result,
+                               Identifier recipeId, CraftingRecipe recipe, List<ItemStack> result,
                                ItemStack plainResult, @Nullable int[] materialSlots, int width, int height) {
     builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(plainResult);
 

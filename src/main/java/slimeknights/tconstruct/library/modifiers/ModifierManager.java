@@ -18,7 +18,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -30,7 +30,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
@@ -74,7 +74,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   /** Location of modifier tags */
   public static final String TAG_FOLDER = "tinkering/tags/modifiers";
 
-  public static final ResourceLocation ENCHANTMENT_MAP = TConstruct.getResource("tinkering/enchantments_to_modifiers.json");
+  public static final Identifier ENCHANTMENT_MAP = TConstruct.getResource("tinkering/enchantments_to_modifiers.json");
   /** Registry key to make tag keys */
   public static final ResourceKey<? extends Registry<Modifier>> REGISTRY_KEY = ResourceKey.createRegistryKey(TConstruct.getResource("modifiers"));
 
@@ -130,7 +130,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   /** For internal use only */
   public void init() {
     TConstruct.getModBus().addListener(EventPriority.NORMAL, false, FMLCommonSetupEvent.class, e -> e.enqueueWork(this::fireRegistryEvent));
-    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddReloadListenerEvent.class, this::addDataPackListeners);
+    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddServerReloadListenersEvent.class, this::addDataPackListeners);
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, OnDatapackSyncEvent.class, e -> JsonUtils.syncPackets(e, new UpdateModifiersPacket(this.dynamicModifiers, this.tags, this.enchantmentMap, this.enchantmentTagMap)));
   }
 
@@ -141,15 +141,15 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   }
 
   /** Adds the managers as datapack listeners */
-  private void addDataPackListeners(final AddReloadListenerEvent event) {
-    event.addListener(this);
+  private void addDataPackListeners(final AddServerReloadListenersEvent event) {
+    event.addListener(TConstruct.getResource("modifiers"), this);
     conditionContext = event.getConditionContext();
     registryAccess = event.getRegistryAccess();
   }
 
   @SuppressWarnings("removal")
   @Override
-  protected void apply(Map<ResourceLocation,JsonElement> splashList, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+  protected void apply(Map<Identifier,JsonElement> splashList, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
     long time = System.nanoTime();
 
     // load modifiers from JSON
@@ -238,7 +238,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
 
             // if it starts with #, it's a tag
             if (key.charAt(0) == '#') {
-              ResourceLocation tagId = ResourceLocation.tryParse(key.substring(1));
+              Identifier tagId = Identifier.tryParse(key.substring(1));
               if (tagId == null) {
                 throw new JsonSyntaxException("Invalid enchantment tag ID " + key.substring(1));
               }
@@ -249,7 +249,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
               if (optional) {
                 key = key.substring(0, key.length() - 1);
               }
-              Enchantment enchantment = registryAccess.registryOrThrow(Registries.ENCHANTMENT).get(ResourceLocation.parse(key));
+              Enchantment enchantment = registryAccess.registryOrThrow(Registries.ENCHANTMENT).get(Identifier.parse(key));
               if (enchantment == null) {
                 if (optional) {
                   TConstruct.LOG.debug("Skipping modifier " + modifierId + " due to unknown optional enchantment " + key);
@@ -271,19 +271,19 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   }
 
   /** Creates context for modifier parsing */
-  public static TypedMapBuilder contextBuilder(ResourceLocation modifier) {
+  public static TypedMapBuilder contextBuilder(Identifier modifier) {
     return TypedMapBuilder.builder().put(ContextKey.ID, modifier).put(ContextKey.DEBUG, "Modifier " + modifier);
   }
 
-  /** @deprecated use {@link #contextBuilder(ResourceLocation)} */
+  /** @deprecated use {@link #contextBuilder(Identifier)} */
   @Deprecated(forRemoval = true)
-  public static TypedMap createContext(ResourceLocation modifier) {
+  public static TypedMap createContext(Identifier modifier) {
     return contextBuilder(modifier).build();
   }
 
   /** Loads a modifier from JSON */
   @Nullable
-  private Modifier loadModifier(ResourceLocation key, JsonElement element, Map<ModifierId, ModifierId> redirects) {
+  private Modifier loadModifier(Identifier key, JsonElement element, Map<ModifierId, ModifierId> redirects) {
     try {
       JsonObject json = GsonHelper.convertToJsonObject(element, "modifier");
 
@@ -398,7 +398,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   }
 
   /** Gets a list of all modifier IDs */
-  public Stream<ResourceLocation> getAllLocations() {
+  public Stream<Identifier> getAllLocations() {
     // filter out redirects (redirects are any modifiers where the ID does not match the key
     return Stream.concat(staticModifiers.entrySet().stream(), dynamicModifiers.entrySet().stream())
                  .filter(entry -> entry.getKey().equals(entry.getValue().getId()))
@@ -422,7 +422,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   /* Tags */
 
   /** Creates a tag key for a modifier */
-  public static TagKey<Modifier> getTag(ResourceLocation id) {
+  public static TagKey<Modifier> getTag(Identifier id) {
     return TagKey.create(REGISTRY_KEY, id);
   }
 
@@ -473,7 +473,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
     private final ModContainer container;
 
     /** Validates the namespace of the container registering */
-    private void checkModNamespace(ResourceLocation name) {
+    private void checkModNamespace(Identifier name) {
       // check mod container, should be the active mod
       // don't want mods registering stuff in Tinkers namespace, or Minecraft
       String activeMod = container.getNamespace();

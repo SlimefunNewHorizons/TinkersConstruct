@@ -76,7 +76,7 @@ public class PotionBucketItem extends PotionItem {
     }
 
     // scale effects by the number of potion bottles contained in the bucket
-    if (!level.isClientSide) {
+    if (!level.isClientSide()) {
       for (MobEffectInstance effect : PotionUtils.getMobEffects(stack)) {
         if (effect.getEffect().value().isInstantenous()) {
           effect.getEffect().value().applyInstantenousEffect(player, player, living, effect.getAmplifier(), POTION_SCALE);

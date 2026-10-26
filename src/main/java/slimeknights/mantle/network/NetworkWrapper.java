@@ -6,7 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -42,11 +42,11 @@ public class NetworkWrapper {
   private final Map<Class<?>, Registration<?>> registrationsByClass = new HashMap<>();
 
   @Deprecated
-  public NetworkWrapper(ResourceLocation channelName) {
+  public NetworkWrapper(Identifier channelName) {
     this(channelName, "1");
   }
 
-  public NetworkWrapper(ResourceLocation channelName, String version) {
+  public NetworkWrapper(Identifier channelName, String version) {
     this.version = version;
     this.clientboundType = new CustomPacketPayload.Type<>(channelName.withSuffix("_clientbound"));
     this.serverboundType = new CustomPacketPayload.Type<>(channelName.withSuffix("_serverbound"));

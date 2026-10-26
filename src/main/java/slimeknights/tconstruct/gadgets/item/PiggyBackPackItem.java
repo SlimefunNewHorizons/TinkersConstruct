@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -90,7 +90,7 @@ public class PiggyBackPackItem extends TooltipItem {
   }
 
   private static boolean pickupEntity(Player player, Entity target) {
-    if (player.getCommandSenderWorld().isClientSide || target.getType().is(TinkerTags.EntityTypes.PIGGYBACKPACK_BLACKLIST)) {
+    if (player.level().isClientSide || target.getType().is(TinkerTags.EntityTypes.PIGGYBACKPACK_BLACKLIST)) {
       return false;
     }
     // silly players, clicking on entities they're already carrying or riding
@@ -156,7 +156,7 @@ public class PiggyBackPackItem extends TooltipItem {
   }
 
   public static class CarryPotionEffect extends TinkerEffect {
-    static final ResourceLocation SPEED_MODIFIER = TConstruct.getResource("piggyback_speed");
+    static final Identifier SPEED_MODIFIER = TConstruct.getResource("piggyback_speed");
 
     public CarryPotionEffect() {
       super(MobEffectCategory.NEUTRAL, true);
@@ -176,7 +176,7 @@ public class PiggyBackPackItem extends TooltipItem {
         TinkerGadgets.piggyBackpack.get().matchCarriedEntitiesToCount(livingEntityIn, 0);
       } else {
         TinkerGadgets.piggyBackpack.get().matchCarriedEntitiesToCount(livingEntityIn, chestArmor.getCount());
-        if (!livingEntityIn.getCommandSenderWorld().isClientSide) {
+        if (!livingEntityIn.level().isClientSide) {
           PiggybackHandler handler = livingEntityIn.getCapability(PiggybackCapability.PIGGYBACK);
           if (handler != null) {
             handler.updatePassengers();
@@ -190,7 +190,7 @@ public class PiggyBackPackItem extends TooltipItem {
     public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
       consumer.accept(new IClientMobEffectExtensions() {
         private final Minecraft mc = Minecraft.getInstance();
-        private static final ResourceLocation[] ICONS = {
+        private static final Identifier[] ICONS = {
           TConstruct.getResource("carry"),
           TConstruct.getResource("carry_2"),
           TConstruct.getResource("carry_3")
@@ -203,7 +203,7 @@ public class PiggyBackPackItem extends TooltipItem {
             amplifier = 2;
           }
           // Effect icons are stored in the mob-effect atlas, not the GUI atlas
-          // used by GuiGraphics.blitSprite(ResourceLocation).
+          // used by GuiGraphics.blitSprite(Identifier).
           MobEffectTextureManager textures = mc.getMobEffectTextures();
           TextureAtlasSprite sprite = textures.getSprite(ICONS[amplifier]);
           graphics.blit(x, y, 0, 18, 18, sprite);

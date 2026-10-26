@@ -4,7 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -149,7 +149,7 @@ public abstract class AbstractMultilevelModifierRecipeBuilder<T extends Abstract
   /* Saving */
 
   /** Saves all salvage recipes for this recipe */
-  public T saveSalvage(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public T saveSalvage(Consumer<FinishedRecipe> consumer, Identifier id) {
     if (levels.isEmpty()) {
       throw new IllegalStateException("Must have at least 1 level");
     }

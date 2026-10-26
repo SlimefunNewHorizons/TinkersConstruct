@@ -440,10 +440,10 @@ public abstract class MultiblockCuboid<T extends MultiblockStructureData> {
    * @return  Set of positions
    */
   protected static Collection<BlockPos> readPosList(CompoundTag rootTag, String key, BlockPos offset) {
-    if (!rootTag.contains(key, Tag.TAG_LIST)) {
+    if (!rootTag.getList(key).isPresent()) {
       return Collections.emptyList();
     }
-    ListTag list = rootTag.getList(key, rootTag.getList(key, Tag.TAG_INT_ARRAY).isEmpty() ? Tag.TAG_COMPOUND : Tag.TAG_INT_ARRAY);
+    ListTag list = rootTag.getListOrEmpty(key);
     List<BlockPos> collection = new ArrayList<>(list.size());
     for (int i = 0; i < list.size(); i++) {
       Tag entry = list.get(i);
@@ -452,7 +452,7 @@ public abstract class MultiblockCuboid<T extends MultiblockStructureData> {
         int[] coordinates = arrayTag.getAsIntArray();
         pos = new BlockPos(coordinates[0], coordinates[1], coordinates[2]);
       } else if (entry instanceof CompoundTag compound) {
-        pos = new BlockPos(compound.getInt("X"), compound.getInt("Y"), compound.getInt("Z"));
+        pos = new BlockPos(compound.getIntOr("X", 0), compound.getIntOr("Y", 0), compound.getIntOr("Z", 0));
       } else {
         continue;
       }
