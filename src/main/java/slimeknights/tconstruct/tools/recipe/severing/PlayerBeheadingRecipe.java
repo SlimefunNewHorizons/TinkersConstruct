@@ -25,7 +25,7 @@ public class PlayerBeheadingRecipe extends SeveringRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.playerBeheadingSerializer.get();
   }
 

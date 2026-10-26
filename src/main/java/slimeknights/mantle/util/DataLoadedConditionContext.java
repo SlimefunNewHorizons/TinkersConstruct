@@ -22,7 +22,7 @@ public enum DataLoadedConditionContext implements ICondition.IContext {
   public <T> Collection<Holder<T>> getTag(TagKey<T> key) {
     Registry<T> registry = RegistryHelper.getRegistry(key.registry());
     if (registry != null) {
-      Optional<HolderSet.Named<T>> tag = registry.getTag(key);
+      Optional<HolderSet.Named<T>> tag = registry.get(key);
       if (tag.isPresent()) {
         return tag.get().stream().toList();
       }

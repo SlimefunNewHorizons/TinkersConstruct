@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -102,7 +103,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements IFluidPacke
 	 */
 	private IFluidHandler getNeighborHandlerUncached(Direction side) {
 		assert level != null;
-		return level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(side), side.getOpposite());
+		return TransferHelper.getFluidHandler(level, worldPosition.relative(side), side.getOpposite());
 	}
 
 	/**

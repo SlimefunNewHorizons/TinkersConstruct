@@ -83,7 +83,7 @@ public class ModifierSalvage implements ICustomOutputRecipe<IEmptyContainer> {
   }
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return TinkerRecipeTypes.DATA.get();
   }
 
@@ -95,7 +95,7 @@ public class ModifierSalvage implements ICustomOutputRecipe<IEmptyContainer> {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.modifierSalvageSerializer.get();
   }
 }

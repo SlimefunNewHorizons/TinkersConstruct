@@ -64,7 +64,7 @@ public class ModifierMaterialRepairKitRecipe extends CraftingTableRepairKitRecip
 
   @SuppressWarnings("removal")
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.craftingModifierMaterialRepair.get();
   }
 }

@@ -218,7 +218,7 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.tinkerStationRepairSerializer.get();
   }
 }

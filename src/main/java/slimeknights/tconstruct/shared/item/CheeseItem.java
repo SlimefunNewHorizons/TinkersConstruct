@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.shared.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.Holder;
@@ -44,7 +47,13 @@ public class CheeseItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag pIsAdvanced) {
-    tooltip.add(TOOLTIP);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag pIsAdvanced) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        tooltip.add(TOOLTIP);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 }

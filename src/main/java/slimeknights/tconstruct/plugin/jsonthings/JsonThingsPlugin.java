@@ -12,7 +12,7 @@ public class JsonThingsPlugin {
     FlexItemTypes.init();
     HarvestTiers.registerTierResolver(JsonThingsTierRegistry::byId, JsonThingsTierRegistry::getId);
 
-    if (FMLEnvironment.dist == Dist.CLIENT) {
+    if (FMLEnvironment.getDist() == Dist.CLIENT) {
       PluginClient.init();
     }
   }

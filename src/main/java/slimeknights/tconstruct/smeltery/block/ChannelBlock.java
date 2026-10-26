@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -166,7 +167,7 @@ public class ChannelBlock extends Block implements EntityBlock {
 	 * @return  True if its a fluid handler
 	 */
 	private static boolean isFluidHandler(LevelAccessor world, Direction side, BlockPos pos) {
-		return world instanceof Level level && level.getCapability(Capabilities.FluidHandler.BLOCK, pos, side) != null;
+		return world instanceof Level level && TransferHelper.getFluidHandler(level, pos, side) != null;
 	}
 
 	/**

@@ -3,13 +3,14 @@ package slimeknights.tconstruct.library.tools.item.armor;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -19,20 +20,20 @@ import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ItemAbility;
 import slimeknights.mantle.client.SafeClientAccess;
@@ -59,17 +60,17 @@ import slimeknights.tconstruct.library.tools.nbt.IToolStackView;
 import slimeknights.tconstruct.library.tools.nbt.StatsNBT;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.library.tools.stat.ToolStats;
-import slimeknights.tconstruct.library.utils.Util;
 import slimeknights.tconstruct.library.utils.ItemStackUtil;
+import slimeknights.tconstruct.library.utils.Util;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay {
+public class ModifiableArmorItem extends Item implements IModifiableDisplay {
   /** Volatile modifier tag to make piglins neutal when worn */
   public static final Identifier PIGLIN_NEUTRAL = TConstruct.getResource("piglin_neutral");
   /** Volatile modifier tag to make this item an elytra */
@@ -81,15 +82,29 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
   @Getter
   private final ToolDefinition toolDefinition;
+  /** Armor slot type, was part of {@code ArmorItem} before 1.21.5 */
+  @Getter
+  protected final ArmorType type;
   /** Cache of the tool built for rendering */
   private ItemStack toolForRendering = null;
-  public ModifiableArmorItem(Holder<ArmorMaterial> materialIn, ArmorType type, Properties builderIn, ToolDefinition toolDefinition) {
-    super(materialIn, type, builderIn);
+  public ModifiableArmorItem(ArmorMaterial materialIn, ArmorType type, Properties builderIn, ToolDefinition toolDefinition) {
+    super(armorProperties(builderIn, materialIn, type));
+    this.type = type;
     this.toolDefinition = toolDefinition;
   }
 
   public ModifiableArmorItem(ModifiableArmorMaterial material, ArmorType type, Properties properties) {
     this(material.getArmorMaterial(), type, properties, Objects.requireNonNull(material.getArmorDefinition(type), "Missing tool definition for " + type.getName()));
+  }
+
+  /** Makes the item equippable in its armor slot. Stats come from the tool, so unlike vanilla armor no attributes are added */
+  protected static Properties armorProperties(Properties properties, ArmorMaterial material, ArmorType type) {
+    return properties.component(DataComponents.EQUIPPABLE, Equippable.builder(type.getSlot()).setEquipSound(material.equipSound()).build());
+  }
+
+  /** Gets the slot this armor is worn in, was part of {@code ArmorItem} before 1.21.5 */
+  public EquipmentSlot getEquipmentSlot() {
+    return type.getSlot();
   }
 
   /* Basic properties */
@@ -106,12 +121,12 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
   @Override
   public boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer) {
-    return type == Type.BOOTS && ModifierUtil.checkVolatileFlag(stack, SNOW_BOOTS);
+    return type == ArmorType.BOOTS && ModifierUtil.checkVolatileFlag(stack, SNOW_BOOTS);
   }
 
   @Override
-  public boolean isEnderMask(ItemStack stack, Player player, EnderMan endermanEntity) {
-    return type == Type.HELMET && ModifierUtil.checkVolatileFlag(stack, ENDERMASK);
+  public boolean isGazeDisguise(ItemStack stack, Player player, @Nullable LivingEntity entity) {
+    return type == ArmorType.HELMET && ModifierUtil.checkVolatileFlag(stack, ENDERMASK);
   }
 
   @Override
@@ -126,16 +141,6 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
 
   /* Enchantments */
-
-  @Override
-  public boolean isEnchantable(ItemStack stack) {
-    return false;
-  }
-
-  @Override
-  public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-    return false;
-  }
 
   @Override
   public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
@@ -156,15 +161,7 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
   /* Loading */
 
   @Override
-  public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
-    if (nbt != null) {
-      ToolStack.verifyTag(this, nbt, getToolDefinition());
-    }
-  }
-
-  @Override
-  public void onCraftedBy(ItemStack stack, Level levelIn, Player playerIn) {
+  public void onCraftedBy(ItemStack stack, Player playerIn) {
     ToolStack.ensureInitialized(stack, getToolDefinition());
   }
 
@@ -211,12 +208,6 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
   /* Damage/Durability */
 
-  @Override
-  public boolean isRepairable(ItemStack stack) {
-    // handle in the tinker station
-    return false;
-  }
-
   public boolean canBeDepleted() {
     return true;
   }
@@ -243,7 +234,7 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
   }
 
   @Override
-  public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T damager, Consumer<Item> onBroken) {
+  public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T damager, Consumer<Item> onBroken) {
     return ToolDamageUtil.handleDamageItem(stack, amount, damager, onBroken);
   }
 
@@ -267,12 +258,6 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
 
   /* Armor properties */
-
-  @Override
-  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-    return false;
-  }
-
 
   @Override
   public Multimap<Attribute,AttributeModifier> getAttributeModifiers(IToolStackView tool, EquipmentSlot slot) {
@@ -321,49 +306,52 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
 
   /* Elytra */
 
-  @Override
-  public boolean canElytraFly(ItemStack stack, LivingEntity entity) {
-    return type == Type.CHESTPLATE && !ToolDamageUtil.isBroken(stack) && ModifierUtil.checkVolatileFlag(stack, ELYTRA);
+  /** Checks if the stack can act as an elytra, flight works through the glider component since 1.21.2 */
+  public boolean canElytraFly(ItemStack stack) {
+    return type == ArmorType.CHESTPLATE && !ToolDamageUtil.isBroken(stack) && ModifierUtil.checkVolatileFlag(stack, ELYTRA);
   }
 
-  @Override
-  public boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks) {
-    if (getEquipmentSlot() == EquipmentSlot.CHEST) {
-      ToolStack tool = ToolStack.from(stack);
-      if (!tool.isBroken()) {
-        // if any modifier says stop flying, stop flying
-        for (ModifierEntry entry : tool.getModifierList()) {
-          if (entry.getHook(ModifierHooks.ELYTRA_FLIGHT).elytraFlightTick(tool, entry, entity, flightTicks)) {
-            return false;
-          }
-        }
-        // damage the tool and keep flying
-        if (!entity.level().isClientSide() && (flightTicks + 1) % 20 == 0) {
-          ToolDamageUtil.damageAnimated(tool, 1, entity, EquipmentSlot.CHEST);
-        }
-        return true;
+  /** Keeps the glider component in sync with the elytra flag and runs flight hooks. Vanilla handles flight durability */
+  protected void elytraTick(ItemStack stack, LivingEntity entity) {
+    boolean canFly = canElytraFly(stack);
+    if (canFly != stack.has(DataComponents.GLIDER)) {
+      if (canFly) {
+        stack.set(DataComponents.GLIDER, Unit.INSTANCE);
+      } else {
+        stack.remove(DataComponents.GLIDER);
       }
     }
-    return false;
+    if (canFly && entity.isFallFlying() && entity.getItemBySlot(EquipmentSlot.CHEST) == stack) {
+      ToolStack tool = ToolStack.from(stack);
+      // if any modifier says stop flying, stop flying
+      for (ModifierEntry entry : tool.getModifierList()) {
+        if (entry.getHook(ModifierHooks.ELYTRA_FLIGHT).elytraFlightTick(tool, entry, entity, entity.getFallFlyingTicks())) {
+          entity.stopFallFlying();
+          return;
+        }
+      }
+    }
   }
 
 
   /* Ticking */
 
   @Override
-  public void inventoryTick(ItemStack stack, Level levelIn, Entity entityIn, int itemSlot, boolean isSelected) {
+  public void inventoryTick(ItemStack stack, ServerLevel levelIn, Entity entityIn, @Nullable EquipmentSlot slot) {
     // don't care about non-living, they skip most tool context
     if (entityIn instanceof LivingEntity living) {
       ToolStack tool = ToolStack.from(stack);
-      if (!levelIn.isClientSide()) {
-        tool.ensureHasData();
+      tool.ensureHasData();
+      if (type == ArmorType.CHESTPLATE) {
+        elytraTick(stack, living);
       }
       List<ModifierEntry> modifiers = tool.getModifierList();
       if (!modifiers.isEmpty()) {
-        boolean isCorrectSlot = living.getItemBySlot(getEquipmentSlot()) == stack;
+        boolean isCorrectSlot = slot == getEquipmentSlot();
+        // the inventory index is no longer passed since 1.21.5, armor modifiers only care about the slot
         // we pass in the stack for most custom context, but for the sake of armor its easier to tell them that this is the correct slot for effects
         for (ModifierEntry entry : modifiers) {
-          entry.getHook(ModifierHooks.INVENTORY_TICK).onInventoryTick(tool, entry, levelIn, living, itemSlot, isSelected, isCorrectSlot, stack);
+          entry.getHook(ModifierHooks.INVENTORY_TICK).onInventoryTick(tool, entry, levelIn, living, -1, slot == EquipmentSlot.MAINHAND, isCorrectSlot, stack);
         }
       }
     }
@@ -388,8 +376,10 @@ public class ModifiableArmorItem extends ArmorItem implements IModifiableDisplay
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
     TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+    tooltip.forEach(tooltipAdder);
   }
 
   @Override

@@ -19,7 +19,7 @@ public class SafeClient {
   /** Returns the active connection's registries, including during a dimension transition. */
   @Nullable
   public static RegistryAccess getRegistryAccess() {
-    return FMLEnvironment.dist == Dist.CLIENT ? ClientOnly.getRegistryAccess() : null;
+    return FMLEnvironment.getDist() == Dist.CLIENT ? ClientOnly.getRegistryAccess() : null;
   }
 
   /**
@@ -30,7 +30,7 @@ public class SafeClient {
    * @param newAmount   New fluid amount
    */
   public static void updateFluidModel(BlockEntity be, FluidTank tank, int oldAmount, int newAmount) {
-    if (FMLEnvironment.dist == Dist.CLIENT) {
+    if (FMLEnvironment.getDist() == Dist.CLIENT) {
       ClientOnly.updateFluidModel(be, tank, oldAmount, newAmount);
     }
   }

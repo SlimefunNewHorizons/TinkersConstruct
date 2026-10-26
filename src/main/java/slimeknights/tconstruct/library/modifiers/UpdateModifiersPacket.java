@@ -100,12 +100,12 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     this.tags = GenericTagUtil.decodeTags(buffer, ModifierManager.REGISTRY_KEY, id -> getModifier(modifiers, new ModifierId(id)));
 
     // read in enchantment to modifier mapping
-    var enchantments = ((RegistryFriendlyByteBuf)buffer).registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+    var enchantments = ((RegistryFriendlyByteBuf)buffer).registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
     ImmutableMap.Builder<Enchantment,Modifier> enchantmentBuilder = ImmutableMap.builder();
     size = buffer.readVarInt();
     for (int i = 0; i < size; i++) {
       Identifier enchantmentId = buffer.readIdentifier();
-      Enchantment enchantment = enchantments.get(enchantmentId);
+      Enchantment enchantment = enchantments.getValue(enchantmentId);
       if (enchantment == null) {
         throw new DecoderException("Unknown enchantment " + enchantmentId);
       }
@@ -149,7 +149,7 @@ public class UpdateModifiersPacket implements IThreadsafePacket {
     GenericTagUtil.encodeTags(buffer, Modifier::getId, this.tags);
 
     // enchantment mapping
-    var enchantments = ((RegistryFriendlyByteBuf)buffer).registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+    var enchantments = ((RegistryFriendlyByteBuf)buffer).registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
     buffer.writeVarInt(enchantmentMap.size());
     for (Entry<Enchantment,Modifier> entry : enchantmentMap.entrySet()) {
       Identifier enchantmentId = enchantments.getKey(entry.getKey());

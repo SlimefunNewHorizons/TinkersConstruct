@@ -82,7 +82,7 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return MantleRecipes.CRAFTING_SHAPED_RETEXTURED.get();
   }
 

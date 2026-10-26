@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +107,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.toolBuildingRecipeSerializer.get();
   }
 
@@ -163,7 +164,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
     }
     // remaining slots must match extra requirements
     for (; i < maxInputs; i++) {
-      Ingredient ingredient = LogicHelper.getOrDefault(ingredients, i - partSize, Ingredient.EMPTY);
+      Ingredient ingredient = LogicHelper.getOrDefault(ingredients, i - partSize, IngredientHelper.EMPTY);
       if (!ingredient.test(inv.getInput(i))) {
         return false;
       }

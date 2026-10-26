@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
 
 /** Builder for {@link MultilevelIncrementalModifierRecipe} */
 public class MultilevelIncrementalModifierRecipeBuilder extends AbstractMultilevelModifierRecipeBuilder<MultilevelIncrementalModifierRecipeBuilder> {
-  private Ingredient input = Ingredient.EMPTY;
+  private Ingredient input = IngredientHelper.EMPTY;
   private int amountPerItem;
   private int neededPerLevel;
   private ItemOutput leftover = ItemOutput.EMPTY;
@@ -97,7 +98,7 @@ public class MultilevelIncrementalModifierRecipeBuilder extends AbstractMultilev
 
   @Override
   public void save(Consumer<FinishedRecipe> consumer, Identifier id) {
-    if (input == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(input)) {
       throw new IllegalStateException("Must set input");
     }
     if (levels.isEmpty()) {

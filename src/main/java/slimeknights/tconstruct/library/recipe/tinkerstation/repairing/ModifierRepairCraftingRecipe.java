@@ -112,7 +112,7 @@ public class ModifierRepairCraftingRecipe extends CustomRecipe implements IModif
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.craftingModifierRepair.get();
   }
 }

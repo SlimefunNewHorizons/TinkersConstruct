@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.inventory;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -73,7 +74,7 @@ public class DuctItemHandler extends SingleItemHandler<DuctBlockEntity> {
       }
     }
     // the item must contain fluid (no empty cans or buckets)
-    var handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    var handler = TransferHelper.getFluidHandler(stack);
     return handler != null && !handler.getFluidInTank(0).isEmpty();
   }
 

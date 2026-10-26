@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.DynamicOps;
@@ -144,7 +145,7 @@ public class MaterialIngredient extends NestedIngredient {
    * @return  Material with tag
    */
   public static Ingredient of(TagKey<Item> tag, MaterialVariantId material) {
-    return of(Ingredient.of(tag), material);
+    return of(IngredientHelper.of(tag), material);
   }
 
   /**
@@ -153,7 +154,7 @@ public class MaterialIngredient extends NestedIngredient {
    * @return  Material with tag
    */
   public static Ingredient of(TagKey<Item> tag) {
-    return of(Ingredient.of(tag));
+    return of(IngredientHelper.of(tag));
   }
 
   @Override
@@ -173,10 +174,10 @@ public class MaterialIngredient extends NestedIngredient {
   public Stream<ItemStack> getItems() {
     if (materialStacks == null) {
       if (!MaterialRegistry.isFullyLoaded()) {
-        return Arrays.stream(nested.getItems());
+        return Arrays.stream(IngredientHelper.getItems(nested));
       }
       // no material? apply all materials for variants
-      Stream<ItemStack> items = Arrays.stream(nested.getItems());
+      Stream<ItemStack> items = Arrays.stream(IngredientHelper.getItems(nested));
       // find all materials matching the filter; note this only shows craftable material variants
       items = items.flatMap(stack -> MaterialRecipeCache.getAllVariants().stream()
         .filter(material::matches)

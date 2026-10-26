@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -142,7 +143,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
   private IItemHandlerModifiable getCannonInventory() {
     Level level = level();
     if (this.cannon != null && level.isLoaded(this.cannon)) {
-      IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, this.cannon, null);
+      IItemHandler handler = TransferHelper.getItemHandler(level, this.cannon, null);
       if (handler instanceof IItemHandlerModifiable modifiable) {
         return modifiable;
       }

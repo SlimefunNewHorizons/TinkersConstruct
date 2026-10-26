@@ -74,8 +74,8 @@ public sealed interface BreakSpeedContext {
       }
     }
     // water
-    var aquaAffinity = entity.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
-                             .getHolderOrThrow(net.minecraft.world.item.enchantment.Enchantments.AQUA_AFFINITY);
+    var aquaAffinity = entity.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                             .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.AQUA_AFFINITY);
     if (entity.isEyeInFluid(FluidTags.WATER) && EnchantmentHelper.getEnchantmentLevel(aquaAffinity, entity) == 0) {
       modifier /= 5.0F;
     }

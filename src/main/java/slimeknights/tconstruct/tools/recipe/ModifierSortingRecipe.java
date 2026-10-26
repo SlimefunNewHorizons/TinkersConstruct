@@ -135,7 +135,7 @@ public class ModifierSortingRecipe extends AbstractWorktableRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.modifierSortingSerializer.get();
   }
 }

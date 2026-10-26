@@ -33,7 +33,7 @@ public enum AncientToolItemListing implements ItemListing {
   @Override
   public MerchantOffer getOffer(Entity trader, RandomSource random) {
     // step 1: select ancient tool
-    Optional<Holder<Item>> selected = BuiltInRegistries.ITEM.getTag(TinkerTags.Items.TRADER_TOOLS).flatMap(t -> t.getRandomElement(random));
+    Optional<Holder<Item>> selected = BuiltInRegistries.ITEM.get(TinkerTags.Items.TRADER_TOOLS).flatMap(t -> t.getRandomElement(random));
     if (selected.isPresent() && selected.get().value() instanceof IModifiable toolItem) {
       // step 2: select materials
       ToolStack tool = ToolBuildHandler.buildToolRandomMaterials(toolItem, RandomMaterial.ancient(), random);

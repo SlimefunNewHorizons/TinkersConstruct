@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -90,7 +91,7 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
     if (output.isEmpty()) {
       TagKey<Item> tag = this.result.getTag();
       if (tag != null) {
-        output = BuiltInRegistries.ITEM.getTag(tag)
+        output = BuiltInRegistries.ITEM.get(tag)
             .flatMap(holders -> holders.stream().findFirst().map(Holder::value))
             .map(item -> new ItemStack(item, this.result.getCount()))
             .orElse(ItemStack.EMPTY);
@@ -116,12 +117,12 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
 
   @Override
   public boolean hasCast() {
-    return getCast() != Ingredient.EMPTY;
+    return !IngredientHelper.isEmpty(getCast());
   }
 
   @Override
   public List<ItemStack> getCastItems() {
-    return Arrays.asList(getCast().getItems());
+    return Arrays.asList(IngredientHelper.getItems(getCast()));
   }
 
   @Override

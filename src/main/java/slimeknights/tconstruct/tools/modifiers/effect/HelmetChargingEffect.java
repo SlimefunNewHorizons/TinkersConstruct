@@ -33,7 +33,6 @@ public class HelmetChargingEffect extends MobEffect {
   public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
   }
 
-  @Override
   public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
     consumer.accept(new IClientMobEffectExtensions() {
       private static final Identifier BAR_KEY = TConstruct.getResource("helmet_charging_bar");

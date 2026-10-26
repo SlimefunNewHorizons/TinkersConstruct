@@ -188,7 +188,7 @@ public abstract class TinkerModule {
 
   /** Accepts the given item if the passed tag has items */
   protected static boolean acceptIfTag(CreativeModeTab.Output output, ItemLike item, TabVisibility visibility, TagKey<Item> tagCondition) {
-    Optional<Named<Item>> tag = BuiltInRegistries.ITEM.getTag(tagCondition);
+    Optional<Named<Item>> tag = BuiltInRegistries.ITEM.get(tagCondition);
     if (tag.isPresent() && tag.get().size() > 0) {
       output.accept(item, visibility);
       return true;

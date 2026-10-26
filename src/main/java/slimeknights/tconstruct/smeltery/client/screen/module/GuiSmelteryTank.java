@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.client.screen.module;
 
+import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -160,7 +161,7 @@ public class GuiSmelteryTank implements IScreenWithFluidTank {
       int hovered = tank.getContained() == 0 ? -1 : getFluidFromMouse(calcLiquidHeights(false), checkY);
       List<Component> tooltip;
       if (hovered == -1) {
-        BiConsumer<Integer, List<Component>> formatter = Screen.hasShiftDown() ? FluidTooltipHandler.BUCKET_FORMATTER : this.formatter;
+        BiConsumer<Integer, List<Component>> formatter = Minecraft.getInstance().hasShiftDown() ? FluidTooltipHandler.BUCKET_FORMATTER : this.formatter;
 
         tooltip = new ArrayList<>();
         tooltip.add(TOOLTIP_CAPACITY);

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.part;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -24,10 +27,16 @@ public class PartCastItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    int cost = MaterialCastingLookup.getItemCost(part.get());
-    if (cost > 0) {
-      tooltip.add(Component.translatable(COST_KEY, cost).withStyle(ChatFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        int cost = MaterialCastingLookup.getItemCost(part.get());
+        if (cost > 0) {
+          tooltip.add(Component.translatable(COST_KEY, cost).withStyle(ChatFormatting.GRAY));
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 }

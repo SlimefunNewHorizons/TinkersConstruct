@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.interaction;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -97,7 +98,7 @@ public record FireballModule(List<FireballType> options, DamageTypePair damageTy
       ModifierEntry.LOADABLE.list(0).defaultField("ammo_modifiers", List.of(), false, FireballType::ammoModifiers),
       FireballType::new);
     /** Empty instance to make cache easier */
-    public static final FireballType EMPTY = new FireballType(Ingredient.EMPTY, null, 1f, List.of());
+    public static final FireballType EMPTY = new FireballType(IngredientHelper.EMPTY, null, 1f, List.of());
 
     /** Gets the damage type with the given fallback */
     public DamageTypePair damageType(DamageTypePair fallback) {
@@ -259,7 +260,7 @@ public record FireballModule(List<FireballType> options, DamageTypePair damageTy
 
     /** Creates a new fireball option */
     public Fireball fireball(TagKey<Item> tag) {
-      return fireball(Ingredient.of(tag));
+      return fireball(IngredientHelper.of(tag));
     }
 
     /** Creates a new fireball option */

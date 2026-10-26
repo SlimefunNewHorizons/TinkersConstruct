@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -44,7 +45,7 @@ public class CastDuplicationRecipe extends ItemCastingRecipe implements IMultiRe
 
   @Override
   public ItemStack getResultItem(HolderLookup.Provider access) {
-    ItemStack[] items = getCast().getItems();
+    ItemStack[] items = IngredientHelper.getItems(getCast());
     return items.length == 0 ? ItemStack.EMPTY : items[0];
   }
 
@@ -52,7 +53,7 @@ public class CastDuplicationRecipe extends ItemCastingRecipe implements IMultiRe
   @Override
   @Deprecated
   public ItemStack getResultItem(RegistryAccess access) {
-    ItemStack[] items = getCast().getItems();
+    ItemStack[] items = IngredientHelper.getItems(getCast());
     return items.length == 0 ? ItemStack.EMPTY : items[0];
   }
 
@@ -62,7 +63,7 @@ public class CastDuplicationRecipe extends ItemCastingRecipe implements IMultiRe
   @Override
   public List<DisplayCastingRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
-      displayRecipes = Arrays.stream(getCast().getItems())
+      displayRecipes = Arrays.stream(IngredientHelper.getItems(getCast()))
         .map(item -> new DisplayCastingRecipe(getId(), getType(), List.of(item), fluid.getFluids(), item, coolingTime, false))
         .toList();
     }

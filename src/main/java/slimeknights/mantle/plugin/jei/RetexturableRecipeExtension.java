@@ -1,5 +1,6 @@
 package slimeknights.mantle.plugin.jei;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.Streams;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -31,7 +32,7 @@ public class RetexturableRecipeExtension implements ICraftingCategoryExtension<S
     // set the output to display all variants from the texture ingredient
     Ingredient texture = recipe.getTexture();
     // fetch all stacks from the ingredient, note any variants that are not blocks will get a blank look
-    List<ItemStack> displayOutputs = Arrays.stream(texture.getItems())
+    List<ItemStack> displayOutputs = Arrays.stream(IngredientHelper.getItems(texture))
                                            .map(stack -> recipe.getResultItem(stack.getItem(), access))
                                            .toList();
     // empty display means the tag found nothing, so just use the original output
@@ -40,8 +41,8 @@ public class RetexturableRecipeExtension implements ICraftingCategoryExtension<S
 
   /** Checks if two ingredients match based on their display items */
   private static boolean ingredientsMatch(Ingredient left, Ingredient right) {
-    ItemStack[] leftStacks = left.getItems();
-    ItemStack[] rightStacks = right.getItems();
+    ItemStack[] leftStacks = IngredientHelper.getItems(left);
+    ItemStack[] rightStacks = IngredientHelper.getItems(right);
     if (leftStacks.length != rightStacks.length) {
       return false;
     }
@@ -63,7 +64,7 @@ public class RetexturableRecipeExtension implements ICraftingCategoryExtension<S
     builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(recipe.getResultItem(access));
 
     // add the itemstacks to the grid
-    List<List<ItemStack>> inputStacks = recipe.getIngredients().stream().map(ingredient -> List.of(ingredient.getItems())).toList();
+    List<List<ItemStack>> inputStacks = recipe.getIngredients().stream().map(ingredient -> List.of(IngredientHelper.getItems(ingredient))).toList();
     int width = recipe.getWidth();
     int height = recipe.getHeight();
     List<IRecipeSlotBuilder> inputs = craftingGridHelper.createAndSetInputs(builder, VanillaTypes.ITEM_STACK, inputStacks, recipe.getWidth(), recipe.getHeight());

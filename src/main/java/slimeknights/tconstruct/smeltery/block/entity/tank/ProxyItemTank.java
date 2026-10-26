@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.tank;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +34,7 @@ public class ProxyItemTank<T extends MantleBlockEntity & IFluidTankUpdater> exte
     Item craftRemainingItem = stack.getItem().getCraftingRemainingItem();
     return !stack.is(TinkerTags.Items.PROXY_TANK_BLACKLIST)
       && (craftRemainingItem == null || !RegistryHelper.contains(TinkerTags.Items.PROXY_TANK_BLACKLIST, craftRemainingItem))
-      && stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
+      && TransferHelper.getFluidHandler(stack) != null;
   }
 
   /** Used by the fluid handler logic to sync changes as we directly mutate the internal stack */
@@ -77,7 +78,7 @@ public class ProxyItemTank<T extends MantleBlockEntity & IFluidTankUpdater> exte
   private IFluidHandlerItem getItemTank() {
     if (itemTank == null) {
       ItemStack stack = getStack();
-      itemTank = stack.getCapability(Capabilities.FluidHandler.ITEM);
+      itemTank = TransferHelper.getFluidHandler(stack);
       if (itemTank == null) {
         itemTank = new EmptyFluidHandlerItem(stack);
       }

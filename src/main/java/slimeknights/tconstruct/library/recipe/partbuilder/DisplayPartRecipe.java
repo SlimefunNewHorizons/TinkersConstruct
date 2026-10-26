@@ -53,7 +53,7 @@ public class DisplayPartRecipe implements IDisplayPartBuilderRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     throw new UnsupportedOperationException();
   }
 }

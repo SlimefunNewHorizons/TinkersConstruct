@@ -41,7 +41,7 @@ public class AgeableSeveringRecipe extends SeveringRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.ageableSeveringSerializer.get();
   }
 }

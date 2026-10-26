@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.command.subcommand;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -436,7 +437,7 @@ public class GenerateMeltingRecipesCommand {
       }
       // fluid capability check
       try {
-        IFluidHandlerItem capability = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        IFluidHandlerItem capability = TransferHelper.getFluidHandler(stack);
         if (capability != null) {
           FluidStack contained = capability.getFluidInTank(0);
           if (!contained.isEmpty()) {

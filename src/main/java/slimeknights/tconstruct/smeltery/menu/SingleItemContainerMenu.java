@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.menu;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,7 +18,7 @@ public class SingleItemContainerMenu extends TriggeringBaseContainerMenu<BlockEn
   public SingleItemContainerMenu(int id, @Nullable Inventory inv, @Nullable BlockEntity te) {
     super(TinkerSmeltery.singleItemContainer.get(), id, inv, te);
     if (te != null && te.getLevel() != null) {
-      var handler = te.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, te.getBlockPos(), null);
+      var handler = TransferHelper.getItemHandler(te.getLevel(), te.getBlockPos(), null);
       if (handler != null) {
         this.addSlot(new SmartItemHandlerSlot(handler, 0, 80, 20));
       }

@@ -1,5 +1,8 @@
 package slimeknights.mantle.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -18,8 +21,14 @@ public class BlockTooltipItem extends BlockItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-    super.appendHoverText(stack, context, tooltip, flagIn);
-    TranslationHelper.addOptionalTooltip(stack, tooltip);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        super.appendHoverText(stack, context, display, tooltip::add, flagIn);
+        TranslationHelper.addOptionalTooltip(stack, tooltip);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 }

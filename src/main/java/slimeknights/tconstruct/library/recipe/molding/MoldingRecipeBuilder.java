@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,8 +24,8 @@ import java.util.function.Consumer;
 public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBuilder> {
   private final ItemOutput output;
   private final TypeAwareRecipeSerializer<MoldingRecipe> serializer;
-  private Ingredient material = Ingredient.EMPTY;
-  private Ingredient pattern = Ingredient.EMPTY;
+  private Ingredient material = IngredientHelper.EMPTY;
+  private Ingredient pattern = IngredientHelper.EMPTY;
   private boolean patternConsumed = false;
 
   /**
@@ -90,7 +91,7 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
 
   @Override
   public void save(Consumer<FinishedRecipe> consumer, Identifier id) {
-    if (material == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(material)) {
       throw new IllegalStateException("Missing material for molding recipe");
     }
     Identifier advancementId = buildOptionalAdvancement(id, "molding");
@@ -105,7 +106,7 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
     @Override
     public void serializeRecipeData(JsonObject json) {
       json.add("material", material.toJson());
-      if (pattern != Ingredient.EMPTY) {
+      if !IngredientHelper.isEmpty((pattern)) {
         json.add("pattern", pattern.toJson());
         if (patternConsumed) {
           json.addProperty("pattern_consumed", true);

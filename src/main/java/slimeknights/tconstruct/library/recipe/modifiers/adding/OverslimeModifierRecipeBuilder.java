@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,7 +41,7 @@ public class OverslimeModifierRecipeBuilder extends AbstractRecipeBuilder<Oversl
 
   @Override
   public void save(Consumer<FinishedRecipe> consumer, Identifier id) {
-    if (ingredient == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(ingredient)) {
       throw new IllegalStateException("Empty ingredient not allowed");
     }
     Identifier advancementId = buildOptionalAdvancement(id, "modifiers");
@@ -49,7 +50,7 @@ public class OverslimeModifierRecipeBuilder extends AbstractRecipeBuilder<Oversl
 
   /** Creates a crafting table overslime repair recipe */
   public OverslimeModifierRecipeBuilder saveCrafting(Consumer<FinishedRecipe> consumer, Identifier id) {
-    if (ingredient == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(ingredient)) {
       throw new IllegalStateException("Empty ingredient not allowed");
     }
     Identifier advancementId = buildOptionalAdvancement(id, "modifiers");

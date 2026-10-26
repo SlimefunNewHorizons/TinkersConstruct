@@ -30,10 +30,12 @@ def parse(path, needle=None):
             symbol = next((d.strip()[len('symbol:'):].strip() for d in detail if d.strip().startswith('symbol:')), '')
             location = next((d.strip()[len('location:'):].strip() for d in detail if d.strip().startswith('location:')), '')
             code = detail[0].strip() if detail else ''
+            # javac prints the source line then a caret line pointing at the error column
+            caret = next((d.index('^') for d in detail[1:3] if d.strip() == '^'), -1)
             key = (file, line, msg, symbol)
             if (needle is None or needle in file) and key not in seen:
                 seen.add(key)
-                errors.append((file, line, msg, symbol, location, code))
+                errors.append((file, line, msg, symbol, location, code, caret))
             i = j
         else:
             i += 1

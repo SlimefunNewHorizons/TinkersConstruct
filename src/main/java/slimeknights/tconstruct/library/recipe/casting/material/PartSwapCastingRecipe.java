@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -153,14 +154,14 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
 
   @Override
   public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
-    return getCast().getItems()[0].copy();
+    return IngredientHelper.getItems(getCast())[0].copy();
   }
 
   @SuppressWarnings("removal")
   @Override
   @Deprecated
   public ItemStack getResultItem(RegistryAccess access) {
-    return getCast().getItems()[0].copy();
+    return IngredientHelper.getItems(getCast())[0].copy();
   }
 
   @Override
@@ -240,7 +241,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
   @Override
   public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
     if (multiRecipes == null) {
-      List<ItemStack> casts = List.of(getCast().getItems());
+      List<ItemStack> casts = List.of(IngredientHelper.getItems(getCast()));
       Predicate<MaterialFluidRecipe> validRecipe = recipe -> recipe.isVisible() && materials.matches(recipe.getOutput().getVariant());
       multiRecipes = Stream.concat(
           // show recipes for creating the tool from all castable fluids

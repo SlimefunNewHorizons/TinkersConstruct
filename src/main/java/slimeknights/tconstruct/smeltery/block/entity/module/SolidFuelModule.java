@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.module;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -80,8 +81,8 @@ public class SolidFuelModule extends FuelModule {
   /** Fetches any relevant fuel handlers from the target position */
   private void fetchHandlers() {
     Level level = getLevel();
-    fluidHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, fuelPos, null);
-    itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, fuelPos, null);
+    fluidHandler = TransferHelper.getFluidHandler(level, fuelPos, null);
+    itemHandler = TransferHelper.getItemHandler(level, fuelPos, null);
   }
 
   @Override

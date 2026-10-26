@@ -9,6 +9,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import slimeknights.mantle.util.ValueIOHelper;
 
 /**
  * Extension of tile entity to make it namable
@@ -40,7 +41,7 @@ public abstract class NameableBlockEntity extends MantleBlockEntity implements I
 	public void saveSynced(CompoundTag tags) {
 		super.saveSynced(tags);
 		if (this.hasCustomName()) {
-			tags.putString(TAG_CUSTOM_NAME, Component.Serializer.toJson(this.customName, registries()));
+			tags.put(TAG_CUSTOM_NAME, ValueIOHelper.saveComponent(this.customName, registries()));
 		}
 	}
 

@@ -33,19 +33,24 @@ public final class ItemStackUtil {
 
   private ItemStackUtil() {}
 
+  /**
+   * Gets the mutable tag inside the stack's custom data, edited in place by tool code.
+   * {@link slimeknights.tconstruct.mixin.ItemStackMixin} keeps copied tools from sharing it.
+   */
   @Nullable
   public static CompoundTag getTag(ItemStack stack) {
     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-    return data == null ? null : data.getUnsafe();
+    return data == null ? null : data.tag;
   }
 
   public static CompoundTag getOrCreateTag(ItemStack stack) {
     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-    if (data == null) {
+    // never edit the shared empty instance
+    if (data == null || data == CustomData.EMPTY) {
       data = CustomData.of(new CompoundTag());
       stack.set(DataComponents.CUSTOM_DATA, data);
     }
-    return data.getUnsafe();
+    return data.tag;
   }
 
   /**
@@ -62,9 +67,9 @@ public final class ItemStackUtil {
       return null;
     }
     // CustomData.of copies the tag
-    CustomData copy = CustomData.of(data.getUnsafe());
+    CustomData copy = CustomData.of(data.tag);
     stack.set(DataComponents.CUSTOM_DATA, copy);
-    return copy.getUnsafe();
+    return copy.tag;
   }
 
   public static void setTag(ItemStack stack, @Nullable CompoundTag tag) {

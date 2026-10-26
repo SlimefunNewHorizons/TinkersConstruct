@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.client.inventory.module;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,7 +21,7 @@ public class ScalingChestScreen<T extends BlockEntity> extends DynamicContainerS
     super(parent, container, playerInventory, title);
     BlockEntity tile = container.getTile();
     IItemHandler handler = tile == null || tile.getLevel() == null ? null
-      : tile.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, tile.getBlockPos(), null);
+      : TransferHelper.getItemHandler(tile.getLevel(), tile.getBlockPos(), null);
     if (handler == null) {
       handler = EmptyItemHandler.INSTANCE;
     }

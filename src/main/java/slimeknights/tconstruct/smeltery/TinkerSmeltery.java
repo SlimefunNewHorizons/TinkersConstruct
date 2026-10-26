@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import static slimeknights.tconstruct.library.tools.definition.ModifiableArmorMaterial.ARMOR_TYPES;
 
 import net.minecraft.core.registries.Registries;
@@ -479,35 +480,32 @@ public final class TinkerSmeltery extends TinkerModule {
 
   @SubscribeEvent
   void registerCapabilities(final RegisterCapabilitiesEvent event) {
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tank.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, lantern.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, fluidCannon.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, fluidCannon.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, castingTank.get(), (blockEntity, side) -> blockEntity.getTank());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, castingTank.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, basin.get(), (blockEntity, side) -> blockEntity.getTank());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, table.get(), (blockEntity, side) -> blockEntity.getTank());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, proxyTank.get(), (blockEntity, side) -> blockEntity.getItemTank());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, proxyTank.get(), (blockEntity, side) -> blockEntity.getItemTank());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, melter.get(), (blockEntity, side) -> blockEntity.getTank());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, melter.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, alloyer.get(), (blockEntity, side) -> blockEntity.getTank());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, smeltery.get(), (blockEntity, side) -> blockEntity.getMeltingInventory());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, foundry.get(), (blockEntity, side) -> blockEntity.getMeltingInventory());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, heater.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, drain.get(), (blockEntity, side) -> blockEntity.getHandler(side));
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, duct.get(), (blockEntity, side) -> blockEntity.getHandler(side));
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, duct.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, chute.get(), (blockEntity, side) -> blockEntity.getHandler(side));
-    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, channel.get(), (blockEntity, side) -> blockEntity.getFluidHandler(side));
+    TransferHelper.registerFluid(event, tank.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
+    TransferHelper.registerFluid(event, lantern.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
+    TransferHelper.registerFluid(event, fluidCannon.get(), (blockEntity, side) -> blockEntity.getFluidHandler());
+    TransferHelper.registerItems(event, fluidCannon.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerFluid(event, castingTank.get(), (blockEntity, side) -> blockEntity.getTank());
+    TransferHelper.registerItems(event, castingTank.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerFluid(event, basin.get(), (blockEntity, side) -> blockEntity.getTank());
+    TransferHelper.registerFluid(event, table.get(), (blockEntity, side) -> blockEntity.getTank());
+    TransferHelper.registerFluid(event, proxyTank.get(), (blockEntity, side) -> blockEntity.getItemTank());
+    TransferHelper.registerItems(event, proxyTank.get(), (blockEntity, side) -> blockEntity.getItemTank());
+    TransferHelper.registerFluid(event, melter.get(), (blockEntity, side) -> blockEntity.getTank());
+    TransferHelper.registerItems(event, melter.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerFluid(event, alloyer.get(), (blockEntity, side) -> blockEntity.getTank());
+    TransferHelper.registerItems(event, smeltery.get(), (blockEntity, side) -> blockEntity.getMeltingInventory());
+    TransferHelper.registerItems(event, foundry.get(), (blockEntity, side) -> blockEntity.getMeltingInventory());
+    TransferHelper.registerItems(event, heater.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerFluid(event, drain.get(), (blockEntity, side) -> blockEntity.getHandler(side));
+    TransferHelper.registerFluid(event, duct.get(), (blockEntity, side) -> blockEntity.getHandler(side));
+    TransferHelper.registerItems(event, duct.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerItems(event, chute.get(), (blockEntity, side) -> blockEntity.getHandler(side));
+    TransferHelper.registerFluid(event, channel.get(), (blockEntity, side) -> blockEntity.getFluidHandler(side));
 
-    event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ignored) -> new CopperCanFluidHandler(stack), copperCan);
-    searedTank.forEach(item -> event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> new TankItemFluidHandler((TankItem)stack.getItem(), stack), item));
-    scorchedTank.forEach(item -> event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> new TankItemFluidHandler((TankItem)stack.getItem(), stack), item));
-    event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> new TankItemFluidHandler((TankItem)stack.getItem(), stack),
+    TransferHelper.registerItemFluid(event, stack -> new CopperCanFluidHandler(stack), copperCan);
+    searedTank.forEach(item -> TransferHelper.registerItemFluid(event, stack -> new TankItemFluidHandler((TankItem)stack.getItem(), stack), item));
+    scorchedTank.forEach(item -> TransferHelper.registerItemFluid(event, stack -> new TankItemFluidHandler((TankItem)stack.getItem(), stack), item));
+    TransferHelper.registerItemFluid(event, stack -> new TankItemFluidHandler((TankItem)stack.getItem(), stack),
       searedCastingTank, searedFluidCannon, scorchedFluidCannon, endFluidCannon, searedLantern, scorchedLantern);
   }
 

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -124,7 +125,7 @@ public abstract class AbstractModifierRecipe implements ITinkerStationRecipe, ID
   /** Gets or builds the list of tool inputs */
   protected List<ItemStack> getToolInputs() {
     if (toolInputs == null) {
-      toolInputs = Arrays.stream(this.toolRequirement.getItems()).map(MAP_TOOL_STACK_FOR_RENDERING).collect(Collectors.toList());
+      toolInputs = Arrays.stream(IngredientHelper.getItems(this.toolRequirement)).map(MAP_TOOL_STACK_FOR_RENDERING).collect(Collectors.toList());
     }
     return toolInputs;
   }
@@ -197,7 +198,7 @@ public abstract class AbstractModifierRecipe implements ITinkerStationRecipe, ID
     if (resultSlots == null) {
       // we need to decide a tool for the dummy stack. Could just use air, but might as well use a tool that shows up
       // on the odd chance the behavior differs per tool this might be wrong, but practically that just affects ancient tools on input right now
-      ItemStack[] tools = toolRequirement.getItems();
+      ItemStack[] tools = IngredientHelper.getItems(toolRequirement);
       resultSlots = getResultSlots(getDisplayResult(), tools.length > 0 ? tools[0].getItem() : Items.AIR, "");
     }
     return resultSlots;

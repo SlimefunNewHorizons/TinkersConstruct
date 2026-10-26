@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -69,7 +70,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<Display
   }
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return serializer.getType();
   }
 
@@ -123,8 +124,8 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<Display
   public List<DisplayCastingRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
       // create a subrecipe for every potion variant
-      List<ItemStack> bottles = List.of(bottle.getItems());
-      displayRecipes = BuiltInRegistries.POTION.holders()
+      List<ItemStack> bottles = List.of(IngredientHelper.getItems(bottle));
+      displayRecipes = BuiltInRegistries.POTION.listElements()
         .map(potion -> {
           ItemStack result = PotionUtils.setPotion(new ItemStack(this.result), potion);
           return new DisplayCastingRecipe(getId(), getType(), bottles, fluid.getFluids().stream()
@@ -141,7 +142,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<Display
 
   @Override
   public NonNullList<Ingredient> getIngredients() {
-    return NonNullList.of(Ingredient.EMPTY, bottle);
+    return NonNullList.of(IngredientHelper.EMPTY, bottle);
   }
 
   /** @deprecated use {@link #assemble(Container, RegistryAccess)} */

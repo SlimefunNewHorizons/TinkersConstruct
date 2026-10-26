@@ -81,12 +81,12 @@ public class SeveringRecipe implements ICustomOutputRecipe<IEmptyContainer> {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.severingSerializer.get();
   }
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return TinkerRecipeTypes.SEVERING.get();
   }
 

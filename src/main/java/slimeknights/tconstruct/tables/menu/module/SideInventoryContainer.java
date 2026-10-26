@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.menu.module;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,7 +35,7 @@ public class SideInventoryContainer<TILE extends BlockEntity> extends BaseContai
       this.itemHandler = EmptyItemHandler.INSTANCE;
     } else {
       var level = tile.getLevel();
-      IItemHandler queried = level == null ? null : level.getCapability(Capabilities.ItemHandler.BLOCK, tile.getBlockPos(), inventoryDirection);
+      IItemHandler queried = level == null ? null : TransferHelper.getItemHandler(level, tile.getBlockPos(), inventoryDirection);
       this.itemHandler = queried == null ? EmptyItemHandler.INSTANCE : queried;
     }
 

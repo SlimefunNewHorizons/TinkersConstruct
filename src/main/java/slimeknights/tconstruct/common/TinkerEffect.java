@@ -39,7 +39,6 @@ public class TinkerEffect extends MobEffect {
 
   /* Visibility */
 
-  @Override
   public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
     consumer.accept(new IClientMobEffectExtensions() {
       @Override

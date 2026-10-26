@@ -223,12 +223,12 @@ public class JsonHelper {
   public static <T> T convertToEntry(Registry<T> registry, JsonElement element, String key) {
     Identifier name = JsonHelper.convertToResourceLocation(element, key);
     if (registry.containsKey(name)) {
-      T value = registry.get(name);
+      T value = registry.getValue(name);
       if (value != null) {
         return value;
       }
     }
-    throw new JsonSyntaxException("Unknown " + registry.key().location() + " " + name);
+    throw new JsonSyntaxException("Unknown " + registry.key().identifier() + " " + name);
   }
 
   /**

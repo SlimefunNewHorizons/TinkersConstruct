@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
 import net.minecraft.core.RegistryAccess;
@@ -152,7 +153,7 @@ public class IncrementalModifierRecipe extends AbstractModifierRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.incrementalModifierSerializer.get();
   }
 
@@ -173,7 +174,7 @@ public class IncrementalModifierRecipe extends AbstractModifierRecipe {
       ImmutableList.Builder<List<ItemStack>> builder = ImmutableList.builder();
 
       // fill extra item slots
-      List<ItemStack> items = Arrays.asList(input.getItems());
+      List<ItemStack> items = Arrays.asList(IngredientHelper.getItems(input));
       int maxStackSize = items.stream().mapToInt(ItemStack::getMaxStackSize).min().orElse(64);
 
       // split the stacks out if we need more than 1

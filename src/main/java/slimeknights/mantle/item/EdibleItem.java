@@ -1,5 +1,8 @@
 package slimeknights.mantle.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -26,14 +29,20 @@ public class EdibleItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslationHelper.addOptionalTooltip(stack, tooltip);
-    // TODO: use ContainerFoodItem helper for more potion like effects?
-    for (FoodProperties.PossibleEffect possibleEffect : Objects.requireNonNull(stack.getFoodProperties(null)).effects()) {
-      MobEffectInstance effect = possibleEffect.effect();
-      if (effect != null) {
-        tooltip.add(Component.literal(I18n.get(effect.getDescriptionId()).trim()).withStyle(ChatFormatting.GRAY));
-      }
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        TranslationHelper.addOptionalTooltip(stack, tooltip);
+        // TODO: use ContainerFoodItem helper for more potion like effects?
+        for (FoodProperties.PossibleEffect possibleEffect : Objects.requireNonNull(stack.getFoodProperties(null)).effects()) {
+          MobEffectInstance effect = possibleEffect.effect();
+          if (effect != null) {
+            tooltip.add(Component.literal(I18n.get(effect.getDescriptionId()).trim()).withStyle(ChatFormatting.GRAY));
+          }
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 }

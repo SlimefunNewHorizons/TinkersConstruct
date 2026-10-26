@@ -5,6 +5,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import slimeknights.mantle.registration.RegistrationContext;
 import slimeknights.mantle.registration.RegistryObject;
 
 import java.util.function.Supplier;
@@ -27,7 +28,8 @@ public class SynchronizedDeferredRegister<T> {
   /** Registers the given object, synchronized over the internal register */
   public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup) {
     synchronized (internal) {
-      return RegistryObject.of(internal.register(name, sup));
+      // items and blocks need their ID in their properties since 1.21.2, expose it to the construction through the registration context
+      return RegistryObject.of(internal.register(name, id -> RegistrationContext.with(ResourceKey.create(internal.getRegistryKey(), id), sup)));
     }
   }
 

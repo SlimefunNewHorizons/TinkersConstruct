@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.melting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.Identifier;
@@ -96,11 +97,11 @@ public class MeltingRecipe implements IMeltingRecipe {
 
   @Override
   public NonNullList<Ingredient> getIngredients() {
-    return NonNullList.of(Ingredient.EMPTY, input);
+    return NonNullList.of(IngredientHelper.EMPTY, input);
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerSmeltery.meltingSerializer.get();
   }
 

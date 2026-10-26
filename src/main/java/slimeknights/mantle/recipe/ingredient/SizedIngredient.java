@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(staticName = "of")
 public class SizedIngredient implements Predicate<ItemStack> {
   /** Empty sized ingredient wrapper. Matches only the empty stack of size 0 */
-  public static final SizedIngredient EMPTY = of(Ingredient.EMPTY, 0);
+  public static final SizedIngredient EMPTY = of(IngredientHelper.EMPTY, 0);
 
   public static final RecordLoadable<SizedIngredient> LOADABLE = RecordLoadable.create(
     IngredientLoadable.DISALLOW_EMPTY.tryDirectField("ingredient", SizedIngredient::getIngredient, "amount_needed"),
@@ -79,7 +80,7 @@ public class SizedIngredient implements Predicate<ItemStack> {
    * @return  Sized ingredient matching any size
    */
   public static SizedIngredient fromTag(TagKey<Item> tag, int amountNeeded) {
-    return of(Ingredient.of(tag), amountNeeded);
+    return of(IngredientHelper.of(tag), amountNeeded);
   }
 
   /**
@@ -109,7 +110,7 @@ public class SizedIngredient implements Predicate<ItemStack> {
    * @return  List of matching stacks
    */
   public List<ItemStack> getMatchingStacks() {
-    ItemStack[] ingredientMatch = ingredient.getItems();
+    ItemStack[] ingredientMatch = IngredientHelper.getItems(ingredient);
     // if we never cached, or the array instance changed since we last cached, recache
     if (matchingStacks == null || lastIngredientMatch.get() != ingredientMatch) {
       matchingStacks = Arrays.stream(ingredientMatch).map(stack -> {

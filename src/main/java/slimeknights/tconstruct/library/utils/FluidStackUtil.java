@@ -14,16 +14,16 @@ public final class FluidStackUtil {
   @Nullable
   public static CompoundTag getTag(FluidStack stack) {
     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-    return data == null ? null : data.getUnsafe();
+    return data == null ? null : data.tag;
   }
 
   public static CompoundTag getOrCreateTag(FluidStack stack) {
     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-    if (data == null) {
+    if (data == null || data == CustomData.EMPTY) {
       data = CustomData.of(new CompoundTag());
       stack.set(DataComponents.CUSTOM_DATA, data);
     }
-    return data.getUnsafe();
+    return data.tag;
   }
 
   public static void setTag(FluidStack stack, @Nullable CompoundTag tag) {

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.module;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -62,7 +63,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
     BlockPos pos = be.getBlockPos();
     if (tankHandlers != null && !tankHandlers.containsKey(pos)) {
       Level level = be.getLevel();
-      IFluidHandler handler = level == null ? null : level.getCapability(Capabilities.FluidHandler.BLOCK, pos, null);
+      IFluidHandler handler = level == null ? null : TransferHelper.getFluidHandler(level, pos, null);
       if (handler != null) {
         tankHandlers.put(pos, handler);
       }
@@ -75,7 +76,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
       tankHandlers = new LinkedHashMap<>();
       Level world = getLevel();
       for (BlockPos pos : tankSupplier.get()) {
-        IFluidHandler handler = world.getCapability(Capabilities.FluidHandler.BLOCK, pos, null);
+        IFluidHandler handler = TransferHelper.getFluidHandler(world, pos, null);
         if (handler != null) {
           tankHandlers.put(pos, handler);
         }

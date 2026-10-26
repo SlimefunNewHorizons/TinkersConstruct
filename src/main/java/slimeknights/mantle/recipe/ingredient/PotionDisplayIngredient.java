@@ -41,7 +41,7 @@ public final class PotionDisplayIngredient extends ItemIngredient {
   @Override
   public Stream<ItemStack> getItems() {
     List<ItemStack> baseStacks = super.getItems().toList();
-    return BuiltInRegistries.POTION.holders().flatMap(potion -> baseStacks.stream().map(base -> {
+    return BuiltInRegistries.POTION.listElements().flatMap(potion -> baseStacks.stream().map(base -> {
       ItemStack stack = base.copy();
       stack.set(DataComponents.POTION_CONTENTS, new PotionContents(potion));
       return stack;

@@ -1,5 +1,6 @@
 package slimeknights.mantle.fluid.transfer;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -36,7 +37,7 @@ public class FillFluidContainerTransfer implements IFluidContainerTransfer.WithD
 
   @Override
   public void addRepresentativeItems(Consumer<Item> consumer) {
-    for (ItemStack stack : input.getItems()) {
+    for (ItemStack stack : IngredientHelper.getItems(input)) {
       consumer.accept(stack.getItem());
     }
   }

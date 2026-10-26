@@ -1,5 +1,6 @@
 package slimeknights.mantle.command;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -193,7 +194,7 @@ public class RemoveRecipesCommand {
             // at least one ingredient must match the ingredient predicate
             ingredientLoop:
             for (Ingredient ingredient : recipe.getIngredients()) {
-              for (ItemStack stack : ingredient.getItems()) {
+              for (ItemStack stack : IngredientHelper.getItems(ingredient)) {
                 if (removeInput.test(stack.getItem())) {
                   recipes.add(holder.id());
                   break ingredientLoop;

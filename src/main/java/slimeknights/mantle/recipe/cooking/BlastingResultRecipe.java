@@ -36,7 +36,7 @@ public class BlastingResultRecipe extends BlastingRecipe implements CookingResul
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return MantleRecipes.BLASTING.get();
   }
 

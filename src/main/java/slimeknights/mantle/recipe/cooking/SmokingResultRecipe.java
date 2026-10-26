@@ -36,7 +36,7 @@ public class SmokingResultRecipe extends SmokingRecipe implements CookingResultR
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return MantleRecipes.SMOKING.get();
   }
 

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -56,7 +57,7 @@ public class TippingCastingRecipe extends PotionCastingRecipe {
       // but it can't match what is already on the stack
       Holder<Potion> potion = PotionUtils.getPotion(inv.getFluidStack());
       return potion != null && potion.unwrapKey().isPresent()
-        && !ModifierUtil.getPersistentString(stack, modifier).equals(potion.unwrapKey().orElseThrow().location().toString());
+        && !ModifierUtil.getPersistentString(stack, modifier).equals(potion.unwrapKey().orElseThrow().identifier().toString());
     }
     return false;
   }
@@ -77,7 +78,7 @@ public class TippingCastingRecipe extends PotionCastingRecipe {
     ItemStack result = inv.getStack().copy();
     Holder<Potion> potion = PotionUtils.getPotion(inv.getFluidStack());
     if (potion != null && potion.unwrapKey().isPresent()) {
-      ToolStack.from(result).getPersistentData().putString(modifier, potion.unwrapKey().orElseThrow().location().toString());
+      ToolStack.from(result).getPersistentData().putString(modifier, potion.unwrapKey().orElseThrow().identifier().toString());
     }
     return result;
   }
@@ -89,13 +90,13 @@ public class TippingCastingRecipe extends PotionCastingRecipe {
   public List<DisplayCastingRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
       // create a list of tools with the modifier
-      List<ItemStack> tools = Arrays.stream(bottle.getItems())
+      List<ItemStack> tools = Arrays.stream(IngredientHelper.getItems(bottle))
         .map(stack -> IDisplayModifierRecipe.withModifiers(IModifiableDisplay.getDisplayStack(stack), List.of(new ModifierEntry(modifier, 1))))
         .toList();
-      displayRecipes = BuiltInRegistries.POTION.holders()
+      displayRecipes = BuiltInRegistries.POTION.listElements()
         .map(potion -> {
           // add the potion to the tool list
-          String id = potion.key().location().toString();
+          String id = potion.key().identifier().toString();
           List<ItemStack> results = tools.stream().map(stack -> {
             ToolStack tool = ToolStack.copyFrom(stack);
             tool.getPersistentData().putString(modifier, id);

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -24,7 +25,7 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
     LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(),
     ContextKey.ID.requiredField(),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("material", MoldingRecipe::getMaterial),
-    IngredientLoadable.ALLOW_EMPTY.defaultField("pattern", Ingredient.EMPTY, MoldingRecipe::getPattern),
+    IngredientLoadable.ALLOW_EMPTY.defaultField("pattern", IngredientHelper.EMPTY, MoldingRecipe::getPattern),
     BooleanLoadable.INSTANCE.defaultField("pattern_consumed", false, false, MoldingRecipe::isPatternConsumed),
     ItemOutput.Loadable.REQUIRED_ITEM.requiredField("result", r -> r.recipeOutput),
     MoldingRecipe::new);
@@ -49,7 +50,7 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
     this.id = id;
     this.material = material;
     this.pattern = pattern;
-    this.patternConsumed = pattern != Ingredient.EMPTY && patternConsumed;
+    this.patternConsumed = !IngredientHelper.isEmpty(pattern) && patternConsumed;
     this.recipeOutput = recipeOutput;
   }
 
@@ -60,7 +61,7 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
 
   @Override
   public NonNullList<Ingredient> getIngredients() {
-    return NonNullList.of(Ingredient.EMPTY, material, pattern);
+    return NonNullList.of(IngredientHelper.EMPTY, material, pattern);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -73,7 +74,7 @@ public class TipClearingCastingRecipe extends PotionCastingRecipe {
   public List<DisplayCastingRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
       // create a list of tools with the modifier
-      List<ItemStack> tools = Arrays.stream(bottle.getItems())
+      List<ItemStack> tools = Arrays.stream(IngredientHelper.getItems(bottle))
         .map(stack -> IDisplayModifierRecipe.withModifiers(IModifiableDisplay.getDisplayStack(stack), List.of(new ModifierEntry(modifier, 1))))
         .toList();
       // list of tools with the potion set

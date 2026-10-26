@@ -90,7 +90,7 @@ public final class RetexturedHelper {
     if (!name.isEmpty()) {
       Identifier location = Identifier.tryParse(name);
       if (location != null) {
-        return BuiltInRegistries.BLOCK.get(Identifier.parse(name));
+        return BuiltInRegistries.BLOCK.getValue(Identifier.parse(name));
       }
     }
     return Blocks.AIR;

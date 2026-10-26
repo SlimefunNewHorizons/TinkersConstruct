@@ -34,7 +34,6 @@ public class PotionFluidType extends FluidType {
     return itemStack;
   }
 
-  @Override
   public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
     consumer.accept(new ClientTextureFluidType(this) {
       /**
@@ -55,7 +54,7 @@ public class PotionFluidType extends FluidType {
 
   /** Resolves a built-in potion key to its holder. */
   private static Holder<Potion> potionHolder(ResourceKey<Potion> potion) {
-    return BuiltInRegistries.POTION.getHolderOrThrow(potion);
+    return BuiltInRegistries.POTION.getOrThrow(potion);
   }
 
   /** Creates a fluid stack for the given potion */

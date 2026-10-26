@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.fluids;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -265,18 +267,13 @@ public final class TinkerFluids extends TinkerModule {
 
   @SubscribeEvent
   void registerCapabilities(final RegisterCapabilitiesEvent event) {
-    event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> new ConstantFluidContainerWrapper(
+    TransferHelper.registerItemFluid(event, stack -> new ConstantFluidContainerWrapper(
         new FluidStack(powderedSnow.get(), FluidType.BUCKET_VOLUME), stack, Items.BUCKET.getDefaultInstance()),
       Items.POWDER_SNOW_BUCKET);
-    event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), venomBottle);
-    slimeBottle.forEach(item -> event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), item));
-    event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> ((MagmaBottleItem)stack.getItem()).createFluidHandler(stack), magmaBottle);
-    event.registerItem(Capabilities.FluidHandler.ITEM,
-      (stack, ignored) -> ((PotionBucketItem)stack.getItem()).createFluidHandler(stack), potion.asItem());
+    TransferHelper.registerItemFluid(event, stack -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), venomBottle);
+    slimeBottle.forEach(item -> TransferHelper.registerItemFluid(event, stack -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), item));
+    TransferHelper.registerItemFluid(event, stack -> ((MagmaBottleItem)stack.getItem()).createFluidHandler(stack), magmaBottle);
+    TransferHelper.registerItemFluid(event, stack -> ((PotionBucketItem)stack.getItem()).createFluidHandler(stack), potion.asItem());
   }
 
   @SubscribeEvent
@@ -394,7 +391,7 @@ public final class TinkerFluids extends TinkerModule {
   private void registerBrewingRecipes(RegisterBrewingRecipesEvent event) {
     var builder = event.getBuilder();
     builder.addRecipe(new BottleBrewingRecipe(Ingredient.of(Items.GLASS_BOTTLE), Ingredient.of(Items.GUNPOWDER), new ItemStack(splashBottle)));
-    builder.addRecipe(new BottleBrewingRecipe(Ingredient.of(MantleTags.Items.SPLASH_BOTTLE), Ingredient.of(Items.DRAGON_BREATH), new ItemStack(lingeringBottle)));
+    builder.addRecipe(new BottleBrewingRecipe(IngredientHelper.of(MantleTags.Items.SPLASH_BOTTLE), Ingredient.of(Items.DRAGON_BREATH), new ItemStack(lingeringBottle)));
     for (SlimeType slime : SlimeType.values()) {
       builder.addRecipe(Ingredient.of(Items.GLASS_BOTTLE), Ingredient.of(TinkerWorld.congealedSlime.get(slime)), new ItemStack(slimeBottle.get(slime)));
     }
@@ -497,7 +494,7 @@ public final class TinkerFluids extends TinkerModule {
     acceptMolten(output, moltenBendalloy);
     acceptCompat(output, moltenSteeleaf, MaterialIds.steeleaf);
     acceptCompat(output, fieryLiquid, "fiery", MaterialIds.fiery);
-    BuiltInRegistries.POTION.holders().filter(holder -> !holder.is(Potions.WATER)).forEachOrdered(holder ->
+    BuiltInRegistries.POTION.listElements().filter(holder -> !holder.is(Potions.WATER)).forEachOrdered(holder ->
       output.accept(PotionFluidType.potionBucket(holder)));
 
     // add copper cans, tanks, and lanterns for all the fluids

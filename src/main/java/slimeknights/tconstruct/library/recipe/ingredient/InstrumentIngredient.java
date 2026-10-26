@@ -104,7 +104,7 @@ public class InstrumentIngredient implements ICustomIngredient {
     @Override
     public InstrumentIngredient deserialize(JsonElement element, DynamicOps<?> ops) {
       JsonObject json = element.getAsJsonObject();
-      Item item = BuiltInRegistries.ITEM.get(Identifier.parse(GsonHelper.getAsString(json, "item")));
+      Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(GsonHelper.getAsString(json, "item")));
       ResourceKey<Instrument> instrument = null;
       TagKey<Instrument> ignore = null;
       if (json.has("instrument")) {
@@ -123,7 +123,7 @@ public class InstrumentIngredient implements ICustomIngredient {
       json.addProperty("type", ID.toString());
       json.addProperty("item", BuiltInRegistries.ITEM.getKey(ingredient.item).toString());
       if (ingredient.instrument != null) {
-        json.addProperty("instrument", ingredient.instrument.location().toString());
+        json.addProperty("instrument", ingredient.instrument.identifier().toString());
       }
       if (ingredient.ignore != null) {
         json.addProperty("ignore", ingredient.ignore.location().toString());
@@ -137,7 +137,7 @@ public class InstrumentIngredient implements ICustomIngredient {
       buffer.writeIdentifier(BuiltInRegistries.ITEM.getKey(ingredient.item));
       if (ingredient.instrument != null) {
         buffer.writeByte(1);
-        buffer.writeResourceLocation(ingredient.instrument.location());
+        buffer.writeIdentifier(ingredient.instrument.identifier());
       } else if (ingredient.ignore != null) {
         buffer.writeByte(2);
         buffer.writeIdentifier(ingredient.ignore.location());
@@ -146,7 +146,7 @@ public class InstrumentIngredient implements ICustomIngredient {
       }
     },
     buffer -> {
-      Item item = BuiltInRegistries.ITEM.get(buffer.readIdentifier());
+      Item item = BuiltInRegistries.ITEM.getValue(buffer.readIdentifier());
       ResourceKey<Instrument> instrument = null;
       TagKey<Instrument> ignore = null;
       byte type = buffer.readByte();

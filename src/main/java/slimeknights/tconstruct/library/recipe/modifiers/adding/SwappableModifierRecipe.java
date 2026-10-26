@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -123,7 +124,7 @@ public class SwappableModifierRecipe extends ModifierRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.swappableModifierSerializer.get();
   }
 
@@ -143,7 +144,7 @@ public class SwappableModifierRecipe extends ModifierRecipe {
   @Override
   public List<SlotCount> getResultSlots() {
     if (resultSlots == null) {
-      ItemStack[] tools = toolRequirement.getItems();
+      ItemStack[] tools = IngredientHelper.getItems(toolRequirement);
       resultSlots = getResultSlots(getDisplayResult(), tools.length > 0 ? tools[0].getItem() : Items.AIR, value);
     }
     return resultSlots;

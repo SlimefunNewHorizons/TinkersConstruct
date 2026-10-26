@@ -4,6 +4,12 @@ issueTrackerURL="https://github.com/SlimeKnights/TinkersConstruct/issues"
 logoFile="logo.png"
 license="MIT"
 
+[[mixins]]
+    config="mantle.mixins.json"
+
+[[mixins]]
+    config="tconstruct.mixins.json"
+
 [[mods]]
     modId="tconstruct"
     version="${version}"

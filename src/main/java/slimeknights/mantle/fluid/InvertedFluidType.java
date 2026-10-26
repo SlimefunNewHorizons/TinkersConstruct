@@ -12,7 +12,6 @@ public class InvertedFluidType extends FluidType {
     super(properties);
   }
 
-  @Override
   public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
     consumer.accept(new ClientInvertedFluidType(this));
   }

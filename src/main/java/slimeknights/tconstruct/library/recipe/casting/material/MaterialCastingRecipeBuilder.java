@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -36,7 +37,7 @@ public class MaterialCastingRecipeBuilder extends AbstractRecipeBuilder<Material
   @Nullable
   private final IModifiable resultTool;
   private final TypeAwareRecipeSerializer<? extends AbstractMaterialCastingRecipe> recipeSerializer;
-  private Ingredient cast = Ingredient.EMPTY;
+  private Ingredient cast = IngredientHelper.EMPTY;
   @Setter
   private int itemCost = 0;
   private CastPurpose castPurpose = CastPurpose.CATALYST;

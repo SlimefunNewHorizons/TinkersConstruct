@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
@@ -209,7 +210,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.partBuilderToolRecycling.get();
   }
 
@@ -243,7 +244,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
   @Override
   public List<DisplayPartRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
-      List<ItemStack> patternItems = List.of(this.pattern.getItems());
+      List<ItemStack> patternItems = List.of(IngredientHelper.getItems(this.pattern));
       // if we have parts, will be using the same list for all tools, so make just 1 recipe per part
       if (!parts.isEmpty()) {
         List<ItemStack> tools = toolRequirement.getMatchingStacks().stream().map(IModifiableDisplay::getDisplayStack).toList();

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.module.alloying;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -134,7 +135,7 @@ public class MixerAlloyTank implements IMutableAlloyTank {
           BlockPos target = parent.getBlockPos().relative(direction);
           // limit by blocks as that gives the modpack more control, say they want to allow only scorched tanks
           if (world.getBlockState(target).is(TinkerTags.Blocks.ALLOYER_TANKS)) {
-            IFluidHandler capability = world.getCapability(Capabilities.FluidHandler.BLOCK, target, direction.getOpposite());
+            IFluidHandler capability = TransferHelper.getFluidHandler(world, target, direction.getOpposite());
             if (capability != null) {
               inputs.put(direction, capability);
               currentTanks++;

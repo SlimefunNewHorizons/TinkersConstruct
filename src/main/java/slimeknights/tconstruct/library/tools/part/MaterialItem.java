@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.part;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -113,8 +116,14 @@ public class MaterialItem extends Item implements IMaterialItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    appendHoverText(this, stack, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        appendHoverText(this, stack, tooltip, flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   /** Gets the creator mod ID based on the material. */

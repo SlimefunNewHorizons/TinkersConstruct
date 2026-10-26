@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.interaction;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -62,7 +63,7 @@ public record TankInteractionModule(@Nullable InteractionSource source) implemen
       return InteractionResult.PASS;
     }
     Direction face = context.getClickedFace();
-    IFluidHandler cap = world.getCapability(Capabilities.FluidHandler.BLOCK, target, face);
+    IFluidHandler cap = TransferHelper.getFluidHandler(world, target, face);
     if (cap == null) {
       return InteractionResult.PASS;
     }

@@ -55,7 +55,7 @@ public class ShapedFallbackRecipe extends ShapedRecipe {
     return alternativeCache.stream().noneMatch(recipe -> recipe.matches(input, level));
   }
 
-  @Override public RecipeSerializer<?> getSerializer() { return MantleRecipes.CRAFTING_SHAPED_FALLBACK.get(); }
+  @Override public RecipeSerializer getSerializer() { return MantleRecipes.CRAFTING_SHAPED_FALLBACK.get(); }
 
   public static class Serializer implements RecipeSerializer<ShapedFallbackRecipe> {
     private static final MapCodec<ShapedFallbackRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

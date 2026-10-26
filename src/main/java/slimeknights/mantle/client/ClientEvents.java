@@ -1,5 +1,6 @@
 package slimeknights.mantle.client;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
@@ -235,7 +236,7 @@ public class ClientEvents {
       return;
     }
     // block entity must have a fluid handler
-    IFluidHandler handler = minecraft.level.getCapability(Capabilities.FluidHandler.BLOCK, gaugeContainer.getBlockPos(), side);
+    IFluidHandler handler = TransferHelper.getFluidHandler(minecraft.level, gaugeContainer.getBlockPos(), side);
     if (handler == null) {
       handler = EmptyFluidHandler.INSTANCE;
     }

@@ -41,11 +41,11 @@ public class RegistryArgument {
   @Internal
   static void registerSuggestions() {
     REGISTRY = register(getResource("registry"), (context, builder) ->
-      SharedSuggestionProvider.suggestResource(context.getSource().registryAccess().registries().map(entry -> entry.key().location()), builder));
+      SharedSuggestionProvider.suggestResource(context.getSource().registryAccess().registries().map(entry -> entry.key().identifier()), builder));
     // TODO 1.21: rename to "registry_tags"
     TAG = register(getResource("valid_tags"), (context, builder) -> {
       Registry<?> result = get(context);
-      return SharedSuggestionProvider.suggestResource(result.getTagNames().map(TagKey::location), builder);
+      return SharedSuggestionProvider.suggestResource(result.listTagIds().map(TagKey::location), builder);
     });
     VALUE = register(getResource("registry_values"), (context, builder) -> {
       Registry<?> result = get(context);

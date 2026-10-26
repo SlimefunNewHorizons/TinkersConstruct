@@ -13,6 +13,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import slimeknights.mantle.util.ValueIOHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -222,7 +223,7 @@ public abstract class InventoryBlockEntity extends NameableBlockEntity implement
 
     for (int i = 0; i < inventory.getContainerSize(); i++) {
       if (!inventory.getItem(i).isEmpty()) {
-        CompoundTag itemTag = (CompoundTag)inventory.getItem(i).save(registries);
+        CompoundTag itemTag = (CompoundTag)ValueIOHelper.saveStack(inventory.getItem(i), registries);
         itemTag.putByte(TAG_SLOT, (byte) i);
         nbttaglist.add(itemTag);
       }
@@ -241,9 +242,9 @@ public abstract class InventoryBlockEntity extends NameableBlockEntity implement
     ItemStack stack;
     for (int i = 0; i < list.size(); ++i) {
       CompoundTag itemTag = list.getCompoundOrEmpty(i);
-      int slot = itemTag.getByte(TAG_SLOT) & 255;
+      int slot = itemTag.getByteOr(TAG_SLOT, (byte) 0) & 255;
       if (slot < this.inventory.size()) {
-        stack = ItemStack.parseOptional(registries, itemTag);
+        stack = ValueIOHelper.parseStack(registries, itemTag);
         if (!stack.isEmpty() && stack.getCount() > limit) {
           stack.setCount(limit);
         }

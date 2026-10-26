@@ -33,18 +33,12 @@ public class MultilayerArmorItem extends ModifiableArmorItem {
     this.name = name;
   }
 
-  public MultilayerArmorItem(Holder<ArmorMaterial> material, ArmorType slot, Properties properties, ToolDefinition toolDefinition, Identifier name) {
+  public MultilayerArmorItem(ArmorMaterial material, ArmorType slot, Properties properties, ToolDefinition toolDefinition, Identifier name) {
     super(material, slot, properties, toolDefinition);
     this.name = name;
   }
 
-  @Nullable
-  @Override
-  public Identifier getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
-    return ArmorUtil.getDummyArmorTexture(slot);
-  }
 
-  @Override
   public void initializeClient(Consumer<IClientItemExtensions> consumer) {
     consumer.accept(new ArmorModelDispatcher() {
       @Override

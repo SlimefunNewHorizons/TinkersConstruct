@@ -94,7 +94,7 @@ public class MultilevelIncrementalModifierRecipe extends IncrementalModifierReci
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.multilevelIncrementalModifierSerializer.get();
   }
 

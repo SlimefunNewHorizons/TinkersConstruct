@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.tools.capability;
 
+import net.neoforged.neoforge.energy.EnergyStorage;
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,12 +24,12 @@ public final class ToolCapabilityProvider {
     if (tools.length == 0) {
       return;
     }
-    event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ignored) -> {
+    TransferHelper.registerItemFluid(event, stack -> {
       Supplier<ToolStack> tool = refreshingTool(stack);
       return tool.get().getVolatileData().getInt(ToolFluidCapability.TOTAL_TANKS) > 0
         ? new ToolFluidCapability(stack, tool) : null;
     }, tools);
-    event.registerItem(Capabilities.ItemHandler.ITEM, (stack, ignored) -> {
+    TransferHelper.registerItemItems(event, stack -> {
       Supplier<ToolStack> tool = refreshingTool(stack);
       return tool.get().getVolatileData().getInt(ToolInventoryCapability.TOTAL_SLOTS) > 0
         ? new ToolInventoryCapability(stack, tool) : null;

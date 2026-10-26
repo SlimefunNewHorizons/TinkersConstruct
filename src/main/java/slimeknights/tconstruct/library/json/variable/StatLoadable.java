@@ -58,12 +58,12 @@ public enum StatLoadable implements Loadable<Stat<?>> {
     Registry<T> registry = statType.getRegistry();
     Identifier name = Loadables.RESOURCE_LOCATION.convert(element, key, context);
     if (registry.containsKey(name)) {
-      T value = registry.get(name);
+      T value = registry.getValue(name);
       if (value != null) {
         return statType.get(value);
       }
     }
-    throw new JsonSyntaxException("Unable to parse " + key + " as registry " + registry.key().location() + " does not contain ID " + name);
+    throw new JsonSyntaxException("Unable to parse " + key + " as registry " + registry.key().identifier() + " does not contain ID " + name);
   }
 
   @Override
@@ -83,7 +83,7 @@ public enum StatLoadable implements Loadable<Stat<?>> {
     T value = stat.getValue();
     Identifier location = registry.getKey(value);
     if (location == null) {
-      throw new RuntimeException("Registry " + registry.key().location() + " does not contain object " + value);
+      throw new RuntimeException("Registry " + registry.key().identifier() + " does not contain object " + value);
     }
     JsonArray array = new JsonArray();
     array.add(TinkerLoadables.STAT_TYPE.serialize(type));
@@ -101,7 +101,7 @@ public enum StatLoadable implements Loadable<Stat<?>> {
     if (value != null) {
       return value;
     }
-    throw new DecoderException("Unknown " + registry.key().location() + " id " + id);
+    throw new DecoderException("Unknown " + registry.key().identifier() + " id " + id);
   }
 
   @Override

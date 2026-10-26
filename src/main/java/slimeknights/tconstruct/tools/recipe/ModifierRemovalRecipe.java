@@ -159,7 +159,7 @@ public class ModifierRemovalRecipe extends AbstractWorktableRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.removeModifierSerializer.get();
   }
 

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.DynamicOps;
@@ -88,7 +89,7 @@ public class MaterialValueIngredient implements ICustomIngredient {
     if (items == null) {
       items = MaterialRecipeCache.getAllRecipes().stream()
         .filter(this::test)
-        .flatMap(material -> Arrays.stream(material.getIngredient().getItems()))
+        .flatMap(material -> Arrays.stream(IngredientHelper.getItems(material.getIngredient())))
         .toArray(ItemStack[]::new);
     }
     return Arrays.stream(items);

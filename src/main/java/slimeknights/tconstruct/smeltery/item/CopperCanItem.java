@@ -129,7 +129,7 @@ public class CopperCanItem extends Item {
     if (nbt != null && nbt.getString(TAG_FLUID).isPresent()) {
       Identifier location = Identifier.tryParse(nbt.getStringOr(TAG_FLUID, ""));
       if (location != null && BuiltInRegistries.FLUID.containsKey(location)) {
-        Fluid fluid = BuiltInRegistries.FLUID.get(location);
+        Fluid fluid = BuiltInRegistries.FLUID.getValue(location);
         if (fluid != null) {
           return fluid;
         }
@@ -141,7 +141,7 @@ public class CopperCanItem extends Item {
   /** Adds filled variants of the copper can to the given consumer */
   @SuppressWarnings("deprecation")
   public static void addFilledVariants(Consumer<ItemStack> output) {
-    BuiltInRegistries.FLUID.holders().filter(holder -> {
+    BuiltInRegistries.FLUID.listElements().filter(holder -> {
       Fluid fluid = holder.value();
       return fluid.isSource(fluid.defaultFluidState()) && !holder.is(TinkerTags.Fluids.HIDE_IN_CREATIVE_TANKS);
     }).forEachOrdered(holder -> {

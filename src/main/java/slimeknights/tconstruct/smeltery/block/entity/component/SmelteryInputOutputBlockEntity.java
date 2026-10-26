@@ -5,19 +5,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.model.data.ModelData;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import slimeknights.mantle.block.entity.IRetexturedBlockEntity;
 import slimeknights.mantle.inventory.EmptyItemHandler;
+import slimeknights.mantle.transfer.TransferHelper;
 import slimeknights.mantle.util.RetexturedHelper;
 import slimeknights.tconstruct.common.multiblock.IMasterLogic;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
@@ -26,6 +26,7 @@ import slimeknights.tconstruct.smeltery.block.entity.tank.ISmelteryTankHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 import static slimeknights.mantle.util.RetexturedHelper.TAG_TEXTURE;
 
@@ -33,8 +34,8 @@ import static slimeknights.mantle.util.RetexturedHelper.TAG_TEXTURE;
  * Shared logic between drains and ducts
  */
 public abstract class SmelteryInputOutputBlockEntity<T> extends SmelteryComponentBlockEntity implements IRetexturedBlockEntity {
-  /** Capability this TE watches */
-  private final BlockCapability<T,Direction> capability;
+  /** Looks up the capability this TE watches */
+  private final BiFunction<Level, BlockPos, T> capability;
   /** Empty capability for in case the valid capability becomes invalid without invalidating */
   protected final T emptyInstance;
   @Nullable
@@ -46,7 +47,7 @@ public abstract class SmelteryInputOutputBlockEntity<T> extends SmelteryComponen
   @Getter
   private Block texture = Blocks.AIR;
 
-  protected SmelteryInputOutputBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockCapability<T,Direction> capability, T emptyInstance) {
+  protected SmelteryInputOutputBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BiFunction<Level, BlockPos, T> capability, T emptyInstance) {
     super(type, pos, state);
     this.capability = capability;
     this.emptyInstance = emptyInstance;
@@ -87,7 +88,7 @@ public abstract class SmelteryInputOutputBlockEntity<T> extends SmelteryComponen
    */
   @Nullable
   protected T findCapability(BlockEntity parent) {
-    return level == null ? null : level.getCapability(capability, parent.getBlockPos(), null);
+    return level == null ? null : capability.apply(level, parent.getBlockPos());
   }
 
   /**
@@ -167,7 +168,7 @@ public abstract class SmelteryInputOutputBlockEntity<T> extends SmelteryComponen
   /** Fluid implementation of smeltery IO */
   public static abstract class SmelteryFluidIO extends SmelteryInputOutputBlockEntity<IFluidHandler> {
     protected SmelteryFluidIO(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-      super(type, pos, state, Capabilities.FluidHandler.BLOCK, EmptyFluidHandler.INSTANCE);
+      super(type, pos, state, (level, target) -> TransferHelper.getFluidHandler(level, target, null), EmptyFluidHandler.INSTANCE);
     }
 
     /** Wraps the given capability */
@@ -195,7 +196,7 @@ public abstract class SmelteryInputOutputBlockEntity<T> extends SmelteryComponen
     }
 
     protected ChuteBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-      super(type, pos, state, Capabilities.ItemHandler.BLOCK, EmptyItemHandler.INSTANCE);
+      super(type, pos, state, (level, target) -> TransferHelper.getItemHandler(level, target, null), EmptyItemHandler.INSTANCE);
     }
   }
 

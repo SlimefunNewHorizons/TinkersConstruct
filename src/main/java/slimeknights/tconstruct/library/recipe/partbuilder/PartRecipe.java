@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.partbuilder;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,7 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.partRecipeSerializer.get();
   }
 
@@ -211,7 +212,7 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
             materialItems = List.copyOf(materialItems);
             resultItems = List.copyOf(resultItems);
           }
-          return Stream.of(new DisplayPartRecipe(id, materialTitle, pattern, List.of(patternItem.getItems()), getCost(), materialItems, resultItems));
+          return Stream.of(new DisplayPartRecipe(id, materialTitle, pattern, List.of(IngredientHelper.getItems(patternItem)), getCost(), materialItems, resultItems));
         })
         .collect(Collectors.toUnmodifiableList());
     }

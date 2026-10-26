@@ -54,7 +54,7 @@ public class OreMeltingRecipe extends MeltingRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerSmeltery.oreMeltingSerializer.get();
   }
 }

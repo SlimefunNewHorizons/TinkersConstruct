@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.MenuType;
@@ -181,9 +182,9 @@ public final class TinkerTables extends TinkerModule {
 
   @SubscribeEvent
   void registerCapabilities(final RegisterCapabilitiesEvent event) {
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tinkersChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, partChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
-    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, castChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerItems(event, tinkersChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerItems(event, partChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
+    TransferHelper.registerItems(event, castChestTile.get(), (blockEntity, side) -> blockEntity.getItemHandler());
   }
 
   /** Adds all relevant items to the creative tab, called in the general tab */

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.fluids.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.network.chat.Component;
@@ -30,13 +33,19 @@ public class MagmaBottleItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-    super.appendHoverText(stack, context, tooltip, flagIn);
-    tooltip.add(Component.translatable(
-      "potion.withDuration",
-      Blocks.FIRE.getName(),
-      StringUtil.formatTickDuration(fireTime * 20, context.tickRate())
-    ).withStyle(MobEffectCategory.HARMFUL.getTooltipFormatting()));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        super.appendHoverText(stack, context, display, tooltip::add, flagIn);
+        tooltip.add(Component.translatable(
+          "potion.withDuration",
+          Blocks.FIRE.getName(),
+          StringUtil.formatTickDuration(fireTime * 20, context.tickRate())
+        ).withStyle(MobEffectCategory.HARMFUL.getTooltipFormatting()));
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   @Override

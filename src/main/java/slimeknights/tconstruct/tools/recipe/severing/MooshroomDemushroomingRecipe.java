@@ -26,7 +26,7 @@ public class MooshroomDemushroomingRecipe extends SeveringRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.mooshroomDemushroomingSerializer.get();
   }
 

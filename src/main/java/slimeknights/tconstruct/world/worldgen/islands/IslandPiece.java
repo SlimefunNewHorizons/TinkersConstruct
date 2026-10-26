@@ -50,12 +50,12 @@ public class IslandPiece extends TemplateStructurePiece {
   public IslandPiece(StructurePieceSerializationContext context, CompoundTag nbt) {
     super(TinkerStructures.islandPiece.get(), nbt, context.structureTemplateManager(), id -> makeSettings(Rotation.valueOf(nbt.getString("Rot")), Mirror.valueOf(nbt.getString("Mi"))));
     RegistryAccess access = context.registryAccess();
-    if (find(access.registryOrThrow(Registries.STRUCTURE), nbt.getString("Structure")) instanceof IslandStructure island) {
+    if (find(access.lookupOrThrow(Registries.STRUCTURE), nbt.getString("Structure")) instanceof IslandStructure island) {
       this.structure = island;
     } else  {
       this.structure = null;
     }
-    this.tree = find(access.registryOrThrow(Registries.CONFIGURED_FEATURE), nbt.getString("Tree"));
+    this.tree = find(access.lookupOrThrow(Registries.CONFIGURED_FEATURE), nbt.getString("Tree"));
     this.numberOfTreesPlaced = nbt.getIntOr("NumberOfTreesPlaced", 0);
   }
 
@@ -67,7 +67,7 @@ public class IslandPiece extends TemplateStructurePiece {
   protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag) {
     super.addAdditionalSaveData(context, tag);
     RegistryAccess access = context.registryAccess();
-    Identifier structure = access.registryOrThrow(Registries.STRUCTURE).getKey(this.structure);
+    Identifier structure = access.lookupOrThrow(Registries.STRUCTURE).getKey(this.structure);
     if (structure != null) {
       tag.putString("Structure", structure.toString());
     }
@@ -75,7 +75,7 @@ public class IslandPiece extends TemplateStructurePiece {
     tag.putString("Mi", this.placeSettings.getMirror().name());
     tag.putInt("NumberOfTreesPlaced", this.numberOfTreesPlaced);
     if (tree != null) {
-      Identifier key = access.registryOrThrow(Registries.CONFIGURED_FEATURE).getKey(tree);
+      Identifier key = access.lookupOrThrow(Registries.CONFIGURED_FEATURE).getKey(tree);
       if (key != null) {
         tag.putString("Tree", key.toString());
       }
@@ -162,7 +162,7 @@ public class IslandPiece extends TemplateStructurePiece {
   private static <T> T find(Registry<T> registry, String key) {
     Identifier id = Identifier.tryParse(key);
     if (id != null) {
-      return registry.get(id);
+      return registry.getValue(id);
     }
     return null;
   }

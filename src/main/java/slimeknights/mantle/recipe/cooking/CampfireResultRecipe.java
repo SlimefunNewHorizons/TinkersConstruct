@@ -36,7 +36,7 @@ public class CampfireResultRecipe extends CampfireCookingRecipe implements Cooki
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return MantleRecipes.CAMPFIRE.get();
   }
 

@@ -1,5 +1,7 @@
 package slimeknights.mantle.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.transfer.TransferHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -77,7 +79,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
     if (stack == null || stack.isEmpty()) {
       return false;
     }
-    IFluidHandlerItem original = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    IFluidHandlerItem original = TransferHelper.getFluidHandler(stack);
     if (original == null || original.getTanks() != 1) {
       return false;
     }
@@ -86,7 +88,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
       return false;
     }
     ItemStack copy = stack.copyWithCount(1);
-    IFluidHandlerItem handler = copy.getCapability(Capabilities.FluidHandler.ITEM);
+    IFluidHandlerItem handler = TransferHelper.getFluidHandler(copy);
     if (handler == null) {
       return false;
     }
@@ -98,7 +100,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
 
   @Override
   public Stream<ItemStack> getItems() {
-    return display == null ? Stream.empty() : java.util.Arrays.stream(display.getItems());
+    return display == null ? Stream.empty() : java.util.Arrays.stream(IngredientHelper.getItems(display));
   }
 
   @Override

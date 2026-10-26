@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jei;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
@@ -59,7 +60,7 @@ public class ToolBuildingCategory implements IRecipeCategory<ToolBuildingRecipe>
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, ToolBuildingRecipe recipe, IFocusGroup focuses) {
     List<List<ItemStack>> partsAndExtras = Stream.concat(recipe.getAllToolParts().stream(),
-      recipe.getExtraRequirements().stream().map(ingredient -> Arrays.asList(ingredient.getItems()))).toList();
+      recipe.getExtraRequirements().stream().map(ingredient -> Arrays.asList(IngredientHelper.getItems(ingredient)))).toList();
     List<LayoutSlot> layoutSlots = recipe.getLayoutSlots();
 
     int missingSlots = partsAndExtras.size() - layoutSlots.size();

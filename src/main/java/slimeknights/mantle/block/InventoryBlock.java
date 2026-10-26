@@ -1,5 +1,6 @@
 package slimeknights.mantle.block;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.component.DataComponents;
@@ -103,7 +104,7 @@ public abstract class InventoryBlock extends Block implements EntityBlock {
     if (state.getBlock() != newState.getBlock()) {
       BlockEntity te = worldIn.getBlockEntity(pos);
       if (te != null) {
-        IItemHandler inventory = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        IItemHandler inventory = TransferHelper.getItemHandler(worldIn, pos, null);
         if (inventory != null) {
           dropInventoryItems(state, worldIn, pos, inventory);
         }

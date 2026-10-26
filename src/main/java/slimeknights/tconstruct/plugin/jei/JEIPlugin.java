@@ -425,7 +425,7 @@ public class JEIPlugin implements IModPlugin {
   /** Checks if the given tag exists */
   @SuppressWarnings("deprecation")
   private static boolean tagExists(String name) {
-    Optional<Named<Item>> tag = BuiltInRegistries.ITEM.getTag(ItemTags.create(commonResource(name)));
+    Optional<Named<Item>> tag = BuiltInRegistries.ITEM.get(ItemTags.create(commonResource(name)));
     return tag.isPresent() && tag.get().size() > 0;
   }
 
@@ -538,7 +538,7 @@ public class JEIPlugin implements IModPlugin {
     // add potion fluids for each potion variant if requested
     if (Config.CLIENT.showPotionFluidInJEI.get()) {
       manager.addIngredientsAtRuntime(NeoForgeTypes.FLUID_STACK,
-                                      BuiltInRegistries.POTION.holders()
+                                      BuiltInRegistries.POTION.listElements()
                                         .filter(holder -> !holder.is(Potions.WATER) && !holder.is(TinkerTags.Potions.HIDDEN_FLUID))
                                         .map(holder -> PotionFluidType.potionFluid(holder, FluidType.BUCKET_VOLUME)).toList());
     }

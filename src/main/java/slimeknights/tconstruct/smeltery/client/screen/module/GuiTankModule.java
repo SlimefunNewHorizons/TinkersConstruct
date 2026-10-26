@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.client.screen.module;
 
+import net.minecraft.client.Minecraft;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -156,7 +157,7 @@ public class GuiTankModule implements IScreenWithFluidTank, ClickableTankModule 
         tooltip = FluidTooltipHandler.getFluidTooltip(fluid);
       } else {
         // function to call for amounts
-        BiConsumer<Integer, List<Component>> formatter = Screen.hasShiftDown()
+        BiConsumer<Integer, List<Component>> formatter = Minecraft.getInstance().hasShiftDown()
                                                               ? FluidTooltipHandler.BUCKET_FORMATTER
                                                               : this.formatter;
 

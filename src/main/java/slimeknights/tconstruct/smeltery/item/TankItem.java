@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -99,7 +100,7 @@ public class TankItem extends BlockTooltipItem {
 
   /** Checks if the given stack has fluid transfer */
   public static boolean mayHaveFluid(ItemStack stack) {
-    return FluidContainerTransferManager.INSTANCE.mayHaveTransfer(stack) || stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
+    return FluidContainerTransferManager.INSTANCE.mayHaveTransfer(stack) || TransferHelper.getFluidHandler(stack) != null;
   }
 
   @Override
@@ -263,7 +264,7 @@ public class TankItem extends BlockTooltipItem {
 
   /** Creates a stack with the given fluid and amount, not validated. */
   private static ItemStack setTank(ItemLike item, Identifier fluid, int amount) {
-    Fluid value = BuiltInRegistries.FLUID.get(fluid);
+    Fluid value = BuiltInRegistries.FLUID.getValue(fluid);
     return value == null ? new ItemStack(item) : setTank(new ItemStack(item), new FluidStack(value, amount));
   }
 
@@ -323,7 +324,7 @@ public class TankItem extends BlockTooltipItem {
   /** Adds filled variants of all standard tank items to the given consumer */
   @SuppressWarnings("deprecation")
   public static void addFilledVariants(Consumer<ItemStack> output) {
-    BuiltInRegistries.FLUID.holders().filter(holder -> {
+    BuiltInRegistries.FLUID.listElements().filter(holder -> {
       Fluid fluid = holder.value();
       return fluid.isSource(fluid.defaultFluidState()) && !holder.is(TinkerTags.Fluids.HIDE_IN_CREATIVE_TANKS);
     }).forEachOrdered(holder -> {

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jei;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -36,7 +37,7 @@ public class ShapedMaterialExtension implements ICraftingCategoryExtension<Shape
         ItemStack stack = plainResult.copy();
         recipe.setMaterial(stack, mat.getMaterial().getVariant());
         // add one copy of the stack per item in the nested ingredient, so the lengths match up
-        return IntStream.range(0, mat.getIngredient().getItems().length).mapToObj(i -> stack);
+        return IntStream.range(0, IngredientHelper.getItems(mat.getIngredient()).length).mapToObj(i -> stack);
       }).toList();
     } else {
       result = List.of(plainResult);

@@ -21,7 +21,7 @@ import slimeknights.tconstruct.shared.TinkerCommons;
 public class TagNotEmptyCondition<T> implements LootItemCondition, ICondition {
   private static final Identifier NAME = TConstruct.getResource("tag_not_empty");
   public static final MapCodec<TagNotEmptyCondition<?>> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    Identifier.CODEC.fieldOf("registry").forGetter(value -> value.tag.registry().location()),
+    Identifier.CODEC.fieldOf("registry").forGetter(value -> value.tag.registry().identifier()),
     Identifier.CODEC.fieldOf("tag").forGetter(value -> value.tag.location())
   ).apply(instance, TagNotEmptyCondition::fromLocations));
   private final TagKey<T> tag;

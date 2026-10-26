@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.InteractionResult;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
@@ -147,8 +150,14 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   public int getDefaultTooltipHideFlags(ItemStack stack) {

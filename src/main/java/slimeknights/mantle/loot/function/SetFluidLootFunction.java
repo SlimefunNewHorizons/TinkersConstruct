@@ -1,5 +1,6 @@
 package slimeknights.mantle.loot.function;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import java.util.List;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,7 +34,7 @@ public class SetFluidLootFunction extends LootItemConditionalFunction {
 
   @Override
   protected ItemStack run(ItemStack stack, LootContext context) {
-    IFluidHandlerItem handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    IFluidHandlerItem handler = TransferHelper.getFluidHandler(stack);
     if (handler != null) {
       handler.fill(fluid.copy(), FluidAction.EXECUTE);
       return handler.getContainer();

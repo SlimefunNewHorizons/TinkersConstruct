@@ -84,7 +84,7 @@ public class DamageableMeltingRecipe extends MeltingRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerSmeltery.damagableMeltingSerializer.get();
   }
 }

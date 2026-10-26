@@ -8,6 +8,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import slimeknights.mantle.util.ValueIOHelper;
 
 import javax.annotation.Nullable;
 
@@ -29,12 +32,17 @@ public class MantleBlockEntity extends BlockEntity {
   public void setChangedFast() {
     if (level != null) {
       if (level.hasChunkAt(worldPosition)) {
-        level.getChunkAt(worldPosition).setUnsaved(true);
+        level.getChunkAt(worldPosition).markUnsaved();
       }
     }
   }
-  
-  
+
+  /** Gets registries for NBT serialization */
+  protected HolderLookup.Provider registries() {
+    return ValueIOHelper.registries(level);
+  }
+
+
   /* Syncing */
 
   /**
@@ -72,10 +80,28 @@ public class MantleBlockEntity extends BlockEntity {
     load(nbt);
   }
 
-  @Override
+  /** NBT load hook, called from {@link #loadAdditional(ValueInput)} with all saved values */
   protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-    super.loadAdditional(nbt, registries);
     load(nbt, registries);
+  }
+
+  /** NBT save hook, all values written are merged into {@link #saveAdditional(ValueOutput)} */
+  protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+    saveSynced(nbt, registries);
+  }
+
+  @Override
+  protected final void loadAdditional(ValueInput input) {
+    super.loadAdditional(input);
+    loadAdditional(ValueIOHelper.read(input), input.lookup());
+  }
+
+  @Override
+  protected final void saveAdditional(ValueOutput output) {
+    super.saveAdditional(output);
+    CompoundTag nbt = new CompoundTag();
+    saveAdditional(nbt, registries());
+    ValueIOHelper.write(output, nbt);
   }
 
   @Override
@@ -83,11 +109,5 @@ public class MantleBlockEntity extends BlockEntity {
     CompoundTag nbt = new CompoundTag();
     saveSynced(nbt, registries);
     return nbt;
-  }
-
-  @Override
-  protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-    super.saveAdditional(nbt, registries);
-    saveSynced(nbt, registries);
   }
 }

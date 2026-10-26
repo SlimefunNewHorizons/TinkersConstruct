@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.common.network;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,7 +50,7 @@ public class InventorySlotSyncPacket implements IThreadsafePacket {
       if (world != null) {
         BlockEntity te = world.getBlockEntity(packet.pos);
         if (te != null) {
-          var cap = world.getCapability(Capabilities.ItemHandler.BLOCK, packet.pos, null);
+          var cap = TransferHelper.getItemHandler(world, packet.pos, null);
           if (cap instanceof IItemHandlerModifiable modifiable) {
               modifiable.setStackInSlot(packet.slot, packet.itemStack);
               //noinspection ConstantConditions

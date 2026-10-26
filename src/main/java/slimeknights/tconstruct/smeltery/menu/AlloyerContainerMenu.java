@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.menu;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +54,7 @@ public class AlloyerContainerMenu extends TriggeringBaseContainerMenu<AlloyerBlo
       // add fuel slot if present
       BlockPos down = alloyer.getBlockPos().below();
       if (world != null && world.getBlockState(down).is(TinkerTags.Blocks.FUEL_TANKS)) {
-        var handler = world.getCapability(Capabilities.ItemHandler.BLOCK, down, null);
+        var handler = TransferHelper.getItemHandler(world, down, null);
         if (handler != null) {
           this.addSlot(new SmartItemHandlerSlot(handler, 0, 151, 32));
           hasFuelSlot = true;

@@ -1,5 +1,8 @@
 package slimeknights.mantle.block;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,8 +45,14 @@ public abstract class RetexturedBlock extends Block implements EntityBlock {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    RetexturedHelper.addTooltip(stack, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        RetexturedHelper.addTooltip(stack, tooltip, flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
 

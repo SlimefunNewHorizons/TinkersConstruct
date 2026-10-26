@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.cooking;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.datafixers.util.Function7;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -24,7 +25,7 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
   protected final ItemOutput result;
   protected float experience = 1.0f;
   protected int cookingTime = 200;
-  protected Ingredient ingredient = Ingredient.EMPTY;
+  protected Ingredient ingredient = IngredientHelper.EMPTY;
   protected CookingBookCategory category = CookingBookCategory.MISC;
   protected CookingType type = CookingType.SMELTING;
 
@@ -100,7 +101,7 @@ public class CookingRecipeBuilder<T extends CookingRecipeBuilder<T>> extends Abs
   /** Helper to save a recipe */
   @SuppressWarnings("unchecked")
   private <R extends Recipe<?>> T save(Consumer<FinishedRecipe> consumer, Identifier id, RecordLoadable<R> loadable, Function7<Identifier,String,CookingBookCategory,Ingredient,ItemOutput,Float,Integer,R> constructor, int cookingTime) {
-    if (ingredient == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(ingredient)) {
       throw new IllegalStateException("Ingredient must be set");
     }
     Identifier advancementID = buildOptionalAdvancement(id, "cooking");

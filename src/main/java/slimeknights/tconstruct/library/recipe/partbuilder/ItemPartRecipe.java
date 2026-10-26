@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.partbuilder;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -124,7 +125,7 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.itemPartBuilderSerializer.get();
   }
 
@@ -135,7 +136,7 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
 
   @Override
   public List<ItemStack> getPatternItems() {
-    return Arrays.asList(patternItem.getItems());
+    return Arrays.asList(IngredientHelper.getItems(patternItem));
   }
 
   @Override

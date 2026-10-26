@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -62,6 +63,6 @@ public class NoContainerIngredient extends NestedIngredient {
 
   /** Creates an instance from the given tag */
   public static Ingredient of(TagKey<Item> tag) {
-    return of(Ingredient.of(tag));
+    return of(IngredientHelper.of(tag));
   }
 }

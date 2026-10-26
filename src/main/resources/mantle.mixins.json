@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "slimeknights.mantle.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockItemMixin",
+    "BlockPropertiesMixin",
+    "ItemPropertiesMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

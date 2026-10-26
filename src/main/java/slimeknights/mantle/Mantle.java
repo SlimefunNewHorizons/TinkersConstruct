@@ -1,5 +1,7 @@
 package slimeknights.mantle;
 
+import slimeknights.mantle.transfer.LegacyItemResourceHandler;
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.util.Util;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.Registry;
@@ -67,6 +69,7 @@ import slimeknights.mantle.recipe.condition.TagCombinationCondition;
 import slimeknights.mantle.recipe.condition.TagEmptyCondition;
 import slimeknights.mantle.recipe.condition.TagFilledCondition;
 import slimeknights.mantle.recipe.helper.TagPreference;
+import slimeknights.mantle.recipe.ingredient.EmptyIngredient;
 import slimeknights.mantle.recipe.ingredient.FluidContainerIngredient;
 import slimeknights.mantle.recipe.ingredient.PotionDisplayIngredient;
 import slimeknights.mantle.recipe.ingredient.PotionIngredient;
@@ -112,7 +115,7 @@ public class Mantle {
     MantleRecipes.init(bus);
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, LecternBookItem::interactWithBlock);
 
-    if (FMLEnvironment.dist == Dist.CLIENT) {
+    if (FMLEnvironment.getDist() == Dist.CLIENT) {
       ClientEvents.onConstruct();
     }
   }
@@ -121,14 +124,13 @@ public class Mantle {
     OffhandCooldownTracker.register(event);
     Block[] inventoryBlocks = BuiltInRegistries.BLOCK.stream().filter(InventoryBlock.class::isInstance).toArray(Block[]::new);
     if (inventoryBlocks.length > 0) {
-      event.registerBlock(Capabilities.ItemHandler.BLOCK,
-        (level, pos, state, blockEntity, side) -> blockEntity instanceof InventoryBlockEntity inventory ? inventory.getItemHandler() : null,
+      event.registerBlock(Capabilities.Item.BLOCK,
+        (level, pos, state, blockEntity, side) -> blockEntity instanceof InventoryBlockEntity inventory ? new LegacyItemResourceHandler(inventory.getItemHandler()) : null,
         inventoryBlocks);
     }
     Item[] fluidFoods = BuiltInRegistries.ITEM.stream().filter(FluidContainerFoodItem.class::isInstance).toArray(Item[]::new);
     if (fluidFoods.length > 0) {
-      event.registerItem(Capabilities.FluidHandler.ITEM,
-        (stack, unused) -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), fluidFoods);
+      TransferHelper.registerItemFluid(event, stack -> ((FluidContainerFoodItem)stack.getItem()).createFluidHandler(stack), fluidFoods);
     }
   }
 
@@ -148,6 +150,7 @@ public class Mantle {
     }
     else if (key == NeoForgeRegistries.Keys.INGREDIENT_TYPES) {
       event.register(NeoForgeRegistries.Keys.INGREDIENT_TYPES, FluidContainerIngredient.ID, () -> FluidContainerIngredient.TYPE);
+      event.register(NeoForgeRegistries.Keys.INGREDIENT_TYPES, EmptyIngredient.ID, () -> EmptyIngredient.TYPE);
       event.register(NeoForgeRegistries.Keys.INGREDIENT_TYPES, getResource("potion"), () -> PotionIngredient.SERIALIZER.type());
       event.register(NeoForgeRegistries.Keys.INGREDIENT_TYPES, getResource("potion_display"), () -> PotionDisplayIngredient.SERIALIZER.type());
     }

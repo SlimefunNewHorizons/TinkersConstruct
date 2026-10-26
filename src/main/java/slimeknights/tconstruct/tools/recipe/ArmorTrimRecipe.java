@@ -120,9 +120,9 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
     ToolStack tool = inv.getTinkerable().copy();
     ModDataNBT persistentData = tool.getPersistentData();
     ModifierId modifier = TinkerModifiers.trim.getId();
-    persistentData.putString(TrimModule.materialKey(modifier), material.key().location().toString());
+    persistentData.putString(TrimModule.materialKey(modifier), material.key().identifier().toString());
     if (pattern != null) {
-      persistentData.putString(TrimModule.patternKey(modifier), pattern.key().location().toString());
+      persistentData.putString(TrimModule.patternKey(modifier), pattern.key().identifier().toString());
     }
 
     // add the modifier if missing
@@ -133,7 +133,7 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.armorTrimSerializer.get();
   }
 
@@ -152,7 +152,7 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
                                                  .map(IModifiableDisplay::getDisplayStack).toList();
       if (!trims.isEmpty() && !toolInputs.isEmpty()) {
         Identifier id = getId();
-        displayRecipes = access.registryOrThrow(Registries.TRIM_MATERIAL).holders()
+        displayRecipes = access.lookupOrThrow(Registries.TRIM_MATERIAL).holders()
           .map(material -> new DisplayRecipe(id, toolInputs, trims, material))
           .collect(Collectors.toList());
       } else {
@@ -187,7 +187,7 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
       this.material = List.of(new ItemStack(material.ingredient().value()));
       this.variant = material.description().plainCopy();
 
-      this.materialName = holder.key().location().toString();
+      this.materialName = holder.key().identifier().toString();
       List<ModifierEntry> results = List.of(RESULT);
       this.materialKey = TrimModule.materialKey(TinkerModifiers.trim.getId());
       toolWithModifier = tools.stream().map(stack -> IDisplayModifierRecipe.withModifiers(stack, results, data -> data.putString(materialKey, materialName))).toList();

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.menu;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -186,7 +187,7 @@ public class HeatingStructureContainerMenu extends TriggeringMultiModuleContaine
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-      return FluidContainerTransferManager.INSTANCE.mayHaveTransfer(stack) || stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
+      return FluidContainerTransferManager.INSTANCE.mayHaveTransfer(stack) || TransferHelper.getFluidHandler(stack) != null;
     }
   }
 

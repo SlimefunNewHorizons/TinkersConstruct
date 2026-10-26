@@ -99,7 +99,7 @@ public class ToolTierStat implements IToolStat<ToolMaterial> {
 
   @Override
   public void toNetwork(FriendlyByteBuf buffer, ToolMaterial value) {
-    buffer.writeResourceLocation(Objects.requireNonNull(HarvestTiers.getId(value)));
+    buffer.writeIdentifier(Objects.requireNonNull(HarvestTiers.getId(value)));
   }
 
   @Override

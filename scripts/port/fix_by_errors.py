@@ -2,12 +2,14 @@
 
 Usage: python scripts/port/fix_by_errors.py <gradle-log>
 
-Each rule matches an error message (and optional symbol) and rewrites only the
-reported source line, so a rename never touches a call on an unrelated type.
+Each rule matches an error message, symbol and location, then rewrites only the
+reported source line (using javac's caret column where it matters), so a rename
+never touches a call on an unrelated type.
 """
 import collections
 import re
 import sys
+import time
 
 sys.path.insert(0, __file__.rsplit('scripts', 1)[0] + 'scripts/port')
 import errors  # noqa: E402
@@ -104,12 +106,85 @@ def rewrite_calls(line, method, fn):
     return result + line[pos:]
 
 
+def at_caret(old, new):
+    """Replaces the occurrence of old nearest to the caret column."""
+    def apply(line, err):
+        caret = err[6]
+        best = None
+        for m in re.finditer(re.escape(old), line):
+            dist = abs(m.start() - caret)
+            if best is None or dist < best[0]:
+                best = (dist, m)
+        if best is None:
+            return line
+        m = best[1]
+        return line[:m.start()] + new + line[m.end():]
+    return apply
+
+
+def method_before_caret(old, new):
+    """Renames the method call whose opening parenthesis is at the caret, e.g. registry.get( -> registry.getValue("""
+    def apply(line, err):
+        caret = err[6]
+        if caret < 0 or caret >= len(line) or line[caret] != '(':
+            return line
+        start = caret - len(old)
+        if start >= 1 and line[start:caret] == old and line[start - 1] == '.':
+            return line[:start] + new + line[caret:]
+        return line
+    return apply
+
+
+def receiver_start(text, end):
+    """Finds the start of the expression ending right before index end (exclusive), e.g. foo.bar(baz)."""
+    i = end
+    while i > 0:
+        ch = text[i - 1]
+        if ch == ')':
+            depth = 0
+            j = i - 1
+            while j >= 0:
+                if text[j] == ')':
+                    depth += 1
+                elif text[j] == '(':
+                    depth -= 1
+                    if depth == 0:
+                        break
+                j -= 1
+            i = j
+        elif ch.isalnum() or ch in '_.':
+            i -= 1
+        else:
+            break
+    return i
+
+
+def wrap_receiver(call, helper):
+    """Turns receiver.call into helper(receiver) for the occurrence nearest the caret, e.g. x.getItems() -> IngredientHelper.getItems(x)"""
+    def apply(line, err):
+        caret = err[6]
+        best = None
+        for m in re.finditer(re.escape(call), line):
+            dist = abs(m.start() - caret)
+            if best is None or dist < best[0]:
+                best = (dist, m)
+        if best is None:
+            return line
+        m = best[1]
+        start = receiver_start(line, m.start())
+        if start == m.start():
+            return line
+        return line[:start] + helper + '(' + line[start:m.start()] + ')' + line[m.end():]
+    return apply
+
+
+def whole_line(fn):
+    return lambda line, err: fn(line)
+
+
 def fix_optional(kind):
     get, get_or, default = OPT_DEFAULTS[kind]
-
-    def apply(line):
-        return rewrite_calls(line, get, lambda a: f'.{get_or}({a[0]}, {default})' if len(a) == 1 else None)
-    return apply
+    return whole_line(lambda line: rewrite_calls(line, get, lambda a: f'.{get_or}({a[0]}, {default})' if len(a) == 1 else None))
 
 
 def fix_contains(line):
@@ -122,53 +197,83 @@ def fix_contains(line):
     return rewrite_calls(line, 'contains', rep)
 
 
-def fix_get_list(line):
-    return rewrite_calls(line, 'getList', lambda a: f'.getListOrEmpty({a[0]})' if len(a) == 2 else None)
-
-
-def fix_get_compound(line):
-    return rewrite_calls(line, 'getCompound', lambda a: f'.getCompoundOrEmpty({a[0]})' if len(a) == 1 else None)
-
-
 def sub(pattern, repl):
-    return lambda line: re.sub(pattern, repl, line)
+    return whole_line(lambda line: re.sub(pattern, repl, line))
 
 
+# (message regex, symbol regex or None, location regex or None, fixer(line, err))
 RULES = [
-    (r'isClientSide has private access', None, sub(r'\.isClientSide\b(?!\s*\()', '.isClientSide()')),
-    (r'Optional<CompoundTag> cannot be converted to CompoundTag', None, fix_get_compound),
-    (r'method contains in class CompoundTag cannot be applied', None, fix_contains),
-    (r'method getList in class CompoundTag cannot be applied', None, fix_get_list),
-    (r'cannot find symbol', r'^method getAllKeys\(\)', sub(r'\.getAllKeys\(\)', '.keySet()')),
-    (r'cannot find symbol', r'^method readResourceLocation\(\)', sub(r'\.readResourceLocation\(\)', '.readIdentifier()')),
-    (r'cannot find symbol', r'^method writeResourceLocation\(', sub(r'\.writeResourceLocation\(', '.writeIdentifier(')),
-    (r'cannot find symbol', r'^method noCollission\(\)', sub(r'\.noCollission\(\)', '.noCollision()')),
-    (r'cannot find symbol', r'^method getCommandSenderWorld\(\)', sub(r'\.getCommandSenderWorld\(\)', '.level()')),
+    (r'isClientSide has private access', None, None, sub(r'\.isClientSide\b(?!\s*\()', '.isClientSide()')),
+    (r'Optional<CompoundTag> cannot be converted to CompoundTag', None, None,
+     whole_line(lambda line: rewrite_calls(line, 'getCompound', lambda a: f'.getCompoundOrEmpty({a[0]})' if len(a) == 1 else None))),
+    (r'method contains in class CompoundTag cannot be applied', None, None, whole_line(fix_contains)),
+    (r'method getList in class CompoundTag cannot be applied', None, None,
+     whole_line(lambda line: rewrite_calls(line, 'getList', lambda a: f'.getListOrEmpty({a[0]})' if len(a) == 2 else None))),
+    (r'cannot find symbol', r'^method getAllKeys\(\)', None, sub(r'\.getAllKeys\(\)', '.keySet()')),
+    (r'cannot find symbol', r'^method readResourceLocation\(\)', None, sub(r'\.readResourceLocation\(\)', '.readIdentifier()')),
+    (r'cannot find symbol', r'^method writeResourceLocation\(', None, sub(r'\.writeResourceLocation\(', '.writeIdentifier(')),
+    (r'cannot find symbol', r'^method noCollission\(\)', None, sub(r'\.noCollission\(\)', '.noCollision()')),
+    (r'cannot find symbol', r'^method getCommandSenderWorld\(\)', None, sub(r'\.getCommandSenderWorld\(\)', '.level()')),
+    # 1.21.11: ResourceKey#location -> identifier
+    (r'cannot find symbol', r'^method location\(\)', r'ResourceKey', at_caret('.location()', '.identifier()')),
+    # 1.21.2 registry API
+    (r'Optional<Reference<.*>> cannot be converted to', None, None, method_before_caret('get', 'getValue')),
+    (r'cannot find symbol', r'^method registryOrThrow\(', None, sub(r'\.registryOrThrow\(', '.lookupOrThrow(')),
+    (r'cannot find symbol', r'^method getTag\(TagKey', r'Registry|HolderGetter|HolderLookup', at_caret('.getTag(', '.get(')),
+    (r'cannot find symbol', r'^method getHolderOrThrow\(', None, at_caret('.getHolderOrThrow(', '.getOrThrow(')),
+    (r'cannot find symbol', r'^method getTagNames\(\)', r'Registry', at_caret('.getTagNames()', '.listTagIds()')),
+    (r'cannot find symbol', r'^method holders\(\)', r'Registry', at_caret('.holders()', '.listElements()')),
+    (r'cannot find symbol', r'^method getHolder\(int\)', r'Registry', at_caret('.getHolder(', '.get(')),
+    (r'cannot find symbol', r'^method getHolder\(ResourceKey', r'Registry', at_caret('.getHolder(', '.get(')),
+    # 1.21.2 ingredients
+    (r'cannot find symbol', r'^method getItems\(\)', r'Ingredient', wrap_receiver('.getItems()', 'IngredientHelper.getItems')),
+    (r'no suitable method found for of\(TagKey<Item>\)', None, None, at_caret('Ingredient.of(', 'IngredientHelper.of(')),
 ] + [
-    (rf'Optional<{k}> cannot be converted to', None, fix_optional(k)) for k in OPT_DEFAULTS
+    (rf'Optional<{k}> cannot be converted to', None, None, fix_optional(k)) for k in OPT_DEFAULTS
 ]
+
+# imports a rewrite may need, added when the helper name appears in the file
+IMPORTS = {
+    'IngredientHelper.': 'import slimeknights.mantle.recipe.helper.IngredientHelper;',
+    'ValueIOHelper.': 'import slimeknights.mantle.util.ValueIOHelper;',
+    'TransferHelper.': 'import slimeknights.mantle.transfer.TransferHelper;',
+}
+
+
+def write(path, text):
+    for _ in range(5):
+        try:
+            with open(path, 'w', encoding='utf-8', newline='') as f:
+                f.write(text)
+            return
+        except OSError:
+            time.sleep(1)  # OneDrive may briefly lock files
+    raise OSError('could not write ' + path)
 
 
 def main():
     errs = errors.parse(sys.argv[1])
-    edits = collections.defaultdict(set)
-    for file, line, msg, symbol, _, _ in errs:
-        for i, (msg_re, sym_re, _) in enumerate(RULES):
-            if re.search(msg_re, msg) and (sym_re is None or re.search(sym_re, symbol)):
-                edits[file].add((line, i))
+    edits = collections.defaultdict(list)
+    for err in errs:
+        file, line, msg, symbol, location = err[:5]
+        for i, (msg_re, sym_re, loc_re, _) in enumerate(RULES):
+            if re.search(msg_re, msg) and (sym_re is None or re.search(sym_re, symbol)) and (loc_re is None or re.search(loc_re, location)):
+                edits[file].append((line, err[6], i, err))
+                break
     changed = collections.Counter()
     for file, items in edits.items():
         path = 'src/main/java/' + file
         with open(path, encoding='utf-8', newline='') as f:
             lines = f.read().split('\n')
-        for line_no, rule in sorted(items):
-            old = lines[line_no - 1]
-            new = RULES[rule][2](old)
+        # rightmost edits first so earlier carets stay valid
+        for line_no, _, rule, err in sorted(items, key=lambda x: (x[0], -x[1])):
+            old = lines[line_no - 1].rstrip('\r')
+            cr = '\r' if lines[line_no - 1].endswith('\r') else ''
+            new = RULES[rule][3](old, err)
             if new != old:
-                lines[line_no - 1] = new
-                changed[RULES[rule][0]] += 1
-        with open(path, 'w', encoding='utf-8', newline='') as f:
-            f.write('\n'.join(lines))
+                lines[line_no - 1] = new + cr
+                changed[RULES[rule][0] + ' ' + (RULES[rule][1] or '')] += 1
+        write(path, '\n'.join(lines))
     for k, v in changed.most_common():
         print(f'{v:5} {k}')
 

@@ -1,7 +1,11 @@
 package slimeknights.tconstruct.library.modifiers.hook.interaction;
 
+import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
@@ -9,6 +13,7 @@ import slimeknights.tconstruct.library.modifiers.ModifierHooks;
 import slimeknights.tconstruct.library.tools.nbt.IToolStackView;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +40,21 @@ public interface InventoryTickModifierHook {
    * @param itemSlot    Slot with the tool
    * @param isSelected  If true, the tool is selected
    */
+  /** Runs the hook from {@link net.minecraft.world.item.Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)}, which since 1.21.5 runs on the server and knows the equipment slot instead of the index */
+  static void heldInventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    int index = -1;
+    if (entity instanceof Player player) {
+      NonNullList<ItemStack> items = player.getInventory().getNonEquipmentItems();
+      for (int i = 0; i < items.size(); i++) {
+        if (items.get(i) == stack) {
+          index = i;
+          break;
+        }
+      }
+    }
+    heldInventoryTick(stack, level, entity, index, slot == EquipmentSlot.MAINHAND);
+  }
+
   static void heldInventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
     // don't care about non-living, they skip most tool context
     if (entityIn instanceof LivingEntity) {

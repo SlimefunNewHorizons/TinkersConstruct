@@ -47,7 +47,7 @@ public abstract class TagCondition<T> implements ICondition {
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected static <C extends TagCondition<?>> MapCodec<C> codec(Function<TagKey<?>, C> constructor) {
     return RecordCodecBuilder.mapCodec(instance -> instance.group(
-      Identifier.CODEC.optionalFieldOf("registry", Registries.ITEM.location()).forGetter(value -> value.getTag().registry().location()),
+      Identifier.CODEC.optionalFieldOf("registry", Registries.ITEM.identifier()).forGetter(value -> value.getTag().registry().identifier()),
       Identifier.CODEC.fieldOf("tag").forGetter(value -> value.getTag().location())
     ).apply(instance, (registry, tag) -> constructor.apply(TagKey.create(ResourceKey.createRegistryKey(registry), tag))));
   }

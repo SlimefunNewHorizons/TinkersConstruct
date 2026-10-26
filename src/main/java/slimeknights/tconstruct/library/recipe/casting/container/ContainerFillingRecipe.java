@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.container;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.HolderLookup;
@@ -52,14 +53,14 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<Disp
   private final Item container;
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return serializer.getType();
   }
 
   @Override
   public int getFluidAmount(ICastingContainer inv) {
     Fluid fluid = inv.getFluid();
-    var handler = inv.getStack().getCapability(Capabilities.FluidHandler.ITEM);
+    var handler = TransferHelper.getFluidHandler(inv.getStack());
     return handler == null ? 0 : handler.fill(new FluidStack(fluid, this.fluidAmount), FluidAction.SIMULATE);
   }
 
@@ -82,7 +83,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<Disp
   public boolean matches(ICastingContainer inv, Level worldIn) {
     ItemStack stack = inv.getStack();
     Fluid fluid = inv.getFluid();
-    var handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    var handler = TransferHelper.getFluidHandler(stack);
     return stack.getItem() == this.container.asItem() && handler != null
            && handler.fill(new FluidStack(fluid, this.fluidAmount), FluidAction.SIMULATE) > 0;
   }
@@ -115,7 +116,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<Disp
 
   private ItemStack assemble0(ICastingContainer inv) {
     ItemStack stack = inv.getStack().copy();
-    var handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    var handler = TransferHelper.getFluidHandler(stack);
     if (handler != null) {
       handler.fill(inv.getFluidStack().copyWithAmount(this.fluidAmount), FluidAction.EXECUTE);
       return handler.getContainer();

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.worktable;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +65,7 @@ public class ModifierSetWorktableRecipeBuilder extends AbstractSizedIngredientRe
     if (inputs.isEmpty()) {
       throw new IllegalStateException("Must have at least one ingredient");
     }
-    if (tools == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(tools)) {
       throw new IllegalStateException("Tools cannot be empty");
     }
     Identifier advancementId = buildOptionalAdvancement(id, "modifiers");

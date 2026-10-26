@@ -27,22 +27,21 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.common.ItemAbility;
 import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.tconstruct.common.TinkerTags;
-import slimeknights.tconstruct.library.client.item.ModifiableItemClientExtension;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
 import slimeknights.tconstruct.library.modifiers.ModifierHooks;
 import slimeknights.tconstruct.library.modifiers.hook.behavior.AttributesModifierHook;
@@ -72,6 +71,7 @@ import slimeknights.tconstruct.library.utils.ItemStackUtil;
 import slimeknights.tconstruct.tools.TinkerItemAbilities;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +81,7 @@ import java.util.function.Consumer;
  * A standard modifiable item which implements melee hooks
  * This class handles how all the modifier hooks and display data for items made out of different materials
  */
-public class ModifiableItem extends TieredItem implements IModifiableDisplay {
+public class ModifiableItem extends Item implements IModifiableDisplay {
   /** Tool definition for the given tool */
   @Getter
   private final ToolDefinition toolDefinition;
@@ -97,7 +97,7 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   }
 
   public ModifiableItem(Properties properties, ToolDefinition toolDefinition, int maxStackSize) {
-    super(TinkerTier.INSTANCE, properties);
+    super(properties);
     this.toolDefinition = toolDefinition;
     this.maxStackSize = maxStackSize;
   }
@@ -126,16 +126,6 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   /* Enchanting */
 
   @Override
-  public boolean isEnchantable(ItemStack stack) {
-    return false;
-  }
-
-  @Override
-  public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-    return false;
-  }
-
-  @Override
   public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
     return enchantment.is(EnchantmentTags.CURSE) && super.supportsEnchantment(stack, enchantment);
   }
@@ -154,15 +144,7 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   /* Loading */
 
   @Override
-  public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
-    if (nbt != null) {
-      ToolStack.verifyTag(this, nbt, getToolDefinition());
-    }
-  }
-
-  @Override
-  public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
+  public void onCraftedBy(ItemStack stack, Player playerIn) {
     ToolStack.ensureInitialized(stack, getToolDefinition());
   }
 
@@ -196,17 +178,6 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
 
 
   /* Damage/Durability */
-
-  @Override
-  public boolean isRepairable(ItemStack stack) {
-    // handle in the tinker station
-    return false;
-  }
-
-  @Override
-  public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
-    return false;
-  }
 
   public boolean canBeDepleted() {
     return true;
@@ -282,15 +253,10 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
     return builder.build();
   }
 
-  @Override
-  public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-    return canPerformAction(stack, TinkerItemAbilities.SHIELD_DISABLE);
-  }
+  // shortcut: shield disabling moved to the WEAPON component in 1.21.5, TinkerItemAbilities.SHIELD_DISABLE needs to set it on stat rebuild
 
   @Override
-  public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-    return true;
-  }
+  public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {}
 
   @Override
   public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -332,8 +298,8 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   /* Modifier interactions */
 
   @Override
-  public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    InventoryTickModifierHook.heldInventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    InventoryTickModifierHook.heldInventoryTick(stack, level, entity, slot);
   }
 
   @Override
@@ -468,7 +434,7 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   }
 
   @Override
-  public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+  public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
     ToolStack tool = ToolStack.from(stack);
     ModifierEntry activeModifier = GeneralInteractionModifierHook.getActiveModifier(tool);
     GeneralInteractionModifierHook hook = activeModifier.getHook(ModifierHooks.GENERAL_INTERACT);
@@ -477,6 +443,7 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
       entry.getHook(ModifierHooks.TOOL_USING).beforeReleaseUsing(tool, entry, entityLiving, duration, timeLeft, activeModifier);
     }
     hook.onStoppedUsing(tool, activeModifier, entityLiving, timeLeft);
+    return true;
   }
 
   @Override
@@ -525,8 +492,10 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
     TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+    tooltip.forEach(tooltipAdder);
   }
 
   public int getDefaultTooltipHideFlags(ItemStack stack) {
@@ -543,12 +512,6 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
     }
     return toolForRendering;
   }
-
-  @Override
-  public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-    consumer.accept(ModifiableItemClientExtension.INSTANCE);
-  }
-
 
   /* Misc */
 

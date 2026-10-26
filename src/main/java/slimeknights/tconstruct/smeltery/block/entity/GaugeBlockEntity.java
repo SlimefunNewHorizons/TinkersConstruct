@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,7 +28,7 @@ public class GaugeBlockEntity extends BlockEntity {
       return EmptyFluidHandler.INSTANCE;
     }
     Direction side = getBlockState().getValue(BlockStateProperties.FACING);
-    IFluidHandler neighbor = level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos().relative(side.getOpposite()), side);
+    IFluidHandler neighbor = TransferHelper.getFluidHandler(level, getBlockPos().relative(side.getOpposite()), side);
     return neighbor == null ? EmptyFluidHandler.INSTANCE : neighbor;
   }
 }

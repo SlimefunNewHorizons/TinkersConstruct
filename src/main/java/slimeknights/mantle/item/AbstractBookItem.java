@@ -1,5 +1,9 @@
 package slimeknights.mantle.item;
 
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -48,16 +52,22 @@ public abstract class AbstractBookItem extends LecternBookItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    // if the stack is in the player inventory, show the right click to open tooltip
-    Player player = SafeClientAccess.getPlayer();
-    if (player != null && isValidContainer(player.containerMenu)) {
-      Inventory inventory = player.getInventory();
-      if (inventory.items.contains(stack) || inventory.offhand.contains(stack)) {
-        tooltip.add(CLICK_TO_OPEN);
-      }
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        // if the stack is in the player inventory, show the right click to open tooltip
+        Player player = SafeClientAccess.getPlayer();
+        if (player != null && isValidContainer(player.containerMenu)) {
+          Inventory inventory = player.getInventory();
+          if (inventory.items.contains(stack) || inventory.offhand.contains(stack)) {
+            tooltip.add(CLICK_TO_OPEN);
+          }
+        }
+        super.appendHoverText(stack, context, display, tooltip::add, flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
-    super.appendHoverText(stack, context, tooltip, flag);
   }
 
   /** Called on the client to open the screen when used on right click in the hand */

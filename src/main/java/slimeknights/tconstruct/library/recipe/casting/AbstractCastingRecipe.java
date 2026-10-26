@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.minecraft.core.NonNullList;
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
 /** Shared logic between item and material casting */
 public abstract class AbstractCastingRecipe implements ICastingRecipe {
   /* Common fields */
-  protected static final LoadableField<Ingredient,AbstractCastingRecipe> CAST_FIELD = IngredientLoadable.ALLOW_EMPTY.defaultField("cast", Ingredient.EMPTY, AbstractCastingRecipe::getCast);
+  protected static final LoadableField<Ingredient,AbstractCastingRecipe> CAST_FIELD = IngredientLoadable.ALLOW_EMPTY.defaultField("cast", IngredientHelper.EMPTY, AbstractCastingRecipe::getCast);
   protected static final LoadableField<Boolean,AbstractCastingRecipe> CAST_CONSUMED_FIELD = BooleanLoadable.INSTANCE.defaultField("cast_consumed", false, false, AbstractCastingRecipe::isConsumed);
   protected static final LoadableField<Boolean,AbstractCastingRecipe> SWITCH_SLOTS_FIELD = BooleanLoadable.INSTANCE.defaultField("switch_slots", false, false, AbstractCastingRecipe::switchSlots);
 
@@ -44,6 +45,6 @@ public abstract class AbstractCastingRecipe implements ICastingRecipe {
 
   @Override
   public NonNullList<Ingredient> getIngredients() {
-    return NonNullList.of(Ingredient.EMPTY, this.cast);
+    return NonNullList.of(IngredientHelper.EMPTY, this.cast);
   }
 }

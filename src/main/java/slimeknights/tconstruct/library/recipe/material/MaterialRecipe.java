@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.Identifier;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer>, IMaterialValue {
   /** Empty material instance for the cache */
   @SuppressWarnings("removal")
-  public static final MaterialRecipe EMPTY = new MaterialRecipe(Identifier.parse("missingno"), "", Ingredient.EMPTY, 0, 0, IMaterial.UNKNOWN_ID, ItemOutput.EMPTY);
+  public static final MaterialRecipe EMPTY = new MaterialRecipe(Identifier.parse("missingno"), "", IngredientHelper.EMPTY, 0, 0, IMaterial.UNKNOWN_ID, ItemOutput.EMPTY);
   public static final RecordLoadable<MaterialRecipe> LOADER = RecordLoadable.create(
     ContextKey.ID.requiredField(),
     LoadableRecipeSerializer.RECIPE_GROUP,
@@ -85,7 +86,7 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   /* Basic */
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return TinkerRecipeTypes.MATERIAL.get();
   }
 
@@ -95,7 +96,7 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.materialRecipeSerializer.get();
   }
 
@@ -118,7 +119,7 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
 
   @Override
   public NonNullList<Ingredient> getIngredients() {
-    return NonNullList.of(Ingredient.EMPTY, ingredient);
+    return NonNullList.of(IngredientHelper.EMPTY, ingredient);
   }
 
   /** Cache of the display items list */
@@ -128,11 +129,11 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   public List<ItemStack> getDisplayItems() {
     if (displayItems == null) {
       if (needed > 1) {
-        displayItems = Arrays.stream(ingredient.getItems())
+        displayItems = Arrays.stream(IngredientHelper.getItems(ingredient))
                              .map(stack -> stack.copyWithCount(needed))
                              .collect(Collectors.toList());
       } else {
-        displayItems = Arrays.asList(ingredient.getItems());
+        displayItems = Arrays.asList(IngredientHelper.getItems(ingredient));
       }
     }
     return displayItems;

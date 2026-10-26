@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.menu;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -120,7 +121,7 @@ public class ToolContainerMenu extends AbstractContainerMenu {
     // if the stack looks like it could be our tool, fetch the handler from it
     IItemHandler handler;
     if (ItemStackUtil.getTag(stack) != null && stack.is(TinkerTags.Items.MODIFIABLE)) {
-      IItemHandler queried = stack.getCapability(Capabilities.ItemHandler.ITEM);
+      IItemHandler queried = TransferHelper.getItemHandler(stack);
       handler = queried instanceof IItemHandlerModifiable ? queried : EmptyItemHandler.INSTANCE;
       // wrong number of slots means something went wrong, use a dummy
       if (handler.getSlots() != size) {

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.item.Item;
@@ -102,7 +103,7 @@ public class MaterialRecipeCache {
   /** Cache lookup function for items by materials */
   private static final Function<MaterialVariantId,List<ItemStack>> GET_ITEMS_BY_MATERIAL = variant ->
     getRecipes(variant).stream().flatMap(r -> {
-      Stream<ItemStack> stacks = Arrays.stream(r.getIngredient().getItems());
+      Stream<ItemStack> stacks = Arrays.stream(IngredientHelper.getItems(r.getIngredient()));
       // if we need multiple, increase the stack size of the display stacks
       if (r.needed > r.value) {
         int size = (r.needed + r.value - 1) / r.value;

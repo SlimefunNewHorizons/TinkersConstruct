@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -96,7 +97,7 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
   public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
     if (multiRecipes == null) {
       RecipeType<?> type = getType();
-      List<ItemStack> castItems = Arrays.asList(getCast().getItems());
+      List<ItemStack> castItems = Arrays.asList(IngredientHelper.getItems(getCast()));
       multiRecipes = MaterialCastingLookup
         .getAllCastingFluids().stream()
         .filter(recipe -> {

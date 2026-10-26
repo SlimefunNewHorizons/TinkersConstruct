@@ -322,6 +322,6 @@ public class BaseContainerMenu<TILE extends BlockEntity> extends AbstractContain
     if (buf == null) {
       return null;
     }
-    return FMLEnvironment.dist == Dist.CLIENT ? BlockEntityHelper.get(type, Minecraft.getInstance().level, buf.readBlockPos()).orElse(null) : null;
+    return FMLEnvironment.getDist() == Dist.CLIENT ? BlockEntityHelper.get(type, Minecraft.getInstance().level, buf.readBlockPos()).orElse(null) : null;
   }
 }

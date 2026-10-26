@@ -24,7 +24,7 @@ public interface IModifierWorktableRecipe extends ICommonRecipe<ITinkerableConta
   Identifier getId();
 
   @Override
-  default RecipeType<?> getType() {
+  default RecipeType getType() {
     return TinkerRecipeTypes.MODIFIER_WORKTABLE.get();
   }
 

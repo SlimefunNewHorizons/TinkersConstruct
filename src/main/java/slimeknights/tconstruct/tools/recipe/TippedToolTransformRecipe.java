@@ -45,7 +45,7 @@ public class TippedToolTransformRecipe extends ToolBuildingRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.tippedToolTransformRecipeSerializer.get();
   }
 
@@ -68,7 +68,7 @@ public class TippedToolTransformRecipe extends ToolBuildingRecipe {
         if (!stack.isEmpty()) {
           Holder<Potion> potion = PotionUtils.getPotion(stack);
           if (potion != null) {
-            potion.unwrapKey().ifPresent(key -> tool.getPersistentData().putString(modifier, key.location().toString()));
+            potion.unwrapKey().ifPresent(key -> tool.getPersistentData().putString(modifier, key.identifier().toString()));
           }
         }
       }
@@ -80,12 +80,12 @@ public class TippedToolTransformRecipe extends ToolBuildingRecipe {
   public List<ItemStack> getDisplayOutput() {
     if (displayOutput == null) {
       ItemStack result = super.getDisplayOutput().get(0);
-      displayOutput = Arrays.stream(ingredients.get(0).getItems())
+      displayOutput = Arrays.stream(IngredientHelper.getItems(ingredients.get(0)))
         .map(stack -> {
           Holder<Potion> potion = PotionUtils.getPotion(stack);
           if (potion != null) {
             ItemStack copy = result.copy();
-            potion.unwrapKey().ifPresent(key -> ToolStack.from(copy).getPersistentData().putString(modifier, key.location().toString()));
+            potion.unwrapKey().ifPresent(key -> ToolStack.from(copy).getPersistentData().putString(modifier, key.identifier().toString()));
             return copy;
           }
           return result;

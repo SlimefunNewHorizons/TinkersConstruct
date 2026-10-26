@@ -87,7 +87,7 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
           if (holder != null) {
             // note that Forge is dumb in BannerItem with their patch - mojang already adds the mod ID to the tooltip key
             holder.unwrapKey().ifPresent(key ->
-              tooltip.add(Component.translatable("block.minecraft.banner." + key.location().toShortLanguageKey() + '.' + dye.getName()).withStyle(ChatFormatting.GRAY)));
+              tooltip.add(Component.translatable("block.minecraft.banner." + key.identifier().toShortLanguageKey() + '.' + dye.getName()).withStyle(ChatFormatting.GRAY)));
 
           }
         }
@@ -114,7 +114,7 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
 
     // add in the base pattern, it only exists on shields and we copy from banners
     CompoundTag basePattern = new CompoundTag();
-    basePattern.putString(KEY_PATTERN, BannerPatterns.BASE.location().toString());
+    basePattern.putString(KEY_PATTERN, BannerPatterns.BASE.identifier().toString());
     basePattern.putInt(KEY_DYE, dye.getId());
     basePattern.putInt(KEY_COLOR, baseColor);
     patterns.add(basePattern);
@@ -125,7 +125,7 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
     // add in all other patterns
     for (BannerPatternLayers.Layer layer : banner.layers()) {
       CompoundTag copy = new CompoundTag();
-      String pattern = layer.pattern().unwrapKey().map(key -> key.location().toString()).orElseGet(() -> layer.pattern().value().assetId().toString());
+      String pattern = layer.pattern().unwrapKey().map(key -> key.identifier().toString()).orElseGet(() -> layer.pattern().value().assetId().toString());
       copy.putString(KEY_PATTERN, pattern);
       // convert the color from a dye color to an integer
       dye = layer.color();

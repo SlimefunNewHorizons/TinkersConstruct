@@ -36,7 +36,7 @@ public class SmeltingResultRecipe extends SmeltingRecipe implements CookingResul
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return MantleRecipes.SMELTING.get();
   }
 

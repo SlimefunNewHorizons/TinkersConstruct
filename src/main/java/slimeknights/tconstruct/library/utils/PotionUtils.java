@@ -65,7 +65,7 @@ public final class PotionUtils {
       return contents;
     }
     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-    return fromLegacyTag(data == null ? null : data.getUnsafe());
+    return fromLegacyTag(data == null ? null : data.tag);
   }
 
   private static PotionContents fromLegacyTag(@Nullable CompoundTag tag) {

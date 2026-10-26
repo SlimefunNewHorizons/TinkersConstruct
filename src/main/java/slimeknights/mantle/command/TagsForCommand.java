@@ -1,5 +1,6 @@
 package slimeknights.mantle.command;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -122,7 +123,7 @@ public class TagsForCommand {
    * @return  Number of tags printed
    */
   private static <T> int printOwningTags(CommandContext<CommandSourceStack> context, TagSource<T> registry, T value, @Nullable Identifier key) {
-    MutableComponent output = Component.translatable("command.mantle.tags_for.success", registry.key().location(), key);
+    MutableComponent output = Component.translatable("command.mantle.tags_for.success", registry.key().identifier(), key);
     List<Identifier> tags = registry.tagsFor(value).map(TagKey::location).toList();
     if (tags.isEmpty()) {
       output.append("\n* ").append(NO_TAGS);
@@ -149,7 +150,7 @@ public class TagsForCommand {
     // first, fetch value
     T value = registry.getValue(name);
     if (value == null) {
-      throw VALUE_NOT_FOUND.create(registry.key().location(), name);
+      throw VALUE_NOT_FOUND.create(registry.key().identifier(), name);
     }
     return printOwningTags(context, registry, value, name);
   }
@@ -179,7 +180,7 @@ public class TagsForCommand {
   private static int heldFluid(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
     CommandSourceStack source = context.getSource();
     ItemStack stack = source.getPlayerOrException().getMainHandItem();
-    IFluidHandlerItem capability = stack.getCapability(Capabilities.FluidHandler.ITEM);
+    IFluidHandlerItem capability = TransferHelper.getFluidHandler(stack);
     if (capability != null) {
       IFluidHandler handler = capability;
       if (handler.getTanks() > 0) {
@@ -214,7 +215,7 @@ public class TagsForCommand {
     if (!enchantments.isEmpty()) {
       int totalTags = 0;
       // print tags for each contained enchantment
-      Registry<Enchantment> registry = source.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+      Registry<Enchantment> registry = source.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
       for (Holder<Enchantment> enchantment : enchantments.keySet()) {
         totalTags += printOwningTags(context, registry, enchantment.value());
       }

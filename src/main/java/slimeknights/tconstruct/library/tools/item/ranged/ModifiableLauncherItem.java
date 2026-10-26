@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.ItemUseAnimation;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -359,8 +361,14 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        TooltipUtil.addInformation(this, stack, context.level(), tooltip, SafeClientAccess.getTooltipKey(), flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   public int getDefaultTooltipHideFlags(ItemStack stack) {
@@ -378,7 +386,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
     return toolForRendering;
   }
 
-  @Override
   public void initializeClient(Consumer<IClientItemExtensions> consumer) {
     consumer.accept(ModifiableItemClientExtension.INSTANCE);
   }

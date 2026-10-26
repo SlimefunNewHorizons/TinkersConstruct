@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.data.recipe;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
 import lombok.AccessLevel;
@@ -535,7 +536,7 @@ public class SmelteryRecipeBuilder {
     baseUnit = FluidValues.INGOT;
     damageUnit = FluidValues.NUGGET;
     melting(9, "block", "storage_blocks", 3.0f, false, false);
-    blockCasting(9, Ingredient.EMPTY, false);
+    blockCasting(9, IngredientHelper.EMPTY, false);
     meltingCasting(1,      TinkerSmeltery.ingotCast,  1.0f, false);
     meltingCasting(1 / 9f, TinkerSmeltery.nuggetCast, 1 / 3f, false);
     // if we set byproducts, we are an ore
@@ -554,7 +555,7 @@ public class SmelteryRecipeBuilder {
     baseUnit = FluidValues.GEM;
     damageUnit = FluidValues.GEM_SHARD;
     melting(storageSize, "block", "storage_blocks", (float)Math.sqrt(storageSize), false, false);
-    blockCasting(storageSize, Ingredient.EMPTY, false);
+    blockCasting(storageSize, IngredientHelper.EMPTY, false);
     meltingCasting(1, TinkerSmeltery.gemCast, 1.0f, false);
     // if we set byproducts, we are an ore
     if (hasOre) {

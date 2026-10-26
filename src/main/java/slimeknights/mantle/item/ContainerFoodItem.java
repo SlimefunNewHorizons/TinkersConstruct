@@ -1,5 +1,8 @@
 package slimeknights.mantle.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.ItemUseAnimation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
@@ -60,10 +63,16 @@ public class ContainerFoodItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-    FoodProperties food = stack.getFoodProperties(null);
-    if (food != null) {
-      addEffectTooltip(food, tooltip);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        FoodProperties food = stack.getFoodProperties(null);
+        if (food != null) {
+          addEffectTooltip(food, tooltip);
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 

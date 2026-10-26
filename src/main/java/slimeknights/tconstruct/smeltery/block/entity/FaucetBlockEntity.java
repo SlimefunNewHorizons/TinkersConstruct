@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -75,7 +76,7 @@ public class FaucetBlockEntity extends MantleBlockEntity {
    */
   private IFluidHandler findFluidHandler(Direction side) {
     assert level != null;
-    return level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(side), side.getOpposite());
+    return TransferHelper.getFluidHandler(level, worldPosition.relative(side), side.getOpposite());
   }
 
   /**

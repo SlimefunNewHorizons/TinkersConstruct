@@ -99,12 +99,12 @@ public class MeltingFuel implements ICustomOutputRecipe<IFluidContainer> {
   /* Recipe type methods */
 
   @Override
-  public RecipeType<?> getType() {
+  public RecipeType getType() {
     return TinkerRecipeTypes.FUEL.get();
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerSmeltery.fuelSerializer.get();
   }
 

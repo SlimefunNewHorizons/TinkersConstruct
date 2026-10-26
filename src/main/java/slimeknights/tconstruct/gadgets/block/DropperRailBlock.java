@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.gadgets.block;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
@@ -22,12 +23,12 @@ public class DropperRailBlock extends RailBlock {
 
   @Override
   public void onMinecartPass(BlockState state, Level world, BlockPos pos, AbstractMinecart cart) {
-    IItemHandler itemHandlerCart = cart.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, Direction.UP);
+    IItemHandler itemHandlerCart = TransferHelper.getItemHandler(cart, Direction.UP);
     if (itemHandlerCart == null || !(cart instanceof Hopper)) {
       return;
     }
     BlockEntity tileEntity = world.getBlockEntity(pos.below());
-    IItemHandler itemHandlerTE = world.getCapability(Capabilities.ItemHandler.BLOCK, pos.below(), Direction.UP);
+    IItemHandler itemHandlerTE = TransferHelper.getItemHandler(world, pos.below(), Direction.UP);
     if (tileEntity == null || itemHandlerTE == null) {
       return;
     }

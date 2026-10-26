@@ -115,7 +115,6 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
     return true;
   }
 
-  @Override
   public void initializeClient(Consumer<IClientItemExtensions> consumer) {
     consumer.accept(ModifiableCrossbowClientExtension.INSTANCE);
   }

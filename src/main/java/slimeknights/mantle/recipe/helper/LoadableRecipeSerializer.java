@@ -99,7 +99,7 @@ public class LoadableRecipeSerializer<T extends Recipe<?>> implements LoggingRec
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType getType() {
       return type.get();
     }
   }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jei.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.Streams;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -42,7 +43,7 @@ public class MaterialsCraftingExtension<T extends CraftingRecipe & MaterialsCraf
     // if we have just the one part, set the output to match its material
     if (recipe.getPartCount() == 1) {
       Ingredient firstPart = recipe.getParts().get(0);
-      result = Arrays.stream(firstPart.getItems()).map(variant -> {
+      result = Arrays.stream(IngredientHelper.getItems(firstPart)).map(variant -> {
         ItemStack stack = plainResult.copy();
         if (variant.getItem() instanceof IMaterialItem materialItem) {
           recipe.setMaterial(stack, materialItem.getMaterial(variant));

@@ -89,7 +89,7 @@ public record TagCombinationCondition<T>(List<TagKey<T>> match, @Nullable TagKey
   private static final Codec<List<Identifier>> MATCH_CODEC = Codec.withAlternative(
     Identifier.CODEC.listOf(), Identifier.CODEC.xmap(List::of, values -> values.get(0)));
   public static final MapCodec<TagCombinationCondition<?>> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    Identifier.CODEC.optionalFieldOf("registry", Registries.ITEM.location()).forGetter(value -> value.match.get(0).registry().location()),
+    Identifier.CODEC.optionalFieldOf("registry", Registries.ITEM.identifier()).forGetter(value -> value.match.get(0).registry().identifier()),
     MATCH_CODEC.fieldOf("match").forGetter(value -> value.match.stream().map(TagKey::location).toList()),
     Identifier.CODEC.optionalFieldOf("ignore").forGetter(value -> Optional.ofNullable(value.ignore).map(TagKey::location))
   ).apply(instance, TagCombinationCondition::fromCodec));

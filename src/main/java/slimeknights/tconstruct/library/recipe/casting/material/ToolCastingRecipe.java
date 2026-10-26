@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.Streams;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.HolderLookup;
@@ -255,7 +256,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
         ItemStack partSwapDisplay = ToolBuildHandler.buildItemFromMaterials(result, partSwapMaterials.build());
         ItemStackUtil.getOrCreateTag(partSwapDisplay).putBoolean(TooltipUtil.KEY_DISPLAY, true);
 
-        List<ItemStack> casts = List.of(getCast().getItems());
+        List<ItemStack> casts = List.of(IngredientHelper.getItems(getCast()));
         // if the cast is consumed, add the tool to the list of cast items to show that part swapping is an option
         boolean consumed = castPurpose != CastPurpose.CATALYST;
         List<ItemStack> castsWithTool = consumed ? Streams.concat(casts.stream(), Stream.of(partSwapDisplay)).toList() : casts;

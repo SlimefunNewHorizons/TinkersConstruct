@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -28,7 +29,7 @@ public class TinkerStationDamagingRecipeBuilder extends AbstractRecipeBuilder<Ti
 
   @Override
   public void save(Consumer<FinishedRecipe> consumer, Identifier id) {
-    if (ingredient == Ingredient.EMPTY) {
+    if (IngredientHelper.isEmpty(ingredient)) {
       throw new IllegalStateException("Empty ingredient not allowed");
     }
     Identifier advancementId = buildOptionalAdvancement(id, "tinker_station");

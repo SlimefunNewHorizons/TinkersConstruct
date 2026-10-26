@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.capability.inventory;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.component.DataComponents;
@@ -129,7 +130,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
   /** If true, the given stack is blacklisted from being stored in a tool */
   public static boolean isBlacklisted(ItemStack stack) {
     return !stack.getItem().canFitInsideContainerItems() || stack.is(TinkerTags.Items.TOOL_INVENTORY_BLACKLIST)
-      || stack.getCapability(Capabilities.ItemHandler.ITEM) != null;
+      || TransferHelper.getItemHandler(stack) != null;
   }
 
   @Override
@@ -561,7 +562,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
 
   /** Opens the tool inventory container if an inventory is present on the given tool */
   public static InteractionResult tryOpenContainer(ItemStack stack, @Nullable IToolStackView tool, ToolDefinition definition, Player player, int slotIndex) {
-    IItemHandler queried = stack.getCapability(Capabilities.ItemHandler.ITEM);
+    IItemHandler queried = TransferHelper.getItemHandler(stack);
     IItemHandler handler = queried instanceof IItemHandlerModifiable ? queried : EmptyItemHandler.INSTANCE;
     // open if we have any slots or we have a crafting table
     if (handler.getSlots() > 0 || ModifierUtil.checkVolatileFlag(stack, CRAFTING_TABLE) || ModifierUtil.checkVolatileFlag(stack, INVENTORY_CRAFTING)) {

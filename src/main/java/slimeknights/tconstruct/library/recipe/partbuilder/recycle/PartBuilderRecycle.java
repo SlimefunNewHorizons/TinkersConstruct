@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.partbuilder.recycle;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.RegistryAccess;
@@ -132,7 +133,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<Disp
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerTables.partBuilderDamageableRecycling.get();
   }
 
@@ -183,8 +184,8 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<Disp
   @Override
   public List<DisplayPartRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
-      List<ItemStack> patternItems = List.of(pattern.getItems());
-      List<ItemStack> toolItems = List.of(tool.getItems());
+      List<ItemStack> patternItems = List.of(IngredientHelper.getItems(pattern));
+      List<ItemStack> toolItems = List.of(IngredientHelper.getItems(tool));
       displayRecipes = results.entrySet().stream()
         .map(entry -> new DisplayPartRecipe(id, MaterialVariant.UNKNOWN, entry.getKey(), patternItems, 0, toolItems, List.of(entry.getValue().get()))).toList();
     }

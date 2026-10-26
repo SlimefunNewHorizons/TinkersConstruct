@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.menu;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;
@@ -146,7 +147,7 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
 
       // if we found something, add the side inventory
       if (inventoryTE != null) {
-        var itemHandler = world.getCapability(Capabilities.ItemHandler.BLOCK, inventoryTE.getBlockPos(), accessDir);
+        var itemHandler = TransferHelper.getItemHandler(world, inventoryTE.getBlockPos(), accessDir);
         int invSlots = (itemHandler == null ? EmptyItemHandler.INSTANCE : itemHandler).getSlots();
         int columns = Mth.clamp((invSlots - 1) / 9 + 1, 3, 6);
         this.addSubContainer(new SideInventoryContainer<>(TinkerTables.craftingStationContainer.get(), containerId, inv, inventoryTE, accessDir, -6 - 18 * 6, 8, columns), false);
@@ -175,7 +176,7 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
    */
   private static boolean hasItemHandler(BlockEntity tileEntity, @Nullable Direction direction) {
     Level level = tileEntity.getLevel();
-    return level != null && level.getCapability(Capabilities.ItemHandler.BLOCK, tileEntity.getBlockPos(), direction) instanceof IItemHandlerModifiable;
+    return level != null && TransferHelper.getItemHandler(level, tileEntity.getBlockPos(), direction) instanceof IItemHandlerModifiable;
   }
 
 
@@ -185,7 +186,7 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
   public void updateScreen() {
     if (this.tile != null) {
       if (this.tile.getLevel() != null) {
-        if (this.tile.getLevel().isClientSide() && FMLEnvironment.dist == Dist.CLIENT) {
+        if (this.tile.getLevel().isClientSide() && FMLEnvironment.getDist() == Dist.CLIENT) {
           ClientOnly.clientScreenUpdate();
         }
       }
@@ -198,7 +199,7 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
   public void error(final MutableComponent message) {
     if (this.tile != null) {
       if (this.tile.getLevel() != null) {
-        if (this.tile.getLevel().isClientSide() && FMLEnvironment.dist == Dist.CLIENT) {
+        if (this.tile.getLevel().isClientSide() && FMLEnvironment.getDist() == Dist.CLIENT) {
           ClientOnly.clientError(message);
         }
       }
@@ -211,7 +212,7 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
   public void warning(final MutableComponent message) {
     if (this.tile != null) {
       if (this.tile.getLevel() != null) {
-        if (this.tile.getLevel().isClientSide() && FMLEnvironment.dist == Dist.CLIENT) {
+        if (this.tile.getLevel().isClientSide() && FMLEnvironment.getDist() == Dist.CLIENT) {
           ClientOnly.clientWarning(message);
         }
       }

@@ -249,7 +249,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
               if (optional) {
                 key = key.substring(0, key.length() - 1);
               }
-              Enchantment enchantment = registryAccess.registryOrThrow(Registries.ENCHANTMENT).get(Identifier.parse(key));
+              Enchantment enchantment = registryAccess.lookupOrThrow(Registries.ENCHANTMENT).getValue(Identifier.parse(key));
               if (enchantment == null) {
                 if (optional) {
                   TConstruct.LOG.debug("Skipping modifier " + modifierId + " due to unknown optional enchantment " + key);
@@ -373,7 +373,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
     }
     // did not find, check the tags
     for (Entry<TagKey<Enchantment>,Modifier> mapping : enchantmentTagMap.entrySet()) {
-      if (RegistryHelper.contains(registryAccess.registryOrThrow(Registries.ENCHANTMENT), mapping.getKey(), enchantment)) {
+      if (RegistryHelper.contains(registryAccess.lookupOrThrow(Registries.ENCHANTMENT), mapping.getKey(), enchantment)) {
         return mapping.getValue();
       }
     }
@@ -389,7 +389,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener {
   @SuppressWarnings("deprecation")  // eventually it won't be if we move away from forge
   public Stream<Holder<Enchantment>> getEquivalentEnchantments(Predicate<ModifierId> modifiers) {
     Predicate<Entry<?,Modifier>> predicate = entry -> modifiers.test(entry.getValue().getId());
-    Registry<Enchantment> registry = registryAccess.registryOrThrow(Registries.ENCHANTMENT);
+    Registry<Enchantment> registry = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
     return Stream.concat(
       enchantmentMap.entrySet().stream().filter(predicate).map(Entry::getKey),
       enchantmentTagMap.entrySet().stream().filter(predicate).flatMap(entry -> RegistryHelper.getTagValueStream(registry, entry.getKey()))

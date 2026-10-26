@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,7 @@ public abstract class NestedIngredient implements ICustomIngredient {
 
   @Override
   public Stream<ItemStack> getItems() {
-    return Arrays.stream(nested.getItems());
+    return Arrays.stream(IngredientHelper.getItems(nested));
   }
 
   @Override

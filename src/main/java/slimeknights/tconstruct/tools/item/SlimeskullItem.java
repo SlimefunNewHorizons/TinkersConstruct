@@ -37,13 +37,7 @@ public class SlimeskullItem extends ModifiableArmorItem {
     this(material, material.getId(), properties);
   }
 
-  @Nullable
-  @Override
-  public Identifier getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
-    return ArmorUtil.getDummyArmorTexture(slot);
-  }
 
-  @Override
   public void initializeClient(Consumer<IClientItemExtensions> consumer) {
     consumer.accept(new ArmorModelDispatcher() {
       @Override

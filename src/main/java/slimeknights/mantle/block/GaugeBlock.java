@@ -1,5 +1,6 @@
 package slimeknights.mantle.block;
 
+import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -75,7 +76,7 @@ public class GaugeBlock extends Block {
       BlockPos tankPos = pos.relative(side.getOpposite());
       BlockEntity te = world.getBlockEntity(tankPos);
       if (te != null) {
-        IFluidHandler handler = world.getCapability(Capabilities.FluidHandler.BLOCK, tankPos, side);
+        IFluidHandler handler = TransferHelper.getFluidHandler(world, tankPos, side);
         if (handler == null) {
           handler = EmptyFluidHandler.INSTANCE;
         }
@@ -111,7 +112,7 @@ public class GaugeBlock extends Block {
   public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
     Direction direction = state.getValue(FACING);
     BlockPos tankPos = pos.relative(direction.getOpposite());
-    return world instanceof Level level && level.getCapability(Capabilities.FluidHandler.BLOCK, tankPos, direction) != null;
+    return world instanceof Level level && TransferHelper.getFluidHandler(level, tankPos, direction) != null;
   }
 
   @Override

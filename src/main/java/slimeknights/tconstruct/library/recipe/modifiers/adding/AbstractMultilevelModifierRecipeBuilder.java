@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonSyntaxException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public abstract class AbstractMultilevelModifierRecipeBuilder<T extends Abstract
   protected final ModifierId result;
   protected final List<LevelEntry> levels = new ArrayList<>();
   protected boolean allowCrystal = true;
-  protected Ingredient tools = Ingredient.EMPTY;
+  protected Ingredient tools = IngredientHelper.EMPTY;
   protected int maxToolSize = ITinkerStationRecipe.DEFAULT_TOOL_STACK_SIZE;
   protected boolean checkTraitLevel = false;
 

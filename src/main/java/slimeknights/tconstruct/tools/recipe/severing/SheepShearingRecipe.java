@@ -46,7 +46,7 @@ public class SheepShearingRecipe extends SeveringRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer getSerializer() {
     return TinkerModifiers.sheepShearing.get();
   }
 

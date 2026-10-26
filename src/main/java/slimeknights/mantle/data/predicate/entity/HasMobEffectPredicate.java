@@ -15,7 +15,7 @@ public record HasMobEffectPredicate(MobEffect effect) implements LivingEntityPre
 
   @Override
   public boolean matches(LivingEntity living) {
-    return living.hasEffect(living.level().registryAccess().registryOrThrow(Registries.MOB_EFFECT).wrapAsHolder(effect));
+    return living.hasEffect(living.level().registryAccess().lookupOrThrow(Registries.MOB_EFFECT).wrapAsHolder(effect));
   }
 
   @Override
