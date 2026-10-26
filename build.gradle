@@ -44,8 +44,17 @@ sourceSets.main {
         // global loot modifier index is likewise migrated to data/neoforge.
         exclude 'data/forge/tags/**'
         exclude 'data/forge/loot_modifiers/**'
+        // Mantle: registry tag directories are singular in 1.21
+        exclude 'data/mantle/tags/blocks/**'
+        exclude 'data/mantle/tags/fluids/**'
     }
     java {
+        // Mantle: 1.20 FinishedRecipe datagen helpers, not yet converted to RecipeOutput
+        exclude 'slimeknights/mantle/datagen/*Provider.java'
+        exclude 'slimeknights/mantle/recipe/data/**'
+        exclude 'slimeknights/mantle/recipe/cooking/CookingRecipeBuilder.java'
+        exclude 'slimeknights/mantle/recipe/crafting/*Builder.java'
+        exclude 'slimeknights/mantle/recipe/helper/SimpleFinishedRecipe.java'
         // These integrations have no NeoForge 1.21.1 API artifact yet. They are
         // intentionally isolated while the core port is brought up.
         exclude 'slimeknights/tconstruct/plugin/craftingtweaks/**'
@@ -117,6 +126,10 @@ neoForge {
         server {
             server()
             programArgument '--nogui'
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'tconstruct'
         }
         data {
             data()
