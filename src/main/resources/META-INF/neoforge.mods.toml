@@ -14,6 +14,30 @@ license="MIT"
 基于匠魂3 3.12.0版本制作的neoforge移植版
     '''
 
+[[mods]]
+    modId="mantle"
+    version="${mantle_version}"
+    displayName="Mantle"
+    authors="Slime Knights"
+    logoFile="Mantle.png"
+    description='''
+Shared code for Slime Knights mods and others. Integrated into this Tinkers' Construct jar.
+    '''
+
+[[dependencies.mantle]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.mantle]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_range}"
+    ordering="NONE"
+    side="BOTH"
+
 [[dependencies.tconstruct]]
     modId="neoforge"
     type="required"

@@ -19,8 +19,6 @@ java {
 }
 
 repositories {
-    maven { name = 'Aliyun Public'; url = 'https://maven.aliyun.com/repository/public' }
-    maven { name = 'BMCLAPI'; url = 'https://bmclapi2.bangbang93.com/maven' }
     mavenCentral()
     maven { name = 'DVS1'; url = 'https://dvs1.progwml6.com/files/maven' }
     maven { name = 'tterrag'; url = 'https://maven.tterrag.com/' }
@@ -148,8 +146,6 @@ configurations {
 }
 
 dependencies {
-    implementation project(':mantle')
-
     compileOnly 'dev.gigaherz.jsonthings:JsonThings-1.21.1:0.13.7'
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
@@ -185,6 +181,7 @@ tasks.named('processResources', ProcessResources).configure {
             minecraft_range: minecraft_range,
             neo_range: neo_range,
             mantle_range: mantle_range,
+            mantle_version: mantle_version,
             jei_range: jei_range
     ]
     inputs.properties replaceProperties
