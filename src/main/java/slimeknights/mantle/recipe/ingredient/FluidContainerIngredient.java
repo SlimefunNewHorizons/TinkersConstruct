@@ -15,14 +15,12 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import slimeknights.mantle.Mantle;
 import slimeknights.mantle.data.JsonCodec;
 import slimeknights.mantle.registration.object.FluidObject;
@@ -95,7 +93,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
     Fluid fluid = handler.getFluidInTank(0).getFluid();
     int amount = fluidIngredient.getAmount(fluid);
     FluidStack drained = handler.drain(amount, FluidAction.EXECUTE);
-    return drained.getFluid() == fluid && drained.getAmount() == amount && ItemStack.matches(stack.getCraftingRemainingItem(), handler.getContainer());
+    return drained.getFluid() == fluid && drained.getAmount() == amount && ItemStack.matches(stack.getCraftingRemainder(), handler.getContainer());
   }
 
   @Override

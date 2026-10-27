@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.shared.client;
 
+import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -287,7 +290,7 @@ public class ClientGeneratePartTexturesCommand {
   private static List<MaterialSpriteInfo> loadMaterialRenderInfoGenerators(ResourceManager manager, Predicate<MaterialVariantId> validMaterialId) {
     // first, we need to fetch all relevant JSON files
     Map<Identifier,JsonElement> jsons = new HashMap<>();
-    SimpleJsonResourceReloadListener.scanDirectory(manager, MaterialRenderInfoLoader.FOLDER, JsonHelper.DEFAULT_GSON, jsons);
+    SimpleJsonResourceReloadListener.scanDirectory(manager, FileToIdConverter.json(MaterialRenderInfoLoader.FOLDER), JsonOps.INSTANCE, ExtraCodecs.JSON, jsons);
     // final results map from texture name to sprite info
     Map<Identifier,MaterialSpriteInfo> builder = new HashMap<>();
 

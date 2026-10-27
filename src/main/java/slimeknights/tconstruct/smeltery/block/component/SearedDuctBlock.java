@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.smeltery.block.component;
 
+import slimeknights.mantle.block.IBlockTooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.phys.HitResult;
 import slimeknights.mantle.block.InventoryBlock;
 import slimeknights.mantle.block.RetexturedBlock;
 import slimeknights.mantle.util.BlockEntityHelper;
@@ -34,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /** Filtering drain block, have to reimplement either inventory block logic or seared block logic unfortunately */
-public class SearedDuctBlock extends InventoryBlock {
+public class SearedDuctBlock extends InventoryBlock implements IBlockTooltip {
   public static final BooleanProperty IN_STRUCTURE = SearedBlock.IN_STRUCTURE;
   public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
   public SearedDuctBlock(Properties properties) {
@@ -50,16 +49,13 @@ public class SearedDuctBlock extends InventoryBlock {
 
   /* Seared block interaction */
 
-  @SuppressWarnings("deprecation")
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level worldIn, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(SmelteryComponentBlockEntity.class, worldIn, pos).ifPresent(te -> te.notifyMasterOfChange(pos, newState));
       // Mantle's InventoryBlock cannot find the item capability once the block is replaced, so drop the filter item directly
       BlockEntityHelper.get(DuctBlockEntity.class, worldIn, pos).ifPresent(duct -> dropInventoryItems(worldIn, pos, duct.getItemHandler()));
     }
-    super.onRemove(state, worldIn, pos, newState, isMoving);
   }
 
   @Override
@@ -74,7 +70,7 @@ public class SearedDuctBlock extends InventoryBlock {
   }
   
   @Override
-  public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
+  protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
     return RetexturedBlock.getPickBlock(world, pos, state);
   }
 

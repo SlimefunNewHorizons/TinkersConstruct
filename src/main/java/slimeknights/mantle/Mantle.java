@@ -1,6 +1,8 @@
 package slimeknights.mantle;
 
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import slimeknights.mantle.block.IBlockTooltip;
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import slimeknights.mantle.transfer.LegacyItemResourceHandler;
 import slimeknights.mantle.transfer.TransferHelper;
@@ -117,6 +119,7 @@ public class Mantle {
     MantleRecipes.init(bus);
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, LecternBookItem::interactWithBlock);
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, OnDatapackSyncEvent.class, RecipeAccessHelper::onDatapackSync);
+    NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ItemTooltipEvent.class, IBlockTooltip::onItemTooltip);
 
     if (FMLEnvironment.getDist() == Dist.CLIENT) {
       ClientEvents.onConstruct();

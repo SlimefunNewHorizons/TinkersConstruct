@@ -264,7 +264,7 @@ public class PartBuilderBlockEntity extends RetexturedTableBlockEntity implement
     }
     ItemStack stack = getItem(slot);
     if (!stack.isEmpty()) {
-      ItemStack container = stack.getCraftingRemainingItem().copy();
+      ItemStack container = stack.getCraftingRemainder().copy();
       if (amount > 1) {
         container.setCount(container.getCount() * amount);
       }

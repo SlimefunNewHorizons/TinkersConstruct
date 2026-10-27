@@ -81,7 +81,7 @@ public class OlympicModifier extends Modifier implements ProjectileLaunchModifie
     Level level = projectile.level();
     if (notBlocked && !level.isClientSide() && targetEntity.getType().getCategory() == MobCategory.MONSTER && RANDOM.nextInt(20) < modifier.getLevel()) {
       CompoundTag startCompound = persistentData.getCompound(OLYMPIC_START);
-      if (!startCompound.isEmpty() && startCompound.contains("X", Tag.TAG_ANY_NUMERIC) && startCompound.contains("Y", Tag.TAG_ANY_NUMERIC) && startCompound.contains("Z", Tag.TAG_ANY_NUMERIC)) {
+      if (!startCompound.isEmpty() && startCompound.getDouble("X").isPresent() && startCompound.getDouble("Y").isPresent() && startCompound.getDouble("Z").isPresent()) {
         // nugget type based on distance
         Item nugget = getNugget(targetEntity.distanceToSqr(startCompound.getDoubleOr("X", 0d), startCompound.getDoubleOr("Y", 0d), startCompound.getDoubleOr("Z", 0d)));
         if (nugget != Items.AIR) {

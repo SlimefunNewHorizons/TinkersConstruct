@@ -56,7 +56,7 @@ public record MeltingFluidEffectiveModule(IJsonPredicate<BlockState> predicate, 
         if (capacity > currentFluid.getAmount()) {
           // new fluid must match current fluid
           FluidStack meltingResult = MeltingRecipeLookup.findResult(state.getBlock(), temperature);
-          return (!meltingResult.isEmpty() && (currentFluid.isEmpty() || currentFluid.isFluidEqual(meltingResult)))
+          return (!meltingResult.isEmpty() && (currentFluid.isEmpty() || FluidStack.isSameFluidSameComponents(currentFluid, meltingResult)))
                  // tier must also match
                  && (ignoreTier || !state.is(HarvestTiers.incorrectBlocksForDrops(MiningTierToolHook.getTier(tool))));
         }

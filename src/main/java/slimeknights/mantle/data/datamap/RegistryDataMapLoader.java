@@ -1,5 +1,7 @@
 package slimeknights.mantle.data.datamap;
 
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -27,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
 /** Simple loader mapping from a registry object to a piece of data parsed from JSON. Supports parenting to reuse data from another file */
-public class RegistryDataMapLoader<R,D> extends SimpleJsonResourceReloadListener {
+public class RegistryDataMapLoader<R,D> extends SimpleJsonResourceReloadListener<JsonElement> {
   /** Merges data from the parent JSON into the passed JSOn */
   public static final BiConsumer<JsonObject,JsonObject> COPY_PARENT_DATA = (json, parentJson) -> {
     for (Entry<String,JsonElement> entry : parentJson.entrySet()) {
@@ -68,7 +70,7 @@ public class RegistryDataMapLoader<R,D> extends SimpleJsonResourceReloadListener
    * @param merger      Logic to copy data from the parent into the target element
    */
   public RegistryDataMapLoader(String name, String folder, Registry<R> registry, RecordLoadable<D> dataLoader, BiConsumer<JsonObject,JsonObject> merger) {
-    super(JsonHelper.DEFAULT_GSON, folder);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(folder));
     this.name = name;
     this.registry = registry;
     this.dataLoader = dataLoader;

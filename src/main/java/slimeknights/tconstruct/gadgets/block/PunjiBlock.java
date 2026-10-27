@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.gadgets.block;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -60,9 +63,9 @@ public class PunjiBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor world, BlockPos pos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
     if (state.getValue(WATERLOGGED)) {
-      world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+      scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
     }
 
     // break if now invalid
@@ -176,7 +179,7 @@ public class PunjiBlock extends Block {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
+  protected void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, InsideBlockEffectApplier effectApplier, boolean intersects) {
     if (entityIn instanceof LivingEntity) {
       Direction side = state.getValue(FACING);
       Axis axis = side.getAxis();

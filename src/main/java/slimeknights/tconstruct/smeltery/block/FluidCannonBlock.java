@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.smeltery.block;
 
+import net.minecraft.world.level.redstone.Orientation;
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +35,7 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.TRIGGERED;
 
 /** Tank block which also shoots a fluid */
-public class FluidCannonBlock extends SearedTankBlock implements IFluidCannon, Equipable {
+public class FluidCannonBlock extends SearedTankBlock implements IFluidCannon, Equipable, IBlockEntityRemovalHandler {
   @Getter
   private final float power;
   @Getter
@@ -76,13 +78,11 @@ public class FluidCannonBlock extends SearedTankBlock implements IFluidCannon, E
     return InteractionResult.SUCCESS;
   }
 
-  @Deprecated
   @Override
-  public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level world, BlockPos pos, BlockState newState) {
     if (state.getBlock() != newState.getBlock() && world.getBlockEntity(pos) instanceof FluidCannonBlockEntity cannon) {
       InventoryBlock.dropInventoryItems(world, pos, cannon.getItemHandler());
     }
-    super.onRemove(state, world, pos, newState, isMoving);
   }
 
 
@@ -115,7 +115,7 @@ public class FluidCannonBlock extends SearedTankBlock implements IFluidCannon, E
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+  protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean isMoving) {
     boolean hasSignal = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
     boolean wasTriggered = state.getValue(TRIGGERED);
     if (hasSignal && !wasTriggered) {

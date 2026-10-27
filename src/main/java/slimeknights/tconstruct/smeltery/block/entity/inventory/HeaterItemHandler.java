@@ -1,7 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.CommonHooks;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.inventory.SingleItemHandler;
 import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;

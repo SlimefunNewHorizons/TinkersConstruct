@@ -10,12 +10,12 @@ public class SearedTintedGlassBlock extends SearedGlassBlock {
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
+  protected boolean propagatesSkylightDown(BlockState state) {
     return false;
   }
 
   @Override
-  public int getLightBlock(BlockState state, BlockGetter world, BlockPos pos) {
+  protected int getLightBlock(BlockState state) {
     return world.getMaxLightLevel();
   }
 }

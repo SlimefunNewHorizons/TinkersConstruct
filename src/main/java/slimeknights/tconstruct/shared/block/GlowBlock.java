@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.block;
 
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -100,12 +101,12 @@ public class GlowBlock extends Block {
 
   @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean p_220069_6_) {
+  protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, @Nullable Orientation orientation, boolean p_220069_6_) {
     if (!this.canSurvive(state, worldIn, pos)) {
       worldIn.removeBlock(pos, false);
     }
 
-    super.neighborChanged(state, worldIn, pos, blockIn, fromPos, p_220069_6_);
+    super.neighborChanged(state, worldIn, pos, blockIn, orientation, p_220069_6_);
   }
 
   @SuppressWarnings("deprecation")

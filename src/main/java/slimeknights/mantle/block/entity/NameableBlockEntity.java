@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,8 +31,8 @@ public abstract class NameableBlockEntity extends MantleBlockEntity implements I
 	@Override
 	protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
 		super.loadAdditional(tags, registries);
-		if (tags.getString(TAG_CUSTOM_NAME).isPresent()) {
-			this.customName = Component.Serializer.fromJson(tags.getString(TAG_CUSTOM_NAME), registries);
+		if (tags.contains(TAG_CUSTOM_NAME)) {
+			this.customName = ValueIOHelper.parseComponent(tags.get(TAG_CUSTOM_NAME), registries);
 		}
 	}
 
@@ -43,13 +42,5 @@ public abstract class NameableBlockEntity extends MantleBlockEntity implements I
 		if (this.hasCustomName()) {
 			tags.put(TAG_CUSTOM_NAME, ValueIOHelper.saveComponent(this.customName, registries()));
 		}
-	}
-
-	/** Returns the level registry lookup used for serializing synced component text. */
-	private HolderLookup.Provider registries() {
-		if (level == null) {
-			throw new IllegalStateException("Cannot serialize a block entity name before it has a level");
-		}
-		return level.registryAccess();
 	}
 }

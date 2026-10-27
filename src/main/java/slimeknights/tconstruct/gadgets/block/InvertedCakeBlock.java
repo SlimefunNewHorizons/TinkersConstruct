@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.gadgets.block;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.food.FoodProperties;
@@ -34,7 +36,7 @@ public class InvertedCakeBlock extends FoodCakeBlock {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos pos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
     if (facing == Direction.UP && !state.canSurvive(level, pos)) {
       return Blocks.AIR.defaultBlockState();
     }

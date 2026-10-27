@@ -27,15 +27,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
-import net.neoforged.neoforge.common.conditions.FalseCondition;
+import net.neoforged.neoforge.common.conditions.NeverCondition;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import slimeknights.mantle.Mantle;
 import slimeknights.mantle.data.loadable.Loadable;
@@ -212,7 +210,7 @@ public class RemoveRecipesCommand {
 
     // create the object for removing recipes
     JsonObject json = new JsonObject();
-    json.add("neoforge:conditions", ICondition.LIST_CODEC.encodeStart(JsonOps.INSTANCE, List.of(FalseCondition.INSTANCE))
+    json.add("neoforge:conditions", ICondition.LIST_CODEC.encodeStart(JsonOps.INSTANCE, List.of(NeverCondition.INSTANCE))
       .getOrThrow(message -> new IllegalStateException("Failed to encode conditions: " + message)));
     String jsonString = DEFAULT_GSON.toJson(json);
 

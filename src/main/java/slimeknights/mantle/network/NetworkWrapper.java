@@ -150,7 +150,7 @@ public class NetworkWrapper {
   }
 
   public void sendToServer(Object message) {
-    PacketDistributor.sendToServer(payload(message, NetworkDirection.PLAY_TO_SERVER));
+    net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(payload(message, NetworkDirection.PLAY_TO_SERVER));
   }
 
   public void sendVanillaPacket(Packet<?> packet, Entity player) {

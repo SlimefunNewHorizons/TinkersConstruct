@@ -1,6 +1,5 @@
 package slimeknights.tconstruct.tools.data.material;
 
-import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.data.PackOutput;
 import slimeknights.tconstruct.library.data.material.AbstractMaterialDataProvider;
 import slimeknights.tconstruct.library.data.material.AbstractMaterialStatsDataProvider;

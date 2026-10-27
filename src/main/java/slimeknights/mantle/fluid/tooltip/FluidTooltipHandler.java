@@ -1,5 +1,8 @@
 package slimeknights.mantle.fluid.tooltip;
 
+import slimeknights.mantle.data.gson.ResourceLocationSerializer;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -43,7 +46,7 @@ import java.util.function.BiConsumer;
 /** Handles fluid units displaying in tooltips */
 @SuppressWarnings("unused")
 @Log4j2
-public class FluidTooltipHandler extends SimpleJsonResourceReloadListener {
+public class FluidTooltipHandler extends SimpleJsonResourceReloadListener<JsonElement> {
   /** Tooltip when not holding shift mentioning that is possible */
   public static final Component HOLD_SHIFT = Mantle.makeComponent("gui", "fluid.hold_shift").withStyle(ChatFormatting.GRAY);
   /** Folder for saving the logic */
@@ -51,7 +54,7 @@ public class FluidTooltipHandler extends SimpleJsonResourceReloadListener {
   /** GSON instance */
   // TODO: do we even need GSON here? I feel a classical serializer is sufficient as this class is pretty simple
   public static final Gson GSON = (new GsonBuilder())
-    .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
+    .registerTypeAdapter(Identifier.class, ResourceLocationSerializer.resourceLocation(Identifier.DEFAULT_NAMESPACE))
     .registerTypeAdapter(FluidIngredient.class, FluidIngredient.LOADABLE)
     .registerTypeAdapter(TagKey.class, new TagKeySerializer<>(Registries.FLUID))
     .setPrettyPrinting()
@@ -91,7 +94,7 @@ public class FluidTooltipHandler extends SimpleJsonResourceReloadListener {
   }
 
   private FluidTooltipHandler() {
-    super(GSON, FOLDER);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
   }
 
   /** Loads from JSON */
@@ -209,7 +212,7 @@ public class FluidTooltipHandler extends SimpleJsonResourceReloadListener {
     List<Component> tooltip = new ArrayList<>();
     Identifier key = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
     // fluid name, not sure if there is a cleaner way to do this
-    tooltip.add(fluid.getDisplayName());
+    tooltip.add(fluid.getHoverName());
     // add ID if advanced
     appendAdvanced(key, tooltip);
     // material

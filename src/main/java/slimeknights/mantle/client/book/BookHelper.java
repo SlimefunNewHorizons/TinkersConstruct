@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.component.CustomData;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class BookHelper {
 

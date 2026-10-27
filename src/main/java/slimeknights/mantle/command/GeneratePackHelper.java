@@ -6,14 +6,12 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.ClickEvent.Action;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
-import net.neoforged.neoforge.common.conditions.FalseCondition;
+import net.neoforged.neoforge.common.conditions.NeverCondition;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.fml.ModList;
 import slimeknights.mantle.Mantle;
@@ -73,7 +71,7 @@ public class GeneratePackHelper {
   /** Saves a JSON that removes the given resource using forge conditions */
   public static boolean saveConditionRemove(Path path, String conditionKey) {
     JsonObject json = new JsonObject();
-    json.add(conditionKey, ICondition.LIST_CODEC.encodeStart(JsonOps.INSTANCE, java.util.List.of(FalseCondition.INSTANCE))
+    json.add(conditionKey, ICondition.LIST_CODEC.encodeStart(JsonOps.INSTANCE, java.util.List.of(NeverCondition.INSTANCE))
       .getOrThrow(message -> new IllegalStateException("Failed to encode conditions: " + message)));
     return saveJson(json, path);
   }

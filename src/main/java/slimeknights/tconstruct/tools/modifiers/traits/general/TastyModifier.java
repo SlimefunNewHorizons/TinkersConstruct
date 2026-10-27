@@ -41,16 +41,16 @@ public class TastyModifier extends Modifier implements ProcessLootModifierHook {
   public void processLoot(IToolStackView tool, ModifierEntry modifier, List<ItemStack> generatedLoot, LootContext context) {
     // if no damage source, probably not a mob
     // otherwise blocks breaking (where THIS_ENTITY is the player) start dropping bacon
-    if (!context.hasParam(LootContextParams.DAMAGE_SOURCE)) {
+    if (!context.hasParameter(LootContextParams.DAMAGE_SOURCE)) {
       return;
     }
 
     // must have an entity
-    Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+    Entity entity = context.getOptionalParameter(LootContextParams.THIS_ENTITY);
     if (entity != null && entity.getType().is(TinkerTags.EntityTypes.BACON_PRODUCER)) {
       // at tasty 1, 2, 3, and 4 its a 2%, 4.15%, 6.25%, 8% per level
       int looting = 0;
-      if (context.getParamOrNull(LootContextParams.ATTACKING_ENTITY) instanceof LivingEntity attacker) {
+      if (context.getOptionalParameter(LootContextParams.ATTACKING_ENTITY) instanceof LivingEntity attacker) {
         looting = EnchantmentHelper.getEnchantmentLevel(
           context.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), attacker);
       }

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.materials.definition;
 
+import slimeknights.mantle.data.gson.ResourceLocationSerializer;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -50,7 +53,7 @@ import static java.util.Objects.requireNonNullElse;
  * So if your mods name is "foobar", the location for your mods materials is "data/foobar/materials".
  */
 @Log4j2
-public class MaterialManager extends SimpleJsonResourceReloadListener {
+public class MaterialManager extends SimpleJsonResourceReloadListener<JsonElement> {
   /** Location of materials */
   public static final String FOLDER = "tinkering/materials/definition";
   /** Location of material tags */
@@ -60,7 +63,7 @@ public class MaterialManager extends SimpleJsonResourceReloadListener {
 
   /** GSON for loading materials */
   public static final Gson GSON = (new GsonBuilder())
-    .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
+    .registerTypeAdapter(Identifier.class, ResourceLocationSerializer.resourceLocation(Identifier.DEFAULT_NAMESPACE))
     .registerTypeHierarchyAdapter(ICondition.class, ConditionSerializer.INSTANCE)
     .setPrettyPrinting()
     .disableHtmlEscaping()
@@ -84,7 +87,7 @@ public class MaterialManager extends SimpleJsonResourceReloadListener {
   private IContext conditionContext = IContext.EMPTY;
 
   public MaterialManager(Runnable onLoaded) {
-    super(GSON, FOLDER);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
     this.onLoaded = onLoaded;
   }
 

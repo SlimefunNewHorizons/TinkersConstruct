@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block;
 
+import net.minecraft.world.level.redstone.Orientation;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
@@ -123,12 +124,14 @@ public class FaucetBlock extends Block implements EntityBlock {
 
   @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+  protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, @Nullable Orientation orientation, boolean isMoving) {
     if (worldIn.isClientSide()) {
       return;
     }
     getFaucet(worldIn, pos).ifPresent(faucet -> {
-      faucet.neighborChanged(fromPos);
+      // the changed neighbor is not known since 1.21.2, so refresh both the output below and the input behind
+      faucet.neighborChanged(pos.below());
+      faucet.neighborChanged(pos.relative(state.getValue(FACING).getOpposite()));
       faucet.handleRedstone(worldIn.hasNeighborSignal(pos));
     });
   }

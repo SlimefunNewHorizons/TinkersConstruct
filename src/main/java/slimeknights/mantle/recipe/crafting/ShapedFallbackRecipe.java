@@ -1,7 +1,6 @@
 package slimeknights.mantle.recipe.crafting;
 
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;

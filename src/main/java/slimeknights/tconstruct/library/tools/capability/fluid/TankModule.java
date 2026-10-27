@@ -68,7 +68,7 @@ public class TankModule implements HookProvider, FluidModifierHook, VolatileData
       return ToolTankHelper.CAPACITY_STAT.formatValue(capacity);
     } else {
       // fluid, display as: Fluid Name: #,### / #,### mb
-      return fluid.getDisplayName().copy()
+      return fluid.getHoverName().copy()
                   .append(": ")
                   .append(ToolTankHelper.CAPACITY_STAT.formatContents(fluid.getAmount(), capacity));
     }
@@ -123,7 +123,7 @@ public class TankModule implements HookProvider, FluidModifierHook, VolatileData
         return Math.min(resource.getAmount(), capacity);
       }
       // if the fluid matches and we have space, update
-      if (current.getAmount() < capacity && current.isFluidEqual(resource)) {
+      if (current.getAmount() < capacity && FluidStack.isSameFluidSameComponents(current, resource)) {
         int filled = Math.min(resource.getAmount(), capacity - current.getAmount());
         if (filled > 0 && action.execute()) {
           current.grow(filled);
@@ -141,7 +141,7 @@ public class TankModule implements HookProvider, FluidModifierHook, VolatileData
     if (!resource.isEmpty()) {
       // ensure we have something and it matches the request
       FluidStack current = helper.getFluid(tool);
-      if (!current.isEmpty() && current.isFluidEqual(resource)) {
+      if (!current.isEmpty() && FluidStack.isSameFluidSameComponents(current, resource)) {
         // create the drained stack
         FluidStack drained = current.copyWithAmount(Math.min(current.getAmount(), resource.getAmount()));
         // if executing, removing it

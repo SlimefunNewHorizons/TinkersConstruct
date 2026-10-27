@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.smeltery.block;
 
+import net.minecraft.world.level.redstone.Orientation;
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
+import net.minecraft.core.Direction;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +26,7 @@ import slimeknights.tconstruct.smeltery.block.entity.CastingBlockEntity;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractCastingBlock extends TableBlock {
+public abstract class AbstractCastingBlock extends TableBlock implements IBlockEntityRemovalHandler {
   /** Property for when the casting block has an item inside */
   public static final BooleanProperty HAS_ITEM = BooleanProperty.create("has_item");
 
@@ -83,7 +86,7 @@ public abstract class AbstractCastingBlock extends TableBlock {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+  protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, @Nullable Orientation orientation, boolean isMoving) {
     if (worldIn.isClientSide()) {
       return;
     }
@@ -108,12 +111,10 @@ public abstract class AbstractCastingBlock extends TableBlock {
    * slots directly when the block is broken so the contents are not lost.
    */
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level world, BlockPos pos, BlockState newState) {
     if (state.getBlock() != newState.getBlock() && world.getBlockEntity(pos) instanceof CastingBlockEntity casting) {
       InventoryBlock.dropInventoryItems(world, pos, casting.getItemHandler());
     }
-    super.onRemove(state, world, pos, newState, isMoving);
   }
 
   @Override
@@ -122,7 +123,7 @@ public abstract class AbstractCastingBlock extends TableBlock {
   }
 
   @Override
-  public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+  protected int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos, Direction direction) {
     return BlockEntityHelper.get(CastingBlockEntity.class, worldIn, pos).map(CastingBlockEntity::getAnalogSignal).orElse(0);
   }
 }

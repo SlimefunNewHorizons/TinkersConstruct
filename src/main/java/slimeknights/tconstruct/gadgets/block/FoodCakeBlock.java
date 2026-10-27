@@ -1,12 +1,12 @@
 package slimeknights.tconstruct.gadgets.block;
 
+import slimeknights.mantle.block.IBlockTooltip;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Extension of cake that utilizes a food instance for properties
  */
-public class FoodCakeBlock extends CakeBlock {
+public class FoodCakeBlock extends CakeBlock implements IBlockTooltip {
   private final FoodProperties food;
   private final EffectCombination combination;
 

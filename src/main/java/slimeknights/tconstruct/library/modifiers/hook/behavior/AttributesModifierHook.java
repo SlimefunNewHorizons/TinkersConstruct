@@ -18,7 +18,6 @@ import slimeknights.tconstruct.library.tools.nbt.StatsNBT;
 import slimeknights.tconstruct.library.tools.stat.ToolStats;
 
 import java.util.Collection;
-import java.util.UUID;
 import net.minecraft.resources.Identifier;
 import slimeknights.tconstruct.TConstruct;
 import java.util.function.BiConsumer;

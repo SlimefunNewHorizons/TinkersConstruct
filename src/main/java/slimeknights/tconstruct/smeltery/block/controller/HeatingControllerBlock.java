@@ -1,16 +1,15 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import slimeknights.mantle.block.IBlockTooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.HitResult;
 import slimeknights.mantle.block.RetexturedBlock;
 import slimeknights.mantle.util.BlockEntityHelper;
 import slimeknights.mantle.util.RetexturedHelper;
@@ -25,7 +24,7 @@ import java.util.List;
 /**
  * Multiblock that displays the error from the tile entity on right click
  */
-public abstract class HeatingControllerBlock extends ControllerBlock {
+public abstract class HeatingControllerBlock extends ControllerBlock implements IBlockTooltip {
   protected HeatingControllerBlock(Properties builder) {
     super(builder);
   }
@@ -71,7 +70,7 @@ public abstract class HeatingControllerBlock extends ControllerBlock {
   }
 
   @Override
-  public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
+  protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
     return RetexturedBlock.getPickBlock(world, pos, state);
   }
 }

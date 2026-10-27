@@ -29,7 +29,6 @@ import slimeknights.mantle.recipe.condition.TagEmptyCondition;
 import slimeknights.mantle.recipe.condition.TagFilledCondition;
 import slimeknights.mantle.registration.adapter.RegistryAdapter;
 
-import java.util.Objects;
 
 import static slimeknights.mantle.loot.condition.ILootModifierCondition.MODIFIER_CONDITIONS;
 

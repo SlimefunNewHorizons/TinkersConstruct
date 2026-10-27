@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -14,7 +15,7 @@ import slimeknights.tconstruct.smeltery.block.entity.controller.MelterBlockEntit
 
 import javax.annotation.Nullable;
 
-public class MelterBlock extends TinyMultiblockControllerBlock {
+public class MelterBlock extends TinyMultiblockControllerBlock implements IBlockEntityRemovalHandler {
   public MelterBlock(Properties props) {
     super(props);
   }
@@ -32,12 +33,10 @@ public class MelterBlock extends TinyMultiblockControllerBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level level, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(MelterBlockEntity.class, level, pos).ifPresent(melter -> dropInventory(level, pos, melter.getItemHandler()));
     }
-    super.onRemove(state, level, pos, newState, isMoving);
   }
 
 
@@ -52,7 +51,7 @@ public class MelterBlock extends TinyMultiblockControllerBlock {
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+  protected boolean propagatesSkylightDown(BlockState state) {
     return true;
   }
 

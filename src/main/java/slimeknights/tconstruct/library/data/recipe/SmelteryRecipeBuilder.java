@@ -22,7 +22,7 @@ import net.neoforged.neoforge.common.crafting.DifferenceIngredient;
 import net.neoforged.neoforge.common.crafting.IntersectionIngredient;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.ItemExistsCondition;
-import net.neoforged.neoforge.common.conditions.TrueCondition;
+import net.neoforged.neoforge.common.conditions.AlwaysCondition;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.recipe.condition.TagCombinationCondition;
 import slimeknights.mantle.recipe.condition.TagFilledCondition;
@@ -326,7 +326,7 @@ public class SmelteryRecipeBuilder {
         // found an always present byproduct? no need to tag and we are done
         alwaysPresent = byproduct.isAlwaysPresent();
         if (alwaysPresent) {
-          builder.addCondition(TrueCondition.INSTANCE);
+          builder.addCondition(AlwaysCondition.INSTANCE);
         } else {
           builder.addCondition(tagCondition("ingots/" + byproduct.getName()));
         }
@@ -338,7 +338,7 @@ public class SmelteryRecipeBuilder {
       }
       // not always present? add a recipe with no byproducts as a final fallback
       if (!alwaysPresent) {
-        builder.addCondition(TrueCondition.INSTANCE);
+        builder.addCondition(AlwaysCondition.INSTANCE);
         builder.addRecipe(supplier.get()::save);
       }
       builder.build(wrapped, location);

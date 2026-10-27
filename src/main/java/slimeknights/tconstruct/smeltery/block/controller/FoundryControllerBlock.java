@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -19,7 +20,7 @@ import slimeknights.tconstruct.smeltery.block.entity.controller.HeatingStructure
 
 import javax.annotation.Nullable;
 
-public class FoundryControllerBlock extends HeatingControllerBlock {
+public class FoundryControllerBlock extends HeatingControllerBlock implements IBlockEntityRemovalHandler {
   public FoundryControllerBlock(Properties builder) {
     super(builder);
   }
@@ -44,15 +45,13 @@ public class FoundryControllerBlock extends HeatingControllerBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level worldIn, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(FoundryBlockEntity.class, worldIn, pos).ifPresent(foundry -> {
         dropInventory(worldIn, pos, foundry.getMeltingInventory());
         foundry.invalidateStructure();
       });
     }
-    super.onRemove(state, worldIn, pos, newState, isMoving);
   }
 
   @Override

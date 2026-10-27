@@ -12,7 +12,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.alchemy.Potion;
 import slimeknights.tconstruct.library.utils.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
 import slimeknights.mantle.client.model.util.MantleItemLayerModel;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.util.ItemLayerPixels;

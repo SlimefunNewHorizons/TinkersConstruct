@@ -2,7 +2,6 @@ package slimeknights.mantle.loot;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;

@@ -15,7 +15,6 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import slimeknights.tconstruct.tools.entity.ThrownShuriken;
 import slimeknights.tconstruct.tools.entity.ToolProjectile;
 
-import javax.annotation.Nonnull;
 
 /** @deprecated use {@link ThrownShuriken} */
 @Deprecated

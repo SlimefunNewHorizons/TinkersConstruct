@@ -45,12 +45,12 @@ public enum SeveringModule implements ModifierModule, ProcessLootModifierHook {
   public void processLoot(IToolStackView tool, ModifierEntry modifier, List<ItemStack> generatedLoot, LootContext context) {
     // if no damage source, probably not a mob
     // otherwise blocks breaking (where THIS_ENTITY is the player) start dropping player heads
-    if (!context.hasParam(LootContextParams.DAMAGE_SOURCE)) {
+    if (!context.hasParameter(LootContextParams.DAMAGE_SOURCE)) {
       return;
     }
 
     // must have an entity
-    Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+    Entity entity = context.getOptionalParameter(LootContextParams.THIS_ENTITY);
     if (entity != null) {
       // ensure no head so far
       if (generatedLoot.stream().noneMatch(stack -> stack.is(net.minecraft.tags.ItemTags.SKULLS))) {
@@ -60,7 +60,7 @@ public enum SeveringModule implements ModifierModule, ProcessLootModifierHook {
         if (!recipes.isEmpty()) {
           float level = modifier.getEffectiveLevel();
           float looting = 0;
-          if (context.getParamOrNull(LootContextParams.ATTACKING_ENTITY) instanceof LivingEntity attacker) {
+          if (context.getOptionalParameter(LootContextParams.ATTACKING_ENTITY) instanceof LivingEntity attacker) {
             looting = EnchantmentHelper.getEnchantmentLevel(
               context.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), attacker);
           }

@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.tools.definition;
 
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import slimeknights.tconstruct.TConstruct;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
@@ -25,7 +27,7 @@ import java.util.Map.Entry;
 
 /** JSON loader that loads tool definitions from JSON */
 @Log4j2
-public class ToolDefinitionLoader extends SimpleJsonResourceReloadListener {
+public class ToolDefinitionLoader extends SimpleJsonResourceReloadListener<JsonElement> {
   public static final String FOLDER = "tinkering/tool_definitions";
   private static final ToolDefinitionLoader INSTANCE = new ToolDefinitionLoader();
 
@@ -39,7 +41,7 @@ public class ToolDefinitionLoader extends SimpleJsonResourceReloadListener {
   private IContext conditionContext = IContext.EMPTY;
 
   private ToolDefinitionLoader() {
-    super(JsonHelper.DEFAULT_GSON, FOLDER);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
   }
 
   /** Gets the instance of the definition loader */

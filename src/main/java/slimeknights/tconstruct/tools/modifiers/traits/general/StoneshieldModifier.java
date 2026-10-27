@@ -1,7 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.traits.general;
 
 import slimeknights.mantle.recipe.helper.IngredientHelper;
-import net.minecraft.world.item.crafting.Ingredient;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.json.LevelingInt;
 import slimeknights.tconstruct.library.modifiers.Modifier;

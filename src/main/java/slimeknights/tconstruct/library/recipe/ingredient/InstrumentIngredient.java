@@ -26,7 +26,6 @@ import slimeknights.mantle.data.JsonCodec;
 import slimeknights.tconstruct.TConstruct;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /** Ingredient matching an {@link net.minecraft.world.item.InstrumentItem} with a particular instrument. */

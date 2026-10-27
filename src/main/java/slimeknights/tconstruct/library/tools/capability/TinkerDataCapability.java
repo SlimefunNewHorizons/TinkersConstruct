@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import slimeknights.mantle.registration.object.IdAwareObject;
-import slimeknights.tconstruct.TConstruct;
 
 import javax.annotation.Nullable;
 import java.util.Collections;

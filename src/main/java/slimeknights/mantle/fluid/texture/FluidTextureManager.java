@@ -1,5 +1,8 @@
 package slimeknights.mantle.fluid.texture;
 
+import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -45,7 +48,7 @@ public class FluidTextureManager implements IEarlySafeManagerReloadListener {
     long time = System.nanoTime();
     // fetch JSONs
     Map<Identifier,JsonElement> jsons = new HashMap<>();
-    SimpleJsonResourceReloadListener.scanDirectory(resourceManager, FOLDER, JsonHelper.DEFAULT_GSON, jsons);
+    SimpleJsonResourceReloadListener.scanDirectory(resourceManager, FileToIdConverter.json(FOLDER), JsonOps.INSTANCE, ExtraCodecs.JSON, jsons);
 
     // start building fluid type map
     Map<FluidType, FluidTexture> map = new HashMap<>();

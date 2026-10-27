@@ -175,7 +175,7 @@ public class ToolStack implements IToolStackView {
       nbt = nbt.copy();
     }
     // Vanilla damage moved out of NBT in 1.21. Preserve it when adapting a regular ItemStack to the legacy tool data view.
-    if (!nbt.contains(TAG_DAMAGE, Tag.TAG_ANY_NUMERIC)) {
+    if (!nbt.getDouble(TAG_DAMAGE).isPresent()) {
       int componentDamage = stack.getOrDefault(DataComponents.DAMAGE, 0);
       if (componentDamage > 0) {
         nbt.putInt(TAG_DAMAGE, componentDamage);
@@ -304,7 +304,7 @@ public class ToolStack implements IToolStackView {
     }
     CompoundTag stackNbt = ItemStackUtil.getOrCreateTag(stack);
     // ensure the damage value is set on the stack for the sake of stacking, since bypassing the vanilla setter skips that
-    if (!stackNbt.contains(TAG_DAMAGE, Tag.TAG_ANY_NUMERIC) && stack.getItem().isDamageable(stack)) {
+    if (!stackNbt.getDouble(TAG_DAMAGE).isPresent() && stack.getItem().isDamageable(stack)) {
       stackNbt.putInt(TAG_DAMAGE, 0);
     }
     // CustomData copies its input, so explicitly reconnect only when the caller requested shared data.

@@ -7,7 +7,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.world.level.gamerules.GameRules;
-import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.permissions.PermissionCheck;
 import net.neoforged.neoforge.common.NeoForge;

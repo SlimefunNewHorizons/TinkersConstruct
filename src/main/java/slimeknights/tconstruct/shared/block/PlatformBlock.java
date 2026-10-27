@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.shared.block;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
@@ -156,9 +159,9 @@ public class PlatformBlock extends Block implements SimpleWaterloggedBlock {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction direction, BlockState neighbor, LevelAccessor level, BlockPos selfPos, BlockPos neighborPos) {
+  protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos selfPos, Direction direction, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
     if (state.getValue(WATERLOGGED)) {
-      level.scheduleTick(selfPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+      scheduledTickAccess.scheduleTick(selfPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
     }
 
     if (direction == Direction.UP) {

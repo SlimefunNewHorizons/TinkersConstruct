@@ -7,11 +7,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import slimeknights.tconstruct.library.recipe.casting.material.MaterialCastingLookup;
 import slimeknights.tconstruct.library.tools.part.PartCastItem;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 

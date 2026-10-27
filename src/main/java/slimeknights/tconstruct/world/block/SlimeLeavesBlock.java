@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.world.block;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,10 +22,10 @@ public class SlimeLeavesBlock extends LeavesBlock {
   }
 
   @Override
-  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
     int i = getDistance(facingState) + 1;
     if (i != 1 || stateIn.getValue(DISTANCE) != i) {
-      worldIn.scheduleTick(currentPos, this, 1);
+      scheduledTickAccess.scheduleTick(currentPos, this, 1);
     }
 
     return stateIn;

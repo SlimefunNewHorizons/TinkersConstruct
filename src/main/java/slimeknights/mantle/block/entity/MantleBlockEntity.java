@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import slimeknights.mantle.util.ValueIOHelper;
 
 import javax.annotation.Nullable;
@@ -34,6 +35,15 @@ public class MantleBlockEntity extends BlockEntity {
       if (level.hasChunkAt(worldPosition)) {
         level.getChunkAt(worldPosition).markUnsaved();
       }
+    }
+  }
+
+  @Override
+  public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    if (level != null && state.getBlock() instanceof IBlockEntityRemovalHandler handler) {
+      handler.onBlockEntityRemoved(state, level, pos, level.getBlockState(pos));
+    } else {
+      super.preRemoveSideEffects(pos, state);
     }
   }
 

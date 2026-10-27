@@ -91,7 +91,7 @@ public final class TransferHelper {
   /* Registration */
 
   /** Registers a legacy fluid handler for a block entity */
-  public static <BE extends BlockEntity> void registerFluid(RegisterCapabilitiesEvent event, BlockEntityType<BE> type, BiFunction<? super BE, @Nullable Direction, @Nullable IFluidHandler> provider) {
+  public static <BE extends BlockEntity> void registerFluid(RegisterCapabilitiesEvent event, BlockEntityType<BE> type, BiFunction<? super BE, Direction, IFluidHandler> provider) {
     event.registerBlockEntity(Capabilities.Fluid.BLOCK, type, (be, side) -> {
       IFluidHandler handler = provider.apply(be, side);
       return handler == null ? null : new LegacyFluidResourceHandler(handler);
@@ -99,7 +99,7 @@ public final class TransferHelper {
   }
 
   /** Registers a legacy item handler for a block entity */
-  public static <BE extends BlockEntity> void registerItems(RegisterCapabilitiesEvent event, BlockEntityType<BE> type, BiFunction<? super BE, @Nullable Direction, @Nullable IItemHandler> provider) {
+  public static <BE extends BlockEntity> void registerItems(RegisterCapabilitiesEvent event, BlockEntityType<BE> type, BiFunction<? super BE, Direction, IItemHandler> provider) {
     event.registerBlockEntity(Capabilities.Item.BLOCK, type, (be, side) -> {
       IItemHandler handler = provider.apply(be, side);
       return handler == null ? null : new LegacyItemResourceHandler(handler);

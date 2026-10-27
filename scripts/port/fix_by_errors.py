@@ -178,6 +178,29 @@ def wrap_receiver(call, helper):
     return apply
 
 
+def call_with_receiver(method, fn):
+    """Rewrites the receiver.method(args) call nearest the caret with fn(receiver, args) -> text"""
+    def apply(line, err):
+        caret = err[6]
+        best = None
+        for m in re.finditer(r'\.' + re.escape(method) + r'\s*\(', line):
+            dist = abs(m.start() - caret)
+            if best is None or dist < best[0]:
+                best = (dist, m)
+        if best is None:
+            return line
+        m = best[1]
+        start = receiver_start(line, m.start())
+        if start == m.start():
+            return line
+        end = args_end(line, m.end() - 1)
+        if end < 0:
+            return line
+        args = split_args(line[m.end():end - 1]) if end - 1 > m.end() else []
+        return line[:start] + fn(line[start:m.start()], args) + line[end:]
+    return apply
+
+
 def whole_line(fn):
     return lambda line, err: fn(line)
 
@@ -225,6 +248,15 @@ RULES = [
     (r'cannot find symbol', r'^method holders\(\)', r'Registry', at_caret('.holders()', '.listElements()')),
     (r'cannot find symbol', r'^method getHolder\(int\)', r'Registry', at_caret('.getHolder(', '.get(')),
     (r'cannot find symbol', r'^method getHolder\(ResourceKey', r'Registry', at_caret('.getHolder(', '.get(')),
+    # assorted 1.21.2 - 1.21.11 renames
+    (r'cannot find symbol', r'^method serverLevel\(\)', None, at_caret('.serverLevel()', '.level()')),
+    (r'cannot find symbol', r'^method getDisplayName\(\)', r'FluidStack', at_caret('.getDisplayName()', '.getHoverName()')),
+    (r'cannot find symbol', r'^method getParamOrNull\(', None, at_caret('.getParamOrNull(', '.getOptionalParameter(')),
+    (r'cannot find symbol', r'^method getCraftingRemainingItem\(\)', r'ItemStack', at_caret('.getCraftingRemainingItem()', '.getCraftingRemainder()')),
+    (r'cannot find symbol', r'^variable TAG_ANY_NUMERIC', None, whole_line(fix_contains)),
+    (r'cannot find symbol', r'^method getGameRules\(\)', r'Level', call_with_receiver('getGameRules', lambda r, a: f'((net.minecraft.server.level.ServerLevel) {r}).getGameRules()')),
+    (r'cannot find symbol', r'^method isFluidEqual\(FluidStack\)', None, call_with_receiver('isFluidEqual', lambda r, a: f'FluidStack.isSameFluidSameComponents({r}, {a[0]})')),
+    (r'cannot find symbol', r'^method sendToServer\(', r'PacketDistributor', at_caret('PacketDistributor.sendToServer(', 'net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(')),
     # 1.21.2 ingredients
     (r'cannot find symbol', r'^method getItems\(\)', r'Ingredient', wrap_receiver('.getItems()', 'IngredientHelper.getItems')),
     (r'no suitable method found for of\(TagKey<Item>\)', None, None, at_caret('Ingredient.of(', 'IngredientHelper.of(')),

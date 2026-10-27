@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tables.block;
 
+import slimeknights.mantle.block.IBlockTooltip;
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,7 +18,7 @@ import slimeknights.tconstruct.shared.block.entity.TableBlockEntity;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class RetexturedTableBlock extends TabbedTableBlock {
+public abstract class RetexturedTableBlock extends TabbedTableBlock implements IBlockEntityRemovalHandler, IBlockTooltip {
   public RetexturedTableBlock(Properties builder) {
     super(builder);
   }
@@ -33,7 +35,7 @@ public abstract class RetexturedTableBlock extends TabbedTableBlock {
   }
 
   @Override
-  public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
+  protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
     return RetexturedBlock.getPickBlock(world, pos, state);
   }
 
@@ -43,11 +45,9 @@ public abstract class RetexturedTableBlock extends TabbedTableBlock {
    * capability lookup in {@code onRemove} finds no handler and loses their contents when the block is broken.
    */
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level level, BlockPos pos, BlockState newState) {
     if (state.getBlock() != newState.getBlock() && level.getBlockEntity(pos) instanceof TableBlockEntity table) {
       InventoryBlock.dropInventoryItems(level, pos, table.getItemHandler());
     }
-    super.onRemove(state, level, pos, newState, isMoving);
   }
 }

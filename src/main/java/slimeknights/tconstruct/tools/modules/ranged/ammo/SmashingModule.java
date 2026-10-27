@@ -443,7 +443,7 @@ public enum SmashingModule implements ModifierModule, FluidModifierHook, Project
     if (fluid != Fluids.EMPTY) {
       // formats as <name> <level> (<fluid>)
       return Component.translatable(FORMAT, name,
-        fluidStack(fluid, FluidValues.BOTTLE, getFluidTag(data)).getDisplayName()
+        fluidStack(fluid, FluidValues.BOTTLE, getFluidTag(data)).getHoverName()
       ).withStyle(name.getStyle());
     }
     return name;
@@ -457,7 +457,7 @@ public enum SmashingModule implements ModifierModule, FluidModifierHook, Project
       int amount = getAmount(modifier, fluid);
       if (amount > 0) {
         // formats as <fluid>: <amount> mb
-        tooltip.add(modifier.getModifier().applyStyle(fluidStack(fluid, amount, getFluidTag(data)).getDisplayName().copy()
+        tooltip.add(modifier.getModifier().applyStyle(fluidStack(fluid, amount, getFluidTag(data)).getHoverName().copy()
           .append(": ").append(Component.translatable(ToolTankHelper.MB_FORMAT, TranslationHelper.COMMA_FORMAT.format(amount)))));
       }
     }

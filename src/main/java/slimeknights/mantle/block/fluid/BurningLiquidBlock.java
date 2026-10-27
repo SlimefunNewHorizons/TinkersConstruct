@@ -1,5 +1,6 @@
 package slimeknights.mantle.block.fluid;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +28,7 @@ public class BurningLiquidBlock extends LiquidBlock {
 
   @SuppressWarnings("deprecation")  // useless annotation on block methods
   @Override
-  public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+  protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
     if (!entity.fireImmune() && entity.getFluidTypeHeight(fluid.getFluidType()) > 0) {
       entity.igniteForSeconds(burnTime);
       if (entity.hurt(entity.damageSources().lava(), damage)) {

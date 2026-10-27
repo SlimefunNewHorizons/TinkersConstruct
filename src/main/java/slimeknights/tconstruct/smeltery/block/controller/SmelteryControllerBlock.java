@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +19,7 @@ import slimeknights.tconstruct.smeltery.block.entity.controller.SmelteryBlockEnt
 
 import javax.annotation.Nullable;
 
-public class SmelteryControllerBlock extends HeatingControllerBlock {
+public class SmelteryControllerBlock extends HeatingControllerBlock implements IBlockEntityRemovalHandler {
   public SmelteryControllerBlock(Properties properties) {
     super(properties);
   }
@@ -43,15 +44,13 @@ public class SmelteryControllerBlock extends HeatingControllerBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level worldIn, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(SmelteryBlockEntity.class, worldIn, pos).ifPresent(smeltery -> {
         dropInventory(worldIn, pos, smeltery.getMeltingInventory());
         smeltery.invalidateStructure();
       });
     }
-    super.onRemove(state, worldIn, pos, newState, isMoving);
   }
 
   @Override

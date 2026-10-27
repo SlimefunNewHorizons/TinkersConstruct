@@ -3,8 +3,6 @@ package slimeknights.tconstruct.library.json.predicate.tool;
 import net.minecraft.resources.Identifier;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-import slimeknights.mantle.data.predicate.IJsonPredicate;
-import slimeknights.tconstruct.library.json.variable.tool.ModDataSource;
 import slimeknights.tconstruct.library.tools.nbt.IToolContext;
 
 /** Predicate that checks if a key is present in persistent data */

@@ -1,11 +1,11 @@
 package slimeknights.mantle.block;
 
+import slimeknights.mantle.block.entity.InventoryBlockEntity;
 import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import slimeknights.mantle.block.entity.INameableMenuProvider;
 import slimeknights.mantle.inventory.BaseContainerMenu;
@@ -29,7 +28,7 @@ import javax.annotation.Nullable;
  * Base class for blocks with an inventory
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class InventoryBlock extends Block implements EntityBlock {
+public abstract class InventoryBlock extends Block implements EntityBlock, IBlockEntityRemovalHandler {
 
   protected InventoryBlock(BlockBehaviour.Properties builder) {
     super(builder);
@@ -97,22 +96,13 @@ public abstract class InventoryBlock extends Block implements EntityBlock {
 
   /* Inventory handling */
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
   @Override
-  public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (state.getBlock() != newState.getBlock()) {
-      BlockEntity te = worldIn.getBlockEntity(pos);
-      if (te != null) {
-        IItemHandler inventory = TransferHelper.getItemHandler(worldIn, pos, null);
-        if (inventory != null) {
-          dropInventoryItems(state, worldIn, pos, inventory);
-        }
-        worldIn.updateNeighbourForOutputSignal(pos, this);
-      }
+  public void onBlockEntityRemoved(BlockState state, Level worldIn, BlockPos pos, BlockState newState) {
+    // the block is already replaced, so read the inventory from the block entity instead of the block capability
+    if (worldIn.getBlockEntity(pos) instanceof InventoryBlockEntity inventory) {
+      dropInventoryItems(state, worldIn, pos, inventory.getItemHandler());
+      worldIn.updateNeighbourForOutputSignal(pos, this);
     }
-
-    super.onRemove(state, worldIn, pos, newState, isMoving);
   }
 
   /**

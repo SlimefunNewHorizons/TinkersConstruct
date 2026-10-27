@@ -1,7 +1,6 @@
 package slimeknights.mantle.recipe;
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import slimeknights.mantle.Mantle;
 
 import static slimeknights.mantle.registration.RegistrationHelper.injected;
 

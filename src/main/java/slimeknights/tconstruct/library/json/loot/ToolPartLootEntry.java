@@ -12,7 +12,6 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.loadable.LoadableCodec;
 import slimeknights.mantle.util.RegistryHelper;
 import slimeknights.tconstruct.library.materials.RandomMaterial;

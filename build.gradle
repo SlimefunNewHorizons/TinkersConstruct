@@ -56,6 +56,16 @@ sourceSets.main {
         exclude 'slimeknights/mantle/recipe/crafting/*Builder.java'
         exclude 'slimeknights/mantle/recipe/helper/SimpleFinishedRecipe.java'
         exclude 'slimeknights/mantle/client/model/builder/**'
+        // Mantle data providers: NeoForge 21.4 reworked datagen (no ExistingFileHelper), ported together with Tinkers datagen
+        exclude 'slimeknights/mantle/data/BuiltinRegistryTagProvider.java'
+        exclude 'slimeknights/mantle/data/GenericDataProvider.java'
+        exclude 'slimeknights/mantle/data/client/**'
+        exclude 'slimeknights/mantle/data/datamap/*Provider.java'
+        exclude 'slimeknights/mantle/fluid/texture/AbstractFluidTextureProvider.java'
+        exclude 'slimeknights/mantle/fluid/texture/FluidTextureCameraProvider.java'
+        exclude 'slimeknights/mantle/fluid/tooltip/AbstractFluidTooltipProvider.java'
+        exclude 'slimeknights/mantle/fluid/transfer/AbstractFluidContainerTransferProvider.java'
+        exclude 'slimeknights/mantle/loot/AbstractLootTableInjectionProvider.java'
         // PORT-STAGE (1.21.11): client code is excluded while common code is ported, so javac can run Lombok.
         // Remove this block once the client packages are ported.
         exclude { details ->

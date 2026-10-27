@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -17,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * Class for solid fuel heater for the melter
  */
-public class HeaterBlock extends ControllerBlock {
+public class HeaterBlock extends ControllerBlock implements IBlockEntityRemovalHandler {
   public HeaterBlock(Properties builder) {
     super(builder);
   }
@@ -29,12 +32,10 @@ public class HeaterBlock extends ControllerBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level level, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(HeaterBlockEntity.class, level, pos).ifPresent(heater -> dropInventory(level, pos, heater.getItemHandler()));
     }
-    super.onRemove(state, level, pos, newState, isMoving);
   }
 
   @Override
@@ -52,7 +53,7 @@ public class HeaterBlock extends ControllerBlock {
   }
 
   @Override
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor world, BlockPos currentPos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
     if (facing == Direction.UP) {
       return state.setValue(IN_STRUCTURE, facingState.is(TinkerTags.Blocks.HEATER_CONTROLLERS));
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jsonthings.block;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import dev.gigaherz.jsonthings.things.blocks.FlexLiquidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -29,7 +30,7 @@ public class FlexMobEffectLiquidBlock extends FlexLiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+  protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
     if (entity.getFluidTypeHeight(fluid.getFluidType()) > 0 && entity instanceof LivingEntity living) {
       living.addEffect(effect.get());
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.controller;
 
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,11 +37,15 @@ public class AlloyerBlock extends TinyMultiblockControllerBlock {
   }
 
   @Override
-  public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-    Direction direction = Util.directionFromOffset(pos, fromPos);
-    if (direction != Direction.DOWN) {
-      BlockEntityHelper.get(AlloyerBlockEntity.class, world, pos).ifPresent(te -> te.neighborChanged(direction));
-    }
+  protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, @Nullable Orientation orientation, boolean isMoving) {
+    // the changed neighbor is not known since 1.21.2, so refresh every side except the bottom
+    BlockEntityHelper.get(AlloyerBlockEntity.class, world, pos).ifPresent(te -> {
+      for (Direction direction : Direction.values()) {
+        if (direction != Direction.DOWN) {
+          te.neighborChanged(direction);
+        }
+      }
+    });
   }
 
   /*
@@ -54,7 +59,7 @@ public class AlloyerBlock extends TinyMultiblockControllerBlock {
   }
 
   @Override
-  public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+  protected boolean propagatesSkylightDown(BlockState state) {
     return true;
   }
 

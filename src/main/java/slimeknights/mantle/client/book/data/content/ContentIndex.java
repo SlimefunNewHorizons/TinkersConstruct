@@ -3,7 +3,6 @@ package slimeknights.mantle.client.book.data.content;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.resources.Identifier;
 import slimeknights.mantle.Mantle;
-import slimeknights.mantle.client.book.IHTML;
 import slimeknights.mantle.client.book.data.BookData;
 import slimeknights.mantle.client.book.transformer.IndexTransformer;
 import slimeknights.mantle.client.screen.book.element.BookElement;

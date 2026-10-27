@@ -6,7 +6,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /** Represents a capability handler for a container with a constant fluid */
 public class ConstantFluidContainerWrapper implements IFluidHandlerItem {
@@ -29,7 +28,7 @@ public class ConstantFluidContainerWrapper implements IFluidHandlerItem {
   }
 
   public ConstantFluidContainerWrapper(FluidStack fluid, ItemStack container) {
-    this(fluid, container, container.getCraftingRemainingItem());
+    this(fluid, container, container.getCraftingRemainder());
   }
 
   @Override

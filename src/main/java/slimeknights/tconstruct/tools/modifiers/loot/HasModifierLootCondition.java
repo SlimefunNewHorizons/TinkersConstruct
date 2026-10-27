@@ -28,7 +28,7 @@ public class HasModifierLootCondition implements LootItemCondition {
 
   @Override
   public boolean test(LootContext context) {
-    ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
+    ItemStack tool = context.getOptionalParameter(LootContextParams.TOOL);
     return tool != null && tool.is(TinkerTags.Items.MODIFIABLE) && ModifierUtil.getModifierLevel(tool, modifier) > 0;
   }
 

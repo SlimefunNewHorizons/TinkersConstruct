@@ -440,7 +440,7 @@ public class ThrownTool extends ThrownTrident implements ToolProjectile {
     this.multiplier = tag.getFloatOr(KEY_MULTIPLIER, 0f);
     this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
     this.hitBlock = tag.getBooleanOr(KEY_HIT_BLOCK, false);
-    if (tag.contains(KEY_ORIGINAL_SLOT, Tag.TAG_ANY_NUMERIC)) {
+    if (tag.getDouble(KEY_ORIGINAL_SLOT).isPresent()) {
       this.originalSlot = tag.getIntOr(KEY_ORIGINAL_SLOT, 0);
     } else {
       this.originalSlot = -1;

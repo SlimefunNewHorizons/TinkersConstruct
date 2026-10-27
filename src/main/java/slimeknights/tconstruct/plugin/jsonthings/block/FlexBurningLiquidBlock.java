@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jsonthings.block;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import dev.gigaherz.jsonthings.things.blocks.FlexLiquidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -30,7 +31,7 @@ public class FlexBurningLiquidBlock extends FlexLiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+  protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
     if (!entity.fireImmune() && entity.getFluidTypeHeight(fluid.getFluidType()) > 0) {
       entity.igniteForSeconds(burnTime);
       if (entity.hurt(level.damageSources().lava(), damage)) {

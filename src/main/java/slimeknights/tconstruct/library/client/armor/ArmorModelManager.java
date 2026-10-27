@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.client.armor;
 
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
@@ -29,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class ArmorModelManager extends SimpleJsonResourceReloadListener {
+public class ArmorModelManager extends SimpleJsonResourceReloadListener<JsonElement> {
   /** Folder containing the logic */
   public static final String FOLDER = "tinkering/armor_models";
 
@@ -57,7 +59,7 @@ public class ArmorModelManager extends SimpleJsonResourceReloadListener {
   }
 
   private ArmorModelManager() {
-    super(JsonHelper.DEFAULT_GSON, FOLDER);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
   }
 
   @Override

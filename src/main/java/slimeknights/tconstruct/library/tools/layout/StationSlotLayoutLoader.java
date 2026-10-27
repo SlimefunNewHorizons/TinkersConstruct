@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import slimeknights.tconstruct.TConstruct;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -20,7 +23,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
  * Loader for tinker station slot layouts, loaded serverside as that makes it eaiser to modify with recipes and the filters are needed both sides
  */
 @Log4j2
-public class StationSlotLayoutLoader extends SimpleJsonResourceReloadListener {
+public class StationSlotLayoutLoader extends SimpleJsonResourceReloadListener<JsonElement> {
   public static final String FOLDER = "tinkering/station_layouts";
   public static final Gson GSON = (new GsonBuilder())
     .registerTypeHierarchyAdapter(Ingredient.class, new IngredientSerializer())
@@ -67,7 +69,7 @@ public class StationSlotLayoutLoader extends SimpleJsonResourceReloadListener {
   private IContext conditionContext = IContext.EMPTY;
 
   private StationSlotLayoutLoader() {
-    super(GSON, FOLDER);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
   }
 
   /** Sets the slots to the given collection from the packet */

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.component;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +15,7 @@ import slimeknights.tconstruct.smeltery.block.entity.component.SmelteryComponent
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class SearedStairsBlock extends StairBlock implements EntityBlock {
+public class SearedStairsBlock extends StairBlock implements EntityBlock, IBlockEntityRemovalHandler {
 
   public SearedStairsBlock(Supplier<BlockState> state, Properties properties) {
     super(state.get(), properties);
@@ -27,12 +28,10 @@ public class SearedStairsBlock extends StairBlock implements EntityBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level worldIn, BlockPos pos, BlockState newState) {
     if (!newState.is(this)) {
       BlockEntityHelper.get(SmelteryComponentBlockEntity.class, worldIn, pos).ifPresent(te -> te.notifyMasterOfChange(pos, newState));
     }
-    super.onRemove(state, worldIn, pos, newState, isMoving);
   }
 
   @Override

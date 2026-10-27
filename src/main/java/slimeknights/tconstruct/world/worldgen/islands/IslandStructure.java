@@ -1,6 +1,5 @@
 package slimeknights.tconstruct.world.worldgen.islands;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.AccessLevel;

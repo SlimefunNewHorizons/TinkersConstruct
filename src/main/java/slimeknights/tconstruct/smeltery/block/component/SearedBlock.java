@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.component;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,7 +21,7 @@ import slimeknights.tconstruct.smeltery.block.entity.component.SmelteryComponent
 
 import javax.annotation.Nullable;
 
-public class SearedBlock extends Block implements EntityBlock {
+public class SearedBlock extends Block implements EntityBlock, IBlockEntityRemovalHandler {
   public static final BooleanProperty IN_STRUCTURE = BooleanProperty.create("in_structure");
   public static final StateArgumentPredicate<EntityType<?>> VALID_SPAWN = (s, r, p, e) -> !s.hasProperty(SearedBlock.IN_STRUCTURE) || !s.getValue(SearedBlock.IN_STRUCTURE);
 
@@ -46,19 +47,19 @@ public class SearedBlock extends Block implements EntityBlock {
   }
 
   @Override
-  @Deprecated
-  public void onRemove(BlockState oldState, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState oldState, Level world, BlockPos pos, BlockState newState) {
+    // block changed, tell the master; the chunk removes the block entity afterwards
     if (requiredBlockEntity || oldState.getValue(IN_STRUCTURE)) {
-      // if the block is unchanged, remove the block entity if we no longer have one
-      if (newState.is(this)) {
-        if (!requiredBlockEntity && !newState.getValue(IN_STRUCTURE)) {
-          world.removeBlockEntity(pos);
-        }
-      } else {
-        // block changed, tell the master then ditch the block entity
-        BlockEntityHelper.get(SmelteryComponentBlockEntity.class, world, pos).ifPresent(te -> te.notifyMasterOfChange(pos, newState));
-        world.removeBlockEntity(pos);
-      }
+      BlockEntityHelper.get(SmelteryComponentBlockEntity.class, world, pos).ifPresent(te -> te.notifyMasterOfChange(pos, newState));
+    }
+  }
+
+  @Override
+  protected void onPlace(BlockState newState, Level world, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    super.onPlace(newState, world, pos, oldState, movedByPiston);
+    // if the block is unchanged but left the structure, remove the block entity as we no longer need one
+    if (oldState.is(this) && !requiredBlockEntity && oldState.getValue(IN_STRUCTURE) && !newState.getValue(IN_STRUCTURE)) {
+      world.removeBlockEntity(pos);
     }
   }
 

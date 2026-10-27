@@ -4,8 +4,6 @@ import slimeknights.mantle.transfer.TransferHelper;
 import static slimeknights.tconstruct.library.tools.definition.ModifiableArmorMaterial.ARMOR_TYPES;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -29,8 +27,6 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -473,10 +469,6 @@ public final class TinkerSmeltery extends TinkerModule {
     }
   }
 
-  @SubscribeEvent
-  void gatherData(final GatherDataEvent event) {
-    // Runtime-first 1.21 port: providers are migrated separately.
-  }
 
   @SubscribeEvent
   void registerCapabilities(final RegisterCapabilitiesEvent event) {

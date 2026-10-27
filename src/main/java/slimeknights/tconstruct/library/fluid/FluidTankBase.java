@@ -26,7 +26,7 @@ public class FluidTankBase<T extends MantleBlockEntity> extends FluidTank {
       if (fluid.isEmpty()) {
         return Math.min(capacity, resource.getAmount());
       }
-      if (!fluid.isFluidEqual(resource)) {
+      if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
         return 0;
       }
       return Math.min(capacity - fluid.getAmount(), resource.getAmount());
@@ -39,7 +39,7 @@ public class FluidTankBase<T extends MantleBlockEntity> extends FluidTank {
       onContentsChanged();
       return filled;
     }
-    if (!fluid.isFluidEqual(resource)) {
+    if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
       return 0;
     }
     int filled = capacity - fluid.getAmount();

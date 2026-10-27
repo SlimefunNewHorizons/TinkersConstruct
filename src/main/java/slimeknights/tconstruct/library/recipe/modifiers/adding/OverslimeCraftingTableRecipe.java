@@ -3,7 +3,6 @@ package slimeknights.tconstruct.library.recipe.modifiers.adding;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -124,7 +123,7 @@ public class OverslimeCraftingTableRecipe extends CustomRecipe {
         repairNeeded -= repairPerItem;
       }
       if (stack.hasCraftingRemainingItem()) {
-        list.set(i, stack.getCraftingRemainingItem());
+        list.set(i, stack.getCraftingRemainder());
       }
     }
     return list;

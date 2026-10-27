@@ -82,7 +82,7 @@ public interface SimpleFluidTank extends IFluidTank, IFluidHandler {
     }
 
     // if unable to fill, nothing more to do
-    if (!fluid.isFluidEqual(resource)) {
+    if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
       return 0;
     }
 
@@ -119,7 +119,7 @@ public interface SimpleFluidTank extends IFluidTank, IFluidHandler {
       return FluidStack.EMPTY;
     }
     FluidStack fluid = getFluid();
-    if (fluid.isEmpty() || !fluid.isFluidEqual(resource)) {
+    if (fluid.isEmpty() || !FluidStack.isSameFluidSameComponents(fluid, resource)) {
       return FluidStack.EMPTY;
     }
     return drain(fluid, resource.getAmount(), action);

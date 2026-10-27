@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.shared.block;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -24,8 +27,8 @@ public class ClearGlassPaneBlock extends BetterPaneBlock implements IMultipartCo
   }
 
   @Override
-  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor world, BlockPos currentPos, BlockPos facingPos) {
-    BlockState state = super.updateShape(stateIn, facing, facingState, world, currentPos, facingPos);
+  protected BlockState updateShape(BlockState stateIn, LevelReader world, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
+    BlockState state = super.updateShape(stateIn, world, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
     return getConnectionUpdate(state, facing, facingState);
   }
 

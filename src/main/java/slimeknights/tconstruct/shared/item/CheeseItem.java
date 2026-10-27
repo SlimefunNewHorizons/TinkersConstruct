@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.EffectCures;
 import slimeknights.tconstruct.TConstruct;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 

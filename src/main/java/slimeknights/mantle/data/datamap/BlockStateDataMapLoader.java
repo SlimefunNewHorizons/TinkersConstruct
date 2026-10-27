@@ -1,5 +1,7 @@
 package slimeknights.mantle.data.datamap;
 
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -28,7 +30,7 @@ import java.util.Map.Entry;
  * Generic JSON serializer which reads data from a block state style file for a mapping from block state to data.
  * @param <T>  Type of data
  */
-public class BlockStateDataMapLoader<T> extends SimpleJsonResourceReloadListener {
+public class BlockStateDataMapLoader<T> extends SimpleJsonResourceReloadListener<JsonElement> {
   private final String name;
   @Getter
   private final String folder;
@@ -38,7 +40,7 @@ public class BlockStateDataMapLoader<T> extends SimpleJsonResourceReloadListener
   private Map<BlockState,T> dataMap = Map.of();
 
   public BlockStateDataMapLoader(String name, String folder, Loadable<T> dataLoader) {
-    super(JsonHelper.DEFAULT_GSON, folder);
+    super(ExtraCodecs.JSON, FileToIdConverter.json(folder));
     this.name = name;
     this.folder = folder;
     this.dataLoader = dataLoader;

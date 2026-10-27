@@ -150,7 +150,7 @@ public record MeltingModule(LevelingInt temperature, LevelingInt nuggetsPerMetal
     // allow tools to decide that we *must* melt the drops
     // for harvestable blocks though, ignore that flag if the block was not effective
     boolean forceMelt = tool.getVolatileData().getBoolean(FORCE_MELTING);
-    BlockState harvestedState = context.hasParam(LootContextParams.BLOCK_STATE)
+    BlockState harvestedState = context.hasParameter(LootContextParams.BLOCK_STATE)
                                 ? context.getParam(LootContextParams.BLOCK_STATE) : null;
     if (forceMelt && harvestedState != null) {
       forceMelt = tool.getHook(ToolHooks.IS_EFFECTIVE).isToolEffective(tool, harvestedState);
@@ -169,7 +169,7 @@ public record MeltingModule(LevelingInt temperature, LevelingInt nuggetsPerMetal
       }
       FluidStack output = meltItem(modifier, stack, world);
       // fluid must match tank fluid
-      if (!output.isEmpty() && (current.isEmpty() || current.isFluidEqual(output))) {
+      if (!output.isEmpty() && (current.isEmpty() || FluidStack.isSameFluidSameComponents(current, output))) {
         int amount;
 
         // if forced to melt, melt everything regardless, fluid handler will ensure we don't overflow
@@ -227,7 +227,7 @@ public record MeltingModule(LevelingInt temperature, LevelingInt nuggetsPerMetal
           damagePerOutput = 2;
         }
         FluidStack fluid = TANK_HELPER.getFluid(tool);
-        if (fluid.isEmpty() || fluid.isFluidEqual(output)) {
+        if (fluid.isEmpty() || FluidStack.isSameFluidSameComponents(fluid, output)) {
           // recipe amount determines how much we get per hit, up to twice the recipe damage
           int fluidAmount;
           if (damageDealt < damagePerOutput * 2) {

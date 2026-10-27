@@ -1,12 +1,11 @@
 package slimeknights.tconstruct.tables.block;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -30,7 +29,7 @@ import javax.annotation.Nullable;
 /**
  * Shared block logic for all chest types
  */
-public class ChestBlock extends TabbedTableBlock {
+public class ChestBlock extends TabbedTableBlock implements IBlockEntityRemovalHandler {
   private static final VoxelShape SHAPE = Shapes.or(
     Block.box(0.0D, 15.0D, 0.0D, 16.0D, 16.0D, 16.0D), //top
     Block.box(1.0D, 3.0D, 1.0D, 15.0D, 16.0D, 15.0D), //middle
@@ -100,12 +99,10 @@ public class ChestBlock extends TabbedTableBlock {
    * {@code onRemove} runs, so it never finds the chest inventory.
    */
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level level, BlockPos pos, BlockState newState) {
     if (state.getBlock() != newState.getBlock() && level.getBlockEntity(pos) instanceof AbstractChestBlockEntity chest) {
       dropInventoryItems(state, level, pos, chest.getItemHandler());
     }
-    super.onRemove(state, level, pos, newState, isMoving);
   }
 
   @Override

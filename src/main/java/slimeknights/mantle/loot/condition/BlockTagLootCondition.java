@@ -9,7 +9,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
@@ -39,12 +39,12 @@ public class BlockTagLootCondition implements LootItemCondition {
 
   @Override
   public boolean test(LootContext context) {
-    BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+    BlockState state = context.getOptionalParameter(LootContextParams.BLOCK_STATE);
     return state != null && state.is(tag) && this.properties.map(predicate -> predicate.matches(state)).orElse(true);
   }
 
   @Override
-  public Set<LootContextParam<?>> getReferencedContextParams() {
+  public Set<ContextKey<?>> getReferencedContextParams() {
     return Set.of(LootContextParams.BLOCK_STATE);
   }
 

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block;
 
+import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 /** Block logic for the proxy tank */
-public class ProxyTankBlock extends Block implements EntityBlock {
+public class ProxyTankBlock extends Block implements EntityBlock, IBlockEntityRemovalHandler {
   private static final float LOWER = 0.3125f;
   private static final float UPPER = 0.6875f;
   public ProxyTankBlock(Properties properties) {
@@ -103,13 +104,11 @@ public class ProxyTankBlock extends Block implements EntityBlock {
     return InteractionResult.SUCCESS;
   }
 
-  @Deprecated
   @Override
-  public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onBlockEntityRemoved(BlockState state, Level world, BlockPos pos, BlockState newState) {
     if (state.getBlock() != newState.getBlock() && world.getBlockEntity(pos) instanceof ProxyTankBlockEntity tank) {
       InventoryBlock.dropInventoryItems(world, pos, tank.getItemTank());
     }
-    super.onRemove(state, world, pos, newState, isMoving);
   }
 
 
@@ -129,7 +128,7 @@ public class ProxyTankBlock extends Block implements EntityBlock {
 
   @Deprecated
   @Override
-  public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos) {
+  protected int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos, Direction direction) {
     if (world.getBlockEntity(pos) instanceof ProxyTankBlockEntity tank) {
       return tank.getComparatorStrength();
     }
