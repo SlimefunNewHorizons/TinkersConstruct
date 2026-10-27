@@ -88,8 +88,7 @@ sourceSets.main {
         exclude { details ->
             def path = details.relativePath.pathString
             def pending = ['slimeknights/mantle/client/ClientEvents.java', 'slimeknights/mantle/client/ExtraHeartRenderHandler.java',
-                           'slimeknights/mantle/client/book/', 'slimeknights/mantle/client/screen/', 'slimeknights/mantle/command/client/',
-                           'slimeknights/mantle/client/model/']
+                           'slimeknights/mantle/client/book/', 'slimeknights/mantle/client/screen/', 'slimeknights/mantle/command/client/']
             def keep = ['slimeknights/mantle/client/model/connected/ConnectedModelRegistry.java', 'slimeknights/mantle/client/model/TextureColorHelper.java', 'slimeknights/mantle/client/book/BookHelper.java']
             return details.file.isFile() && pending.any { path.startsWith(it) } && !keep.contains(path)
         }

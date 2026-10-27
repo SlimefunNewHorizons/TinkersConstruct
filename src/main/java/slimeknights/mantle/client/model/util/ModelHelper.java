@@ -1,27 +1,26 @@
 package slimeknights.mantle.client.model.util;
 
-import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.SimpleUnbakedGeometry;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.UnbakedGeometry;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
-import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
-/**
- * Utilities to help in custom models
- */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ModelHelper {
   private static final Map<Block,Identifier> TEXTURE_NAME_CACHE = new ConcurrentHashMap<>();
   /** Listener instance to clear cache */
@@ -32,9 +31,8 @@ public class ModelHelper {
    * @param block  Block to fetch
    * @return Texture name for the block
    */
-  @SuppressWarnings("deprecation")
   private static Identifier getParticleTextureInternal(Block block) {
-    TextureAtlasSprite particle = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(block.defaultBlockState()).getParticleIcon();
+    TextureAtlasSprite particle = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(block.defaultBlockState()).particleIcon();
     //noinspection ConstantConditions  dumb mods returning null particle icons
     if (particle != null) {
       return particle.contents().name();
@@ -49,55 +47,6 @@ public class ModelHelper {
    */
   public static Identifier getParticleTexture(Block block) {
     return TEXTURE_NAME_CACHE.computeIfAbsent(block, ModelHelper::getParticleTextureInternal);
-  }
-
-  /* JSON */
-
-  /**
-   * Converts a JSON float array to the specified object
-   * @param json    JSON object
-   * @param name    Name of the array in the object to fetch
-   * @param size    Expected array size
-   * @param mapper  Functon to map from the array to the output type
-   * @param <T> Output type
-   * @return  Vector3f of data
-   * @throws JsonParseException  If there is no array or the length is wrong
-   * @deprecated use {@link slimeknights.mantle.data.loadable.array.FloatArrayLoadable}
-   */
-  @Deprecated(forRemoval = true)
-  public static <T> T arrayToObject(JsonObject json, String name, int size, Function<float[], T> mapper) {
-    JsonArray array = GsonHelper.getAsJsonArray(json, name);
-    if (array.size() != size) {
-      throw new JsonParseException("Expected " + size + " " + name + " values, found: " + array.size());
-    }
-    float[] vec = new float[size];
-    for(int i = 0; i < size; ++i) {
-      vec[i] = GsonHelper.convertToFloat(array.get(i), name + "[" + i + "]");
-    }
-    return mapper.apply(vec);
-  }
-
-  /**
-   * Converts a JSON array with 3 elements into a Vector3f
-   * @param json  JSON object
-   * @param name  Name of the array in the object to fetch
-   * @return  Vector3f of data
-   * @throws JsonParseException  If there is no array or the length is wrong
-   * @deprecated use {@link slimeknights.mantle.data.loadable.common.Vector3fLoadable}
-   */
-  @Deprecated(forRemoval = true)
-  public static Vector3f arrayToVector(JsonObject json, String name) {
-    return arrayToObject(json, name, 3, arr -> new Vector3f(arr[0], arr[1], arr[2]));
-  }
-
-  /** @deprecated use {@link slimeknights.mantle.data.loadable.common.Vector3fLoadable} */
-  @Deprecated(forRemoval = true)
-  public static JsonArray vectorToJson(Vector3f vector) {
-    JsonArray array = new JsonArray();
-    array.add(vector.x());
-    array.add(vector.y());
-    array.add(vector.z());
-    return array;
   }
 
   /** Validates the given rotation is in 90 degree increments */
@@ -117,5 +66,36 @@ public class ModelHelper {
     } else {
       throw new JsonParseException("Invalid '" + key + "' " + i + " found, only 0/90/180/270 allowed");
     }
+  }
+
+  /* Loading */
+
+  /**
+   * Parses the vanilla part of a model with a custom loader, so custom loaders only need to handle their own keys
+   * @param json     Model JSON, not modified
+   * @param context  Deserialization context
+   * @return  Vanilla model
+   */
+  public static UnbakedModel parseVanilla(JsonObject json, JsonDeserializationContext context) {
+    JsonObject copy = json.deepCopy();
+    copy.remove("loader");
+    return context.deserialize(copy, UnbakedModel.class);
+  }
+
+  /**
+   * Gets the elements to bake for a model, models without elements use the elements of their parents
+   * @param geometry  Geometry of the model, null if it has no elements
+   * @param parent    Parent of the model
+   * @param baker     Baker to resolve the parent
+   * @return  Elements of the model or its closest parent with elements
+   */
+  public static List<BlockElement> getElements(@Nullable UnbakedGeometry geometry, @Nullable Identifier parent, ModelBaker baker) {
+    if (geometry == null && parent != null) {
+      geometry = baker.getModel(parent).getTopGeometry();
+    }
+    if (geometry instanceof SimpleUnbakedGeometry simple) {
+      return simple.elements();
+    }
+    return List.of();
   }
 }
