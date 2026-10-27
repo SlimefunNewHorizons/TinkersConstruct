@@ -8,10 +8,10 @@ license="MIT"
     modId="tconstruct"
     version="${version}"
     displayName="Tinkers' Construct"
-    authors="主厨"
+    authors="SlimeKnights; zhuchuovo (NeoForge 1.21.1 port); SlimefunNewHorizons (1.21.11 port)"
     enumExtensions="META-INF/enumextensions.json"
     description='''
-基于匠魂3 3.12.0版本制作的neoforge移植版
+Unofficial NeoForge port of Tinkers' Construct 3.12. Tinker a little, build a little, tinker a little more.
     '''
 
 [[mods]]

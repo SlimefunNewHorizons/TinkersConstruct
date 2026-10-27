@@ -38,10 +38,10 @@ class MobLootToolEncodingTest extends BaseMcTest {
     // location path. That closes the three bytes per character inflation which would turn the 16 bit length prefix
     // of a network NBT string into a UTFDataFormatException.
     assertThatThrownBy(() -> {
-      MaterialVariantId.create(ANCIENT, "远古");
+      MaterialVariantId.create(ANCIENT, "\u8fdc\u53e4");
     }).isInstanceOf(ResourceLocationException.class);
     assertThat(MaterialVariantId.create(ANCIENT, "head").toString()).isEqualTo("tconstruct:ancient#head");
-    assertThat(MaterialId.tryParse("tconstruct:ancient#头")).isNull();
+    assertThat(MaterialId.tryParse("tconstruct:ancient#\u5934")).isNull();
   }
 
   @Test
@@ -77,7 +77,7 @@ class MobLootToolEncodingTest extends BaseMcTest {
   @Test
   void encodedLengthMatchesWriteUtf() {
     assertThat(encodedLength("tconstruct:ancient")).isEqualTo(18);
-    assertThat(encodedLength("远古")).isEqualTo(6);
+    assertThat(encodedLength("\u8fdc\u53e4")).isEqualTo(6);
     assertThat(encodedLength("a\u0000b")).isEqualTo(4);
   }
 

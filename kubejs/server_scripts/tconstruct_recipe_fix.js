@@ -1,63 +1,64 @@
 // ============================================================
-// 匠魂3 + KubeJS 配方冲突修复脚本
-// 适用环境: Minecraft 1.21.1 / NeoForge / Tinkers' Construct 3.12.0-port / KubeJS 7
+// Tinkers' Construct + KubeJS recipe conflict fix script
+// Environment: Minecraft 1.21.1 / NeoForge / Tinkers' Construct 3.12.0-port / KubeJS 7
 //
-// 冲突根因:
-//   1. KubeJS 的 .replaceInput/.replaceOutput 基于原版配方序列化
-//      (getIngredients() + toJson/fromJson 往返) 工作。匠魂配方由 Mantle
-//      RecordLoadable 自定义序列化, 字段是 inputs / input / cast / tools,
-//      不是原版的 key.X 结构; 且 SizedIngredient 带有 count 字段,
-//      往返重解析时会丢失或损坏这些字段, 导致 replaceInput 静默失效
-//      或配方加载报错。
-//   2. KubeJS 的 .remove 只按配方 ID 删除单个文件。一个强化(modifier)
-//      实际包含多个配方: 升级配方 + salvage 配方(甚至增量配方), 只删其一,
-//      其余配方仍会在加载时向 ModifierRecipeLookup 等静态缓存注入数据,
-//      表现为"删除后仍在工作台/JEI 中出现"。
+// Root causes:
+//   1. KubeJS .replaceInput/.replaceOutput rely on vanilla recipe serialization
+//      (getIngredients() + toJson/fromJson round trip). Tinkers' recipes use Mantle's
+//      RecordLoadable serialization with inputs / input / cast / tools fields,
+//      not the vanilla key.X structure, and SizedIngredient carries a count field.
+//      The round trip drops or corrupts those fields, so replaceInput silently
+//      does nothing or the recipe fails to load.
+//   2. KubeJS .remove only deletes one recipe file by ID. A modifier actually
+//      consists of several recipes: the upgrade recipe + the salvage recipe (sometimes
+//      an incremental recipe too). Removing only one leaves the others feeding static
+//      caches such as ModifierRecipeLookup, so the modifier "still shows up in the
+//      station/JEI after removal".
 //
-// 修复策略:
-//   - 移除: 按 ID 正则成对移除升级配方 + salvage 配方
-//   - 替换: 不依赖 .replaceInput, 用 JSON 深遍历直接改字段
-//     (兼容 KubeJS 7 的 Gson JsonObject/JsonArray, 也兼容普通 JS 对象)
-//   - 顺序: 先移除, 再替换, 最后新增
+// Fix strategy:
+//   - Remove: remove the upgrade + salvage recipes together with an ID regex
+//   - Replace: skip .replaceInput and edit the fields with a deep JSON walk
+//     (works with KubeJS 7 Gson JsonObject/JsonArray and plain JS objects)
+//   - Order: remove first, then replace, then add
 // ============================================================
 
 ServerEvents.recipes(event => {
   const TC = 'tconstruct'
 
-  // ---------- 1. 按 ID 正则移除配方 ----------
-  // 注: 匠魂 modifier 配方的 result 是修饰符而非物品, 所以
-  //     event.remove({ output: 'tconstruct:haste' }) 永远匹配不到!
+  // ---------- 1. Remove recipes by ID regex ----------
+  // Note: the result of a Tinkers' modifier recipe is a modifier, not an item, so
+  //       event.remove({ output: 'tconstruct:haste' }) never matches!
 
-  // 移除单个强化(modifier)的全部相关配方: 升级 + salvage (+ 变体)
-  // 用法: tconstructRemoveModifier('haste')
+  // Removes every recipe of a single modifier: upgrade + salvage (+ variants)
+  // Usage: tconstructRemoveModifier('haste')
   function tconstructRemoveModifier(modifierId) {
-    // 升级/能力/防御/无槽位/工作台/兼容等主配方
+    // main recipes: upgrade/ability/defense/slotless/worktable/compat
     event.remove({
       id: new RegExp(`^${TC}:tools/modifiers/(upgrade|ability|defense|slotless|worktable|compat)/${modifierId}(_.+)?$`)
     })
-    // 配套 salvage 配方(独立 ID 路径, 必须一并删除, 否则残留缓存)
+    // matching salvage recipe (separate ID path, must be removed too or the cache keeps it)
     event.remove({
       id: new RegExp(`^${TC}:tools/modifiers/salvage/${modifierId}(_.+)?$`)
     })
-    // 增量配方与晶球配方通常与升级配方同名或带后缀, 上面两条已覆盖;
-    // 若存在 tools/modifiers 根目录下的同名配方(如 tasty.json), 再删一次:
+    // incremental and crystal recipes usually share the upgrade name or add a suffix, covered above;
+    // if a recipe with the same name sits directly in tools/modifiers (such as tasty.json), remove it too:
     event.remove({
       id: new RegExp(`^${TC}:tools/modifiers/${modifierId}$`)
     })
   }
 
-  // ---------- 2. JSON 深遍历替换输入 ----------
-  // 匠魂配方字段:
+  // ---------- 2. Replace inputs with a deep JSON walk ----------
+  // Tinkers' recipe fields:
   //   tconstruct:modifier             -> "inputs": [{"item"/"tag", "count"?: N}, ...]
-  //   tconstruct:incremental_modifier -> "input": {"item"/"tag"} (单数)
+  //   tconstruct:incremental_modifier -> "input": {"item"/"tag"} (singular)
   //   tconstruct:modifier_repair      -> "ingredient": {"item"/"tag"}
   //   tconstruct:extract_modifier     -> "inputs": [...]
   //   tconstruct:remove_modifier      -> "inputs": [{"ingredient": [...], ...}]
   //   tconstruct:toggle_interaction   -> "inputs": [...]
   //   tconstruct:casting_table/basin  -> "cast": {...}, "fluid": {...}
-  // 本函数递归遍历上述全部结构(含嵌套 ingredient 与 count)。
+  // This function recursively walks all of the above (including nested ingredient and count).
 
-  // 替换 JSON 中的 item/tag 字符串, 返回是否发生修改
+  // Replaces item/tag strings in the JSON, returning whether anything changed
   function replaceJsonIngredient(json, from, to, mode = 'item') {
     let changed = false
 
@@ -65,7 +66,7 @@ ServerEvents.recipes(event => {
       if (node === null || node === undefined) return false
       let localChanged = false
 
-      // Gson JsonObject: 有 entrySet() 方法
+      // Gson JsonObject: has entrySet()
       if (typeof node.entrySet === 'function') {
         const keys = []
         node.entrySet().forEach(entry => keys.push(entry.key))
@@ -81,7 +82,7 @@ ServerEvents.recipes(event => {
         return localChanged
       }
 
-      // Gson JsonArray: 有 size()/get(i) 方法
+      // Gson JsonArray: has size()/get(i)
       if (typeof node.size === 'function' && typeof node.get === 'function') {
         for (let i = 0; i < node.size(); i++) {
           if (walk(node.get(i))) localChanged = true
@@ -89,7 +90,7 @@ ServerEvents.recipes(event => {
         return localChanged
       }
 
-      // 普通 JS 数组
+      // plain JS array
       if (Array.isArray(node)) {
         for (const child of node) {
           if (walk(child)) localChanged = true
@@ -97,7 +98,7 @@ ServerEvents.recipes(event => {
         return localChanged
       }
 
-      // 普通 JS 对象
+      // plain JS object
       if (typeof node === 'object') {
         for (const [key, value] of Object.entries(node)) {
           if (key === mode && typeof value === 'string' && value === from) {
@@ -117,45 +118,45 @@ ServerEvents.recipes(event => {
     return changed
   }
 
-  // 对指定类型的匠魂配方批量替换输入物品
-  // 用法: tconstructReplaceInput({ type: 'tconstruct:modifier' }, 'minecraft:gold_ingot', 'minecraft:netherite_ingot')
+  // Replaces an input item in all Tinkers' recipes matching the filter
+  // Usage: tconstructReplaceInput({ type: 'tconstruct:modifier' }, 'minecraft:gold_ingot', 'minecraft:netherite_ingot')
   function tconstructReplaceInput(filter, fromItem, toItem) {
     event.forEachRecipe(filter, recipe => {
       if (recipe.json && replaceJsonIngredient(recipe.json, fromItem, toItem)) {
-        console.info(`[TConstructFix] 替换输入 ${fromItem} -> ${toItem}: ${recipe.getId()}`)
+        console.info(`[TConstructFix] Replaced input ${fromItem} -> ${toItem}: ${recipe.getId()}`)
       }
     })
   }
 
-  // 对指定类型的匠魂配方批量替换流体标签 (如 c:molten_gold -> c:molten_netherite)
+  // Replaces a fluid tag in all Tinkers' recipes matching the filter (such as c:molten_gold -> c:molten_netherite)
   function tconstructReplaceFluidTag(filter, fromTag, toTag) {
     event.forEachRecipe(filter, recipe => {
       if (recipe.json && replaceJsonIngredient(recipe.json, fromTag, toTag, 'tag')) {
-        console.info(`[TConstructFix] 替换流体 ${fromTag} -> ${toTag}: ${recipe.getId()}`)
+        console.info(`[TConstructFix] Replaced fluid ${fromTag} -> ${toTag}: ${recipe.getId()}`)
       }
     })
   }
 
-  // ---------- 3. 使用示例(按需取消注释) ----------
+  // ---------- 3. Examples (uncomment as needed) ----------
 
-  // 示例 A: 移除某强化及其 salvage 配方
+  // Example A: remove a modifier and its salvage recipe
   // tconstructRemoveModifier('haste')
 
-  // 示例 B: 替换某类型配方中的输入物品(不触发 replaceInput 的序列化问题)
+  // Example B: replace an input item in recipes of a type (avoids the replaceInput serialization issue)
   // tconstructReplaceInput({ type: `${TC}:modifier` }, 'minecraft:gold_ingot', 'minecraft:netherite_ingot')
   // tconstructReplaceInput({ type: `${TC}:incremental_modifier` }, 'minecraft:gold_ingot', 'minecraft:netherite_ingot')
 
-  // 示例 C: 替换铸造/熔炼配方中的流体标签
+  // Example C: replace the fluid tag in casting/melting recipes
   // tconstructReplaceFluidTag({ type: `${TC}:casting_table` }, 'c:molten_gold', 'c:molten_netherite')
 
-  // ---------- 4. 完全替换一个配方(最稳妥, 不依赖任何 JSON 可变性) ----------
-  // 先删旧配方, 再 event.custom 写入完整 JSON(字段必须与上方结构完全一致)
+  // ---------- 4. Fully replace a recipe (safest, does not rely on any JSON mutability) ----------
+  // Remove the old recipe first, then write the complete JSON with event.custom (fields must match the structure above exactly)
   // event.remove({ id: `${TC}:tools/modifiers/upgrade/smelting` })
   // event.custom({
   //   type: `${TC}:modifier`,
   //   allow_crystal: true,
   //   inputs: [
-  //     { item: 'minecraft:soul_campfire' }   // 原为 campfire
+  //     { item: 'minecraft:soul_campfire' }   // originally campfire
   //   ],
   //   level: { max: 4 },
   //   result: `${TC}:smelting`,

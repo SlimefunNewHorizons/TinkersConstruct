@@ -1,53 +1,46 @@
-# Tinkers' Construct 1.21.1
+# Tinkers' Construct — SlimefunNewHorizons port
 
-这是一个面向 **Minecraft 1.21.1** 与 **NeoForge** 的 Tinkers' Construct（匠魂）移植项目。模组围绕“部件—材料—改造”体系扩展工具、武器和护甲的制作与成长，让玩家可以按用途组合部件、选择材料特性，并通过强化改造持续调整装备能力。
+Unofficial port of [Tinkers' Construct](https://github.com/SlimeKnights/TinkersConstruct) by SlimeKnights to recent Minecraft versions on NeoForge.
+Mantle is integrated into the same jar: no separate Mantle download is needed.
 
-## 主要内容
+## Branches
 
-- 使用工具装配台制作可自定义的工具、武器与护甲。
-- 为部件选择不同材料，获得对应的耐久、挖掘、攻击与特殊属性。
-- 通过强化槽和能力槽为装备添加改造效果，并可维修、替换部件或进一步升级。
-- 提供熔炉、多方块冶炼炉、铸件与合金等冶炼流程，用于材料加工与装备制造。
-- 已同步上游 3.12 的史莱姆套装体系：史莱姆头盔、胸甲（含肋骨笼的史莱姆胸甲）、护腿（黏液壳）、靴子与鞘翅均可按史莱姆类型定制，并支持鹦鹉螺壳、犄角、奶酪、毒液等新材料。
+Each Minecraft version has its own branch.
 
-## 项目信息
+| Branch | Minecraft | NeoForge | Status |
+| :--- | :---: | :---: | :--- |
+| `1.21.1` | 1.21.1 | 21.1.241 | Builds and loads. Base of the newer ports |
+| `1.21.11` | 1.21.11 | 21.11.48 | Port in progress, does not build yet |
 
-- Mod ID：`tconstruct`
-- 游戏版本：`Minecraft 1.21.1`
-- 模组加载器：`NeoForge`
-- 当前模组版本：`3.13.1`
-- Java 版本：`JDK 21`
-- 必需依赖：`Mantle 1.12.6` 或兼容版本
-- 可选依赖：`JEI`
+## Contents
 
-> 项目仍在移植与适配阶段，部分功能、兼容性或游戏内文档可能尚未完全实现。
+- Build custom tools, weapons and armor in the tool station from parts made of different materials.
+- Each material gives its own durability, mining, attack and special traits; upgrades and abilities modify tools further.
+- Melter, smeltery and foundry multiblocks, casting and alloying to process materials.
+- Synchronized with the upstream 3.12 content: slimesuit with slime types, nautilus, horn, cheese and venom materials, edible tools and goat horn instruments. See [CHANGELOG](doc/CHANGELOG.md).
 
-## 更新内容
+Compatibility alloys such as bronze or nicrosil only appear when the matching metal tags exist (`c:ingots/tin`, `c:ingots/nickel`, `c:ingots/chromium`, ...) or the `forceIntegrationMaterials` config option is enabled, same as upstream.
 
-当前版本同步了上游 1.20.1 分支的最新内容，新增**鹦鹉螺、犄角、奶酪、毒液**四种材料与**天空/末影黏液皮**拆分，并补全可食用工具系统（`savory`、`scrumptious`）与山羊角乐器特性。详细列表见 [CHANGELOG.md](CHANGELOG.md)。
+## Integrated Mantle
 
-> 提示：青铜、镍铬合金等**兼容合金**需要实例中存在对应金属标签（`c:ingots/tin`、`c:ingots/nickel`、`c:ingots/chromium` 等）或开启 `forceIntegrationMaterials` 配置后才会出现，这是上游的既定行为。
+The jar declares two mods in `META-INF/neoforge.mods.toml`: `tconstruct` and `mantle`.
+Mantle keeps its packages (`slimeknights.mantle.*`) and assets (`assets/mantle/`), so other mods depending on Mantle find it loaded.
+Install the jar alone, plus JEI if you want recipe lookup.
 
-## 安装
+## Building
 
-1. 安装与 Minecraft `1.21.1` 匹配的 NeoForge。
-2. 将本模组和 Mantle 放入游戏实例的 `mods` 文件夹。
-3. 如需配方查询功能，可额外安装 JEI。
+Requires JDK 21.
 
-## 开发构建
-
-请先安装 JDK 21，然后在项目根目录执行：
-
-```powershell
-.\gradlew.bat build
+```bash
+./gradlew build
 ```
 
-构建产物位于 `build/libs/`。本项目构建 Mantle 源码依赖时，也会同时生成 Mantle 的对应产物。
+The jar is written to `build/libs/`. On the `1.21.11` branch, `./gradlew compileJava` shows the remaining porting errors.
 
-## 上游
+## Credits and license
 
-本项目上游为：[https://github.com/SlimeKnights/TinkersConstruct/](https://github.com/SlimeKnights/TinkersConstruct/)
+- [SlimeKnights](https://github.com/SlimeKnights): Tinkers' Construct and Mantle, MIT license.
+- [zhuchuovo](https://github.com/zhuchuovo/TinkersConstruct-1.21.1): NeoForge 1.21.1 port of Tinkers' Construct and Mantle, MIT license, base of this fork.
+- SlimefunNewHorizons: Mantle integration and the 1.21.11 port.
 
-## 许可证
-
-本项目遵循仓库内 [LICENSE](LICENSE) 文件所列的 MIT 许可证。
+Distributed under the MIT license, see [LICENSE](LICENSE). This is an unofficial port: please report issues here, not to SlimeKnights.
