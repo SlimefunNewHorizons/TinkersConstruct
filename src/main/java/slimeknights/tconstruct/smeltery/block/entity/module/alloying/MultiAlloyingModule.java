@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.module.alloying;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
@@ -51,7 +52,7 @@ public class MultiAlloyingModule implements IAlloyingModule {
   private List<AlloyRecipe> getRecipes() {
     if (lastRecipes == null) {
       // The cache is shuffled and pruned in place, so it must remain mutable.
-      lastRecipes = getLevel().getRecipeManager().getRecipesFor(TinkerRecipeTypes.ALLOYING.get(), alloyTank, getLevel()).stream()
+      lastRecipes = RecipeAccessHelper.getRecipeMap(getLevel()).getRecipesFor(TinkerRecipeTypes.ALLOYING.get(), alloyTank, getLevel())
                               .map(RecipeHolder::value)
                               .collect(Collectors.toCollection(ArrayList::new));
     }

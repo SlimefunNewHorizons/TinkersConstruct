@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.core.BlockPos;
@@ -130,7 +131,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
         return lastRecipe;
       }
       // if that failed, do a recipe lookup
-      RecipeHolder<? extends AbstractCookingRecipe> recipe = level.getRecipeManager().getRecipeFor(recipeType, input, level).orElse(null);
+      RecipeHolder<? extends AbstractCookingRecipe> recipe = RecipeAccessHelper.getRecipeFor(level, recipeType, input).orElse(null);
       if (recipe != null) {
         lastRecipe = recipe;
       }

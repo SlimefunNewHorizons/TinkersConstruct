@@ -56,7 +56,7 @@ public enum SeveringModule implements ModifierModule, ProcessLootModifierHook {
       if (generatedLoot.stream().noneMatch(stack -> stack.is(net.minecraft.tags.ItemTags.SKULLS))) {
         // find proper recipe
         Level world = context.getLevel();
-        List<SeveringRecipe> recipes = SeveringRecipeCache.findRecipe(world.getRecipeManager(), entity.getType());
+        List<SeveringRecipe> recipes = SeveringRecipeCache.findRecipe(world, entity.getType());
         if (!recipes.isEmpty()) {
           float level = modifier.getEffectiveLevel();
           float looting = 0;

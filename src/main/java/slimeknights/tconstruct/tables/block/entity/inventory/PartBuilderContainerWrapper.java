@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.inventory;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import slimeknights.tconstruct.common.TinkerTags;
@@ -67,7 +68,7 @@ public class PartBuilderContainerWrapper implements IPartBuilderContainer {
         }
       } else {
         Level world = getWorld();
-        this.material = world.getRecipeManager().getRecipeFor(TinkerRecipeTypes.MATERIAL.get(), this, world).map(holder -> holder.value()).orElse(null);
+        this.material = RecipeAccessHelper.getRecipeFor(world, TinkerRecipeTypes.MATERIAL.get(), this).map(holder -> holder.value()).orElse(null);
       }
     }
     return this.material;

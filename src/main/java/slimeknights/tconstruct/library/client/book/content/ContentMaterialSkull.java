@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -66,7 +67,7 @@ public class ContentMaterialSkull extends AbstractMaterialContent {
   private IDisplayableCastingRecipe getSkullRecipe() {
     Level world = Minecraft.getInstance().level;
     if (!searchedSkullRecipe && world != null) {
-      skullRecipe = world.getRecipeManager().getRecipes().stream()
+      skullRecipe = RecipeAccessHelper.getRecipeMap(world).values().stream()
 												 .map(holder -> holder.value())
 												 .filter(recipe -> recipe.getType() == TinkerRecipeTypes.CASTING_BASIN.get())
 												 .filter(recipe -> recipe instanceof IDisplayableCastingRecipe)

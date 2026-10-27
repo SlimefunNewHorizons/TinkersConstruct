@@ -3,6 +3,7 @@ package slimeknights.tconstruct.library.recipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -50,6 +51,12 @@ public class TinkerRecipeTypes {
   public static final DeferredHolder<RecipeType<?>,RecipeType<Recipe<?>>> DATA = register("data");
 
   /** Initializes the deferred register */
+  /** Sends our recipe types to clients for screens, JEI and books, as recipes only exist on the server since 1.21.2. Book pages also show vanilla crafting and cooking */
+  public static void syncToClient() {
+    TYPES.getEntries().forEach(holder -> RecipeAccessHelper.syncToClient(holder.get()));
+    RecipeAccessHelper.syncToClient(RecipeType.CRAFTING, RecipeType.SMELTING, RecipeType.BLASTING, RecipeType.SMOKING, RecipeType.CAMPFIRE_COOKING);
+  }
+
   public static void init(IEventBus bus) {
     TYPES.register(bus);
   }

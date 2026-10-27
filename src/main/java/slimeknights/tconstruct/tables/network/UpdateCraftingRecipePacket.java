@@ -45,7 +45,7 @@ public class UpdateCraftingRecipePacket implements IThreadsafePacket {
       Level world = Minecraft.getInstance().level;
       if (world != null) {
         BlockEntityHelper.get(CraftingStationBlockEntity.class, world, packet.pos).ifPresent(te ->
-          RecipeHelper.getRecipe(world.getRecipeManager(), packet.recipe, CraftingRecipe.class).ifPresent(recipe -> te.updateRecipe(packet.recipe, recipe)));
+          RecipeHelper.getRecipe(world, packet.recipe, CraftingRecipe.class).ifPresent(recipe -> te.updateRecipe(packet.recipe, recipe)));
       }
     }
   }

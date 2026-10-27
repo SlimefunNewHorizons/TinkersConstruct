@@ -80,7 +80,7 @@ public class RemoveRecipesCommand {
 
   /** Suggestion builder for recipe IDs */
   private static final SuggestionProvider<CommandSourceStack> SUGGESTS_RECIPES = (context, builder)
-    -> SharedSuggestionProvider.suggestResource(context.getSource().getRecipeManager().getRecipeIds(), builder);
+    -> SharedSuggestionProvider.suggestResource(context.getSource().getServer().getRecipeManager().getRecipes().stream().map(holder -> holder.id().identifier()), builder);
   /** Suggests presets for the command */
   private static final SuggestionProvider<CommandSourceStack> SUGGEST_PRESETS = SourcesCommand.suggestFolder(PRESETS);
 
@@ -182,7 +182,7 @@ public class RemoveRecipesCommand {
     RegistryAccess access = level.registryAccess();
     List<Identifier> recipes = new ArrayList<>();
     for (RecipeType<?> recipeType : recipeTypes) {
-      for (Object holderObject : context.getSource().getLevel().getRecipeManager().getAllRecipesFor((RecipeType) recipeType)) {
+      for (Object holderObject : context.getSource().getLevel().recipeAccess().recipeMap().byType((RecipeType) recipeType)) {
         RecipeHolder<?> holder = (RecipeHolder<?>) holderObject;
         Recipe<?> recipe = holder.value();
         // result must match or not be requested

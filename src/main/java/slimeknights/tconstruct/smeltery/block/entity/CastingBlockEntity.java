@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -335,7 +336,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
     if (this.lastCastingRecipe != null && this.lastCastingRecipe.matches(castingInventory, level)) {
       return this.lastCastingRecipe;
     }
-    ICastingRecipe castingRecipe = level.getRecipeManager().getRecipeFor(this.castingType, castingInventory, level).map(RecipeHolder::value).orElse(null);
+    ICastingRecipe castingRecipe = RecipeAccessHelper.getRecipeFor(level, this.castingType, castingInventory).map(RecipeHolder::value).orElse(null);
     if (castingRecipe != null) {
       this.lastCastingRecipe = castingRecipe;
     }
@@ -353,7 +354,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
     if (lastMoldingRecipe != null && lastMoldingRecipe.matches(moldingInventory, level)) {
       return lastMoldingRecipe;
     }
-    Optional<MoldingRecipe> newRecipe = level.getRecipeManager().getRecipeFor(moldingType, moldingInventory, level).map(RecipeHolder::value);
+    Optional<MoldingRecipe> newRecipe = RecipeAccessHelper.getRecipeFor(level, moldingType, moldingInventory).map(RecipeHolder::value);
     if (newRecipe.isPresent()) {
       lastMoldingRecipe = newRecipe.get();
       return lastMoldingRecipe;
@@ -539,7 +540,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
     FluidStack fluid = tank.getFluid();
     if(!fluid.isEmpty()) {
       // fetch recipe by name
-      RecipeHelper.getRecipe(level.getRecipeManager(), name, ICastingRecipe.class).ifPresent(recipe -> {
+      RecipeHelper.getRecipe(level, name, ICastingRecipe.class).ifPresent(recipe -> {
         this.currentRecipe = recipe;
         castingInventory.setFluid(fluid);
         tank.setCapacity(recipe.getFluidAmount(castingInventory));
@@ -575,7 +576,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
     }
     if (currentRecipe != null) {
       if (level != null) {
-        level.getRecipeManager().getRecipes().stream().filter(holder -> holder.value() == currentRecipe).findFirst().ifPresent(holder -> tags.putString(TAG_RECIPE, holder.id().toString()));
+        RecipeAccessHelper.getRecipeMap(level).values().stream().filter(holder -> holder.value() == currentRecipe).findFirst().ifPresent(holder -> tags.putString(TAG_RECIPE, holder.id().toString()));
       }
     } else if (recipeName != null) {
       tags.putString(TAG_RECIPE, recipeName.toString());

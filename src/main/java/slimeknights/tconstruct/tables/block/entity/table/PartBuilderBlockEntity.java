@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.table;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -80,7 +81,7 @@ public class PartBuilderBlockEntity extends RetexturedTableBlockEntity implement
       } else {
         record PatternRecipe(Pattern pattern, IPartBuilderRecipe recipe) {}
         // fetch all recipes that can match these inputs, the map ensures the patterns are unique
-        recipes = level.getRecipeManager().getAllRecipesFor(TinkerRecipeTypes.PART_BUILDER.get()).stream()
+        recipes = RecipeAccessHelper.byType(level, TinkerRecipeTypes.PART_BUILDER.get()).stream()
                        .sorted(Comparator.comparing(RecipeHolder::id))
                        .map(RecipeHolder::value)
                        .filter(r -> r.partialMatch(inventoryWrapper))

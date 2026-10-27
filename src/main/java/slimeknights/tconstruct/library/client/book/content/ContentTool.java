@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
@@ -161,7 +162,7 @@ public class ContentTool extends PageContent {
       Recipe<?> recipe = Optional.ofNullable(Minecraft.getInstance().level)
                                                  .flatMap(world -> {
                                                    RegistryAccess access = world.registryAccess();
-                                                   return world.getRecipeManager().getRecipes().stream()
+                                                   return RecipeAccessHelper.getRecipeMap(world).values().stream()
                                                         .map(holder -> holder.value())
                                                         .filter(r -> r.getType() == RecipeType.CRAFTING && r.getResultItem(access).getItem() == tool.asItem())
                                                         .findFirst();
@@ -184,7 +185,7 @@ public class ContentTool extends PageContent {
         }
         // fetch the tool building recipe for extra ingredients
         List<Ingredient> extraRequirements = Optional.ofNullable(Minecraft.getInstance().level)
-                                                     .flatMap(world -> world.getRecipeManager().getRecipes().stream()
+                                                     .flatMap(world -> RecipeAccessHelper.getRecipeMap(world).values().stream()
                                                                             .map(holder -> holder.value())
                                                                             .filter(r -> r.getType() == TinkerRecipeTypes.TINKER_STATION.get() && r instanceof ToolBuildingRecipe toolRecipe && toolRecipe.getOutput() == tool)
                                                                             .map(r -> ((ToolBuildingRecipe)r).getExtraRequirements())

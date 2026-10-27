@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.traits.skull;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.modifiers.hook.interaction.KeybindInteractModifierHook;

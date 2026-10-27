@@ -86,7 +86,7 @@ public class EntityMeltingModule {
       return lastRecipe;
     }
     // find a new recipe if the last recipe does not match
-    EntityMeltingRecipe recipe = EntityMeltingRecipeCache.findRecipe(getLevel().getRecipeManager(), type);
+    EntityMeltingRecipe recipe = EntityMeltingRecipeCache.findRecipe(getLevel(), type);
     if (recipe != null) {
       lastRecipe = recipe;
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.table;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -137,7 +138,7 @@ public class ModifierWorktableBlockEntity extends RetexturedTableBlockEntity imp
         return updateRecipe(lastRecipe);
       }
       // look for a new recipe, if it matches cache it
-      Optional<IModifierWorktableRecipe> recipe = level.getRecipeManager().getRecipeFor(TinkerRecipeTypes.MODIFIER_WORKTABLE.get(), inventoryWrapper, level).map(holder -> holder.value());
+      Optional<IModifierWorktableRecipe> recipe = RecipeAccessHelper.getRecipeFor(level, TinkerRecipeTypes.MODIFIER_WORKTABLE.get(), inventoryWrapper).map(holder -> holder.value());
       if (recipe.isPresent()) {
         return updateRecipe(recipe.get());
       }

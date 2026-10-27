@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.inventory;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import lombok.Setter;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -62,7 +63,7 @@ public class TinkerStationContainerWrapper implements IMutableTinkerStationConta
       return lastMaterialRecipe;
     }
     // try to find a new recipe
-    Optional<MaterialRecipe> newRecipe = world.getRecipeManager().getRecipeFor(TinkerRecipeTypes.MATERIAL.get(), inv, world).map(holder -> holder.value());
+    Optional<MaterialRecipe> newRecipe = RecipeAccessHelper.getRecipeFor(world, TinkerRecipeTypes.MATERIAL.get(), inv).map(holder -> holder.value());
     if (newRecipe.isPresent()) {
       lastMaterialRecipe = newRecipe.get();
       return lastMaterialRecipe;

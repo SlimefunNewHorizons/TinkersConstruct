@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.ChatFormatting;
@@ -148,7 +149,7 @@ public abstract class AbstractMaterialContent extends PageContent {
       }
       // simply combine all items from all recipes
       MaterialVariantId material = getMaterialVariant();
-      repairStacks = world.getRecipeManager().getRecipes().stream()
+      repairStacks = RecipeAccessHelper.getRecipeMap(world).values().stream()
         .filter(holder -> holder.value().getType() == TinkerRecipeTypes.MATERIAL.get())
         .sorted(Comparator.comparing(holder -> holder.id().toString()))
         .map(holder -> holder.value())

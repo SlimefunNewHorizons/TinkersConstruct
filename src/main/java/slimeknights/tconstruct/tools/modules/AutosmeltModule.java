@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +87,7 @@ public class AutosmeltModule implements ModifierModule, ProcessLootModifierHook 
     // try each recipe type to see if we have a recipe for any of them
     Optional<? extends AbstractCookingRecipe> recipe = Optional.empty();
     for (RecipeType<? extends AbstractCookingRecipe> recipeType : recipeTypes) {
-      recipe = world.getRecipeManager().getRecipeFor(recipeType, input, world).map(RecipeHolder::value);
+      recipe = RecipeAccessHelper.getRecipeFor(world, recipeType, input).map(RecipeHolder::value);
       if (recipe.isPresent()) {
         break;
       }

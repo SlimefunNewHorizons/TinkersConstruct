@@ -47,7 +47,7 @@ public class UpdateTinkerStationRecipePacket implements IThreadsafePacket {
     private static void handle(UpdateTinkerStationRecipePacket packet) {
       Level world = Minecraft.getInstance().level;
       if (world != null) {
-        Optional<ITinkerStationRecipe> recipe = RecipeHelper.getRecipe(world.getRecipeManager(), packet.recipe, ITinkerStationRecipe.class);
+        Optional<ITinkerStationRecipe> recipe = RecipeHelper.getRecipe(world, packet.recipe, ITinkerStationRecipe.class);
 
         // if the screen is open, use that to get the TE and update the screen
         boolean handled = false;

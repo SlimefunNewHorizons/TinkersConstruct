@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.crafting;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -45,7 +46,7 @@ public class ShapedFallbackRecipe extends ShapedRecipe {
     if (!super.matches(input, level)) return false;
     if (alternativeCache == null) {
       alternativeCache = alternatives.stream()
-        .map(level.getRecipeManager()::byKey)
+        .map(id -> RecipeAccessHelper.byKey(level, id))
         .flatMap(Optional::stream)
         .map(holder -> holder.value())
         .filter(recipe -> recipe.getClass() == ShapedRecipe.class || recipe.getClass() == ShapelessRecipe.class)
