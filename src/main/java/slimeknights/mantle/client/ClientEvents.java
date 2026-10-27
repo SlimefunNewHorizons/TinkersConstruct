@@ -1,8 +1,23 @@
 package slimeknights.mantle.client;
 
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
+import slimeknights.mantle.fluid.texture.ClientTextureFluidType;
+import slimeknights.mantle.fluid.texture.ClientInvertedFluidType;
+import slimeknights.mantle.fluid.TextureFluidType;
+import slimeknights.mantle.fluid.InvertedFluidType;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import javax.annotation.Nullable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import slimeknights.mantle.command.client.BookCommand;
+import slimeknights.mantle.client.book.data.BookData;
+import slimeknights.mantle.item.AbstractBookItem.BookOpener;
+import slimeknights.mantle.item.AbstractBookItem;
+import net.minecraft.client.renderer.RenderPipelines;
 import slimeknights.mantle.transfer.TransferHelper;
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.Minecraft;
@@ -26,8 +41,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent.RegisterGeometryLoaders;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent.RegisterLoaders;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
@@ -88,16 +103,16 @@ public class ClientEvents {
 
   @SuppressWarnings("removal")
   @SubscribeEvent
-  static void registerListeners(RegisterClientReloadListenersEvent event) {
-    event.registerReloadListener(ModelHelper.LISTENER);
-    event.registerReloadListener(new BookLoader());
+  static void registerListeners(AddClientReloadListenersEvent event) {
+    event.addListener(Mantle.getResource("model_helper"), ModelHelper.LISTENER);
+    event.addListener(Mantle.getResource("books"), new BookLoader());
     ResourceColorManager.init(event);
     FluidTooltipHandler.init(event);
     FluidTextureManager.init(event);
-    event.registerReloadListener(FluidCuboid.REGISTRY);
-    event.registerReloadListener(RenderItem.REGISTRY);
-    event.registerReloadListener(RenderItem.STATE_REGISTRY);
-    event.registerReloadListener(TextureColorHelper.RELOAD_LISTENER);
+    event.addListener(Mantle.getResource("fluid_cuboids"), FluidCuboid.REGISTRY);
+    event.addListener(Mantle.getResource("render_items"), RenderItem.REGISTRY);
+    event.addListener(Mantle.getResource("render_item_states"), RenderItem.STATE_REGISTRY);
+    event.addListener(Mantle.getResource("texture_colors"), TextureColorHelper.RELOAD_LISTENER);
   }
 
   @SubscribeEvent
@@ -106,10 +121,59 @@ public class ClientEvents {
 
     BookLoader.registerBook(Mantle.getResource("test"), new FileRepository(Mantle.getResource("books/test")));
     MantleClientCommand.init();
+    AbstractBookItem.opener = new ClientBookOpener();
+  }
+
+  /** Opens books from the book loader */
+  private static class ClientBookOpener implements BookOpener {
+    @Override
+    public boolean open(Identifier book, @Nullable InteractionHand hand, ItemStack stack) {
+      BookData data = BookLoader.getBook(book);
+      if (data == null) {
+        BookCommand.bookNotFound(book);
+        return false;
+      }
+      if (hand != null) {
+        data.openGui(hand, stack);
+      } else {
+        data.openGui(Component.literal("Book"), "", null, null);
+      }
+      return true;
+    }
+
+    @Override
+    public void openFromSlot(Identifier book, int slotIndex, ItemStack stack) {
+      BookData data = BookLoader.getBook(book);
+      if (data != null) {
+        data.openGui(slotIndex, stack);
+      }
+    }
+
+    @Override
+    public void openFromLectern(Identifier book, BlockPos pos, ItemStack stack) {
+      BookData data = BookLoader.getBook(book);
+      if (data != null) {
+        data.openGui(pos, stack);
+      }
+    }
+  }
+
+  /** Registers client extensions for Mantle fluid types, runs last so mods can register their own */
+  @SubscribeEvent(priority = EventPriority.LOWEST)
+  static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+    for (FluidType type : NeoForgeRegistries.FLUID_TYPES) {
+      if (!event.isFluidTypeRegistered(type)) {
+        if (type instanceof InvertedFluidType) {
+          event.registerFluidType(new ClientInvertedFluidType(type), type);
+        } else if (type instanceof TextureFluidType) {
+          event.registerFluidType(new ClientTextureFluidType(type), type);
+        }
+      }
+    }
   }
 
   @SubscribeEvent
-  static void registerModelLoaders(RegisterGeometryLoaders event) {
+  static void registerModelLoaders(RegisterLoaders event) {
     // standard models - useful in resource packs for any model
     event.register(Mantle.getResource("connected"), ConnectedModel.LOADER);
     event.register(Mantle.getResource("item_layer"), MantleItemLayerModel.LOADER);
@@ -124,6 +188,8 @@ public class ClientEvents {
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
     NeoForge.EVENT_BUS.register(new ExtraHeartRenderHandler());
+    // recipes only reach the client through the recipe types synced by RecipeAccessHelper
+    NeoForge.EVENT_BUS.addListener(RecipesReceivedEvent.class, recipes -> RecipeAccessHelper.setClientRecipes(recipes.getRecipeMap()));
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, RenderGuiLayerEvent.Post.class, ClientEvents::renderOffhandAttackIndicator);
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, RenderGuiLayerEvent.Post.class, ClientEvents::renderGaugeTooltip);
   }
@@ -162,21 +228,18 @@ public class ClientEvents {
         if (!isHotbar && minecraft.options.getCameraType().isFirstPerson()) {
           if (!minecraft.getDebugOverlay().showDebugScreen() || settings.hideGui || minecraft.player.isReducedDebugInfo() || settings.reducedDebugInfo().get()) {
             // mostly cloned from vanilla attack indicator
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
             // integer division makes this a pain to line up, there might be a simplier version of this formula but I cannot think of one
             int y = (scaledHeight / 2) - 14 + (2 * (scaledHeight % 2));
             int x = minecraft.getWindow().getGuiScaledWidth() / 2 - 8;
             int width = (int)(cooldown * 17.0F);
-            graphics.blitSprite(CROSSHAIR_ATTACK_BACKGROUND, x, y, 16, 4);
-            graphics.blitSprite(CROSSHAIR_ATTACK_PROGRESS, 17, 4, 0, 0, x, y, width, 4);
-            RenderSystem.defaultBlendFunc();
+            graphics.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_BACKGROUND, x, y, 16, 4);
+            graphics.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_PROGRESS, 17, 4, 0, 0, x, y, width, 4);
           }
         }
         break;
       case HOTBAR:
-        if (isHotbar && minecraft.cameraEntity == minecraft.player) {
+        if (isHotbar && minecraft.getCameraEntity() == minecraft.player) {
           int centerWidth = minecraft.getWindow().getGuiScaledWidth() / 2;
           int y = minecraft.getWindow().getGuiScaledHeight() - 20;
           int x;
@@ -188,9 +251,8 @@ public class ClientEvents {
           }
 //          RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
           int l1 = (int)(cooldown * 19.0F);
-          RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-          graphics.blitSprite(HOTBAR_ATTACK_BACKGROUND, x, y, 18, 18);
-          graphics.blitSprite(HOTBAR_ATTACK_PROGRESS, 18, 18, 0, 18 - l1, x, y + 18 - l1, 18, l1);
+          graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_ATTACK_BACKGROUND, x, y, 18, 18);
+          graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_ATTACK_PROGRESS, 18, 18, 0, 18 - l1, x, y + 18 - l1, 18, l1);
         }
         break;
     }
@@ -250,7 +312,7 @@ public class ClientEvents {
       // in the tag, don't show capacity
       Identifier id = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
       tooltip = new ArrayList<>(3);
-      tooltip.add(fluid.getDisplayName());
+      tooltip.add(fluid.getHoverName());
       FluidTooltipHandler.appendAdvanced(id, tooltip);
       tooltip.add(GaugeBlock.formatCapacity(handler.getTankCapacity(0)).withStyle(ChatFormatting.GRAY));
       tooltip.add(FluidTooltipHandler.formatModName(id));
@@ -261,6 +323,6 @@ public class ClientEvents {
 
     int x = minecraft.getWindow().getGuiScaledWidth() / 2;
     int y = minecraft.getWindow().getGuiScaledHeight() / 2;
-    event.getGuiGraphics().renderTooltip(minecraft.font, tooltip, Optional.empty(), x, y);
+    event.getGuiGraphics().setTooltipForNextFrame(minecraft.font, tooltip, Optional.empty(), x, y);
   }
 }

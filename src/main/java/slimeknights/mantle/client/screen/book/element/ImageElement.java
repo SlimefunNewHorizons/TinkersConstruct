@@ -1,5 +1,7 @@
 package slimeknights.mantle.client.screen.book.element;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -71,25 +73,19 @@ public class ImageElement extends SizedBookElement {
 
   @Override
   public void draw(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, Font fontRenderer) {
-    float r = ((this.colorMultiplier >> 16) & 0xff) / 255.F;
-    float g = ((this.colorMultiplier >> 8) & 0xff) / 255.F;
-    float b = (this.colorMultiplier & 0xff) / 255.F;
-    graphics.setColor(r, g, b, 1f);
-
     if (this.image.item == null) {
       Identifier texture = requireNonNullElse(this.image.location, TextureManager.INTENTIONAL_MISSING_TEXTURE);
-      graphics.blit(texture, this.x, this.y, this.width, this.height, this.image.u, this.image.v, this.image.uw, this.image.vh, this.image.texWidth, this.image.texHeight);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, texture, this.x, this.y, this.image.u, this.image.v, this.width, this.height, this.image.uw, this.image.vh, this.image.texWidth, this.image.texHeight, 0xFF000000 | this.colorMultiplier);
     }
     else {
-      PoseStack matrices = graphics.pose();
-      matrices.pushPose();
-      matrices.translate(this.x, this.y, 0F);
-      matrices.scale(this.width / 16F, this.height / 16F, 1F);
+      Matrix3x2fStack matrices = graphics.pose();
+      matrices.pushMatrix();
+      matrices.translate((float) this.x, (float) this.y);
+      matrices.scale(this.width / 16F, this.height / 16F);
 
       this.itemElement.draw(graphics, mouseX, mouseY, partialTicks, fontRenderer);
 
-      matrices.popPose();
+      matrices.popMatrix();
     }
-    graphics.setColor(1, 1, 1, 1);
   }
 }

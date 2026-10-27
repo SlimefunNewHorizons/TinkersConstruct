@@ -1,6 +1,5 @@
 package slimeknights.mantle.client.screen.book.element;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -49,16 +48,11 @@ public class SelectionElement extends SizedBookElement {
     if (hover) {
       graphics.fill(this.iconX, this.iconY, this.iconX + IMG_SIZE, this.iconY + IMG_SIZE, this.parent.book.appearance.hoverColor);
     }
-    if (unlocked) {
-      RenderSystem.setShaderColor(1F, 1F, 1F, hover ? 1F : 0.5F);
-    } else {
-      float r = ((this.parent.book.appearance.lockedSectionColor >> 16) & 0xff) / 255.F;
-      float g = ((this.parent.book.appearance.lockedSectionColor >> 8) & 0xff) / 255.F;
-      float b = (this.parent.book.appearance.lockedSectionColor & 0xff) / 255.F;
-      RenderSystem.setShaderColor(r, g, b, 0.75F);
-    }
-
     this.iconRenderer.draw(graphics, mouseX, mouseY, partialTicks, fontRenderer);
+    // shortcut: GUI rendering has no shader color since 1.21.6, so locked icons get a tinted overlay and unhovered icons are not faded
+    if (!unlocked) {
+      graphics.fill(this.iconX, this.iconY, this.iconX + IMG_SIZE, this.iconY + IMG_SIZE, (this.parent.book.appearance.lockedSectionColor & 0xFFFFFF) | 0x80000000);
+    }
 
     if (this.parent.drawText && this.section.parent.appearance.drawSectionListText) {
       String title = this.section.getTitle().replace("\\n", "\n");

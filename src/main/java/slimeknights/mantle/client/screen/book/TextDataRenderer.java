@@ -1,5 +1,6 @@
 package slimeknights.mantle.client.screen.book;
 
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -26,7 +27,7 @@ public class TextDataRenderer {
     String action = drawText(graphics, x, y, boxWidth, boxHeight, data, mouseX, mouseY, fr, tooltip);
 
     if (!tooltip.isEmpty()) {
-      graphics.renderTooltip(fr, tooltip, Optional.empty(), mouseX, mouseY);
+      graphics.setTooltipForNextFrame(fr, tooltip, Optional.empty(), mouseX, mouseY);
     }
 
     return action;
@@ -248,14 +249,14 @@ public class TextDataRenderer {
   //BEGIN METHODS FROM GUI
   //TODO: does this exist elsewhere now?
   public static void drawScaledString(GuiGraphics graphics, Font font, String text, float x, float y, int color, boolean dropShadow, float scale) {
-    PoseStack poseStack = graphics.pose();
-    poseStack.pushPose();
-    poseStack.translate(x, y, 0);
-    poseStack.scale(scale, scale, 1F);
+    Matrix3x2fStack poseStack = graphics.pose();
+    poseStack.pushMatrix();
+    poseStack.translate((float) x, (float) y);
+    poseStack.scale((float) scale, (float) scale);
 
     graphics.drawString(font, text, 0, 0, color, dropShadow);
 
-    poseStack.popPose();
+    poseStack.popMatrix();
   }
   //END METHODS FROM GUI
 }

@@ -84,14 +84,6 @@ sourceSets.main {
         // JEI integration is client code, ported with it
         exclude 'slimeknights/mantle/plugin/jei/**' // ported with the Tinkers JEI plugin
         exclude 'slimeknights/tconstruct/plugin/jei/**'
-        // Mantle client packages not ported yet, enabled one at a time
-        exclude { details ->
-            def path = details.relativePath.pathString
-            def pending = ['slimeknights/mantle/client/ClientEvents.java', 'slimeknights/mantle/client/ExtraHeartRenderHandler.java',
-                           'slimeknights/mantle/client/book/', 'slimeknights/mantle/client/screen/', 'slimeknights/mantle/command/client/']
-            def keep = ['slimeknights/mantle/client/model/connected/ConnectedModelRegistry.java', 'slimeknights/mantle/client/model/TextureColorHelper.java', 'slimeknights/mantle/client/book/BookHelper.java']
-            return details.file.isFile() && pending.any { path.startsWith(it) } && !keep.contains(path)
-        }
         // notes of client extensions to register, not compiled
         exclude 'slimeknights/tconstruct/shared/client/PendingClientExtensions.java'
         // These integrations have no NeoForge 1.21.1 API artifact yet. They are

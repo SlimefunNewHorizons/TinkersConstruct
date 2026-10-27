@@ -32,3 +32,15 @@ def edit(path, pairs, required=True):
     out = norm.replace('\n', '\r\n') if crlf else norm
     if out != text:
         write(path, out)
+
+
+def add_import(path, *imports):
+    """Adds imports after the first import of a Java file, skipping existing ones"""
+    import re
+    text = read(path)
+    nl = '\r\n' if '\r\n' in text else '\n'
+    for imp in imports:
+        line = 'import ' + imp + ';'
+        if line not in text:
+            text = re.sub(r'^(import [^\r\n]*\r?\n)', lambda m: line + nl + m.group(1), text, count=1, flags=re.M)
+    write(path, text)

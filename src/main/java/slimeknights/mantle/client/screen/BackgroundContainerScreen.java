@@ -1,5 +1,6 @@
 package slimeknights.mantle.client.screen;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.MenuScreens.ScreenConstructor;
@@ -49,8 +50,7 @@ public class BackgroundContainerScreen<T extends AbstractContainerMenu> extends 
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-		graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-		graphics.blit(this.background, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, this.background, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
 	}
 
 	@RequiredArgsConstructor(staticName = "of")

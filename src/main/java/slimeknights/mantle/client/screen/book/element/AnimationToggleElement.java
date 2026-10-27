@@ -1,5 +1,7 @@
 package slimeknights.mantle.client.screen.book.element;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.KeyEvent;
 import slimeknights.mantle.client.screen.book.ArrowButton;
 
 public class AnimationToggleElement extends ArrowElement {
@@ -21,7 +23,7 @@ public class AnimationToggleElement extends ArrowElement {
   @Override
   public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
     if (this.button != null && this.isHovered(mouseX, mouseY)) {
-      this.button.onPress();
+      this.button.onPress(new KeyEvent(InputConstants.KEY_RETURN, 0, 0));
       this.toggled = !this.toggled;
       this.updateColor();
     }

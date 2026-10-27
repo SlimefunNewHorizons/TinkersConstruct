@@ -1,5 +1,9 @@
 package slimeknights.mantle.client.screen;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
+import org.joml.Matrix3x2fStack;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -68,7 +72,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
     }
     // TODO: this is a small ordering change, does it need another hook?
     for (ModuleScreen<?,?> module : this.modules) {
-      module.init(this.minecraft, width, height);
+      module.init(width, height);
       this.updateSubmodule(module);
     }
   }
@@ -95,13 +99,13 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
     this.drawContainerName(graphics);
     this.drawPlayerInventoryName(graphics);
 
-    PoseStack poses = graphics.pose();
+    Matrix3x2fStack poses = graphics.pose();
     for (ModuleScreen<?,?> module : this.modules) {
       // set correct state for the module
-      poses.pushPose();
-      poses.translate(module.guiLeft() - this.leftPos, module.guiTop() - this.topPos, 0.0F);
+      poses.pushMatrix();
+      poses.translate((float) (module.guiLeft() - this.leftPos), (float) (module.guiTop() - this.topPos));
       module.handleDrawGuiContainerForegroundLayer(graphics, mouseX, mouseY);
-      poses.popPose();
+      poses.popMatrix();
     }
   }
 
@@ -115,8 +119,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   protected void drawBackground(GuiGraphics graphics, Identifier background) {
-    graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-    graphics.blit(background, this.cornerX, this.cornerY, 0, 0, this.realWidth, this.realHeight);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.cornerX, this.cornerY, 0, 0, this.realWidth, this.realHeight, 256, 256);
   }
 
   protected void drawContainerName(GuiGraphics graphics) {
@@ -130,11 +133,11 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   @Override
-  public void resize(Minecraft mc, int width, int height) {
-    super.resize(mc, width, height);
+  public void resize(int width, int height) {
+    super.resize(width, height);
 
     for (ModuleScreen<?,?> module : this.modules) {
-      module.resize(mc, width, height);
+      module.resize(width, height);
       this.updateSubmodule(module);
     }
   }
@@ -192,7 +195,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   @Override
-  public void renderSlot(GuiGraphics graphics, Slot slotIn) {
+  protected void renderSlot(GuiGraphics graphics, Slot slotIn, int mouseX, int mouseY) {
     ModuleScreen<?,?> module = this.getModuleForSlot(slotIn.index);
 
     if (module != null) {
@@ -207,7 +210,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
       }
     }
 
-    super.renderSlot(graphics, slotIn);
+    super.renderSlot(graphics, slotIn, mouseX, mouseY);
   }
 
   public boolean isHovering(Slot slotIn, double mouseX, double mouseY) {
@@ -230,7 +233,10 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int mouseButton = event.button();
     ModuleScreen<?,?> module = this.getModuleForPoint(mouseX, mouseY);
 
     if (module != null) {
@@ -239,11 +245,14 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
       }
     }
 
-    return super.mouseClicked(mouseX, mouseY, mouseButton);
+    return super.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, event.modifiers())), doubleClick);
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int clickedMouseButton, double timeSinceLastClick, double unkowwn) {
+  public boolean mouseDragged(MouseButtonEvent event, double timeSinceLastClick, double unkowwn) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int clickedMouseButton = event.button();
     ModuleScreen<?,?> module = this.getModuleForPoint(mouseX, mouseY);
 
     if (module != null) {
@@ -252,7 +261,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
       }
     }
 
-    return super.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick, unkowwn);
+    return super.mouseDragged(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(clickedMouseButton, event.modifiers())), timeSinceLastClick, unkowwn);
   }
 
   @Override
@@ -269,7 +278,10 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int state) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int state = event.button();
     ModuleScreen<?,?> module = this.getModuleForPoint(mouseX, mouseY);
 
     if (module != null) {
@@ -278,7 +290,7 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
       }
     }
 
-    return super.mouseReleased(mouseX, mouseY, state);
+    return super.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, event.modifiers())));
   }
 
   @Nullable

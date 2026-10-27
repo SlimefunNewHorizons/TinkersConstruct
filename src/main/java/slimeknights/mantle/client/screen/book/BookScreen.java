@@ -1,6 +1,13 @@
 package slimeknights.mantle.client.screen.book;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.font.glyphs.EffectGlyph;
+import net.minecraft.client.gui.GlyphSource;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
@@ -9,16 +16,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientAdvancements;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import slimeknights.mantle.client.book.data.BookData;
 import slimeknights.mantle.client.book.data.PageData;
@@ -104,9 +106,6 @@ public class BookScreen extends Screen {
     this.pageUpdater = pageUpdater;
     this.bookPickup = bookPickup;
 
-    this.minecraft = Minecraft.getInstance();
-    this.font = this.minecraft.font;
-
     this.advancementCache = new AdvancementCache();
     if (this.minecraft.player != null) {
       this.minecraft.player.connection.getAdvancements().setListener(this.advancementCache);
@@ -117,17 +116,32 @@ public class BookScreen extends Screen {
   /** Gets the alt Minecraft font */
   public static Font getAltFont() {
     if (altFont == null) {
-      FontManager fontManager = Minecraft.getInstance().fontManager;
-      altFont = new Font(id -> fontManager.fontSets.get(Minecraft.ALT_FONT), false);
+      altFont = withFont(Minecraft.ALT_FONT);
     }
     return altFont;
+  }
+
+  /** Creates a font renderer that always uses the given font, as fonts are picked per style since 1.21.9 */
+  private static Font withFont(Identifier font) {
+    Font.Provider base = Minecraft.getInstance().font.provider;
+    FontDescription description = new FontDescription.Resource(font);
+    return new Font(new Font.Provider() {
+      @Override
+      public GlyphSource glyphs(FontDescription ignored) {
+        return base.glyphs(description);
+      }
+
+      @Override
+      public EffectGlyph effect() {
+        return base.effect();
+      }
+    });
   }
 
   /** Gets the uniform version of the Minecraft font */
   public static Font getUniformFont() {
     if (uniformFont == null) {
-      FontManager fontManager = Minecraft.getInstance().fontManager;
-      uniformFont = new Font(id -> fontManager.fontSets.get(Minecraft.UNIFORM_FONT), false);
+      uniformFont = withFont(Minecraft.UNIFORM_FONT);
     }
     return uniformFont;
   }
@@ -141,22 +155,6 @@ public class BookScreen extends Screen {
     return fontRenderer;
   }
 
-  private Vector3f splitRGB(int color) {
-    float r = FastColor.ARGB32.red(color) / 255.F;
-    float g = FastColor.ARGB32.green(color)  / 255.F;
-    float b = FastColor.ARGB32.blue(color)  / 255.F;
-
-    return new Vector3f(r, g, b);
-  }
-
-  private Vector4f splitRGBA(int color) {
-    float r = FastColor.ARGB32.red(color) / 255.F;
-    float g = FastColor.ARGB32.green(color)  / 255.F;
-    float b = FastColor.ARGB32.blue(color)  / 255.F;
-    float a = FastColor.ARGB32.alpha(color)  / 255.F;
-
-    return new Vector4f(r, g, b, a);
-  }
 
   @Override
   public void render(GuiGraphics graphics, int mouseX ,int mouseY, float partialTicks) {
@@ -172,16 +170,12 @@ public class BookScreen extends Screen {
       graphics.drawString(this.font, "DEBUG", 2, 2, 0xFFFFFFFF, false);
     }
 
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    // RenderSystem.enableAlphaTest(); TODO: still needed?
-    RenderSystem.enableBlend();
-
-    Vector3f coverColor = splitRGB(this.book.appearance.coverColor);
+    int coverColor = 0xFF000000 | this.book.appearance.coverColor;
 
     if(this.page == -1) {
       this.renderCover(graphics, coverColor);
     } else {
-      PoseStack matrixStack = graphics.pose();
+      Matrix3x2fStack matrixStack = graphics.pose();
       // TODO: can we create copies of the guiGraphics?
       // Jank way to copy last matrix in matrix stack, as no proper way is provided
 //      PoseStack leftMatrix = new PoseStack();
@@ -215,17 +209,17 @@ public class BookScreen extends Screen {
       if (this.book.appearance.drawPageNumbers) {
         if (renderLeft) {
           String pNum = this.page * 2 + "";
-          matrixStack.pushPose();
+          matrixStack.pushMatrix();
           drawerTransform(matrixStack, false);
-          graphics.drawString(fontRenderer, pNum, (PAGE_WIDTH - fontRenderer.width(pNum)) / 2f, PAGE_HEIGHT - 10, 0xFFAAAAAA, false);
-          matrixStack.popPose();
+          graphics.drawString(fontRenderer, pNum, (PAGE_WIDTH - fontRenderer.width(pNum)) / 2, PAGE_HEIGHT - 10, 0xFFAAAAAA, false);
+          matrixStack.popMatrix();
         }
         if (renderRight) {
           String pNum = this.page * 2 + 1 + "";
-          matrixStack.pushPose();
+          matrixStack.pushMatrix();
           drawerTransform(matrixStack, true);
-          graphics.drawString(fontRenderer, pNum, (PAGE_WIDTH - fontRenderer.width(pNum)) / 2f, PAGE_HEIGHT - 10, 0xFFAAAAAA, false);
-          matrixStack.popPose();
+          graphics.drawString(fontRenderer, pNum, (PAGE_WIDTH - fontRenderer.width(pNum)) / 2, PAGE_HEIGHT - 10, 0xFFAAAAAA, false);
+          matrixStack.popMatrix();
         }
       }
 
@@ -237,19 +231,19 @@ public class BookScreen extends Screen {
       // we did that in 1.16.5 - causes tooltips of left to draw under elements on right
       for (ILayerRenderFunction layer : LAYERS) {
         if(renderLeft) {
-          matrixStack.pushPose();
+          matrixStack.pushMatrix();
           drawerTransform(matrixStack, false);
-          matrixStack.scale(PAGE_SCALE, PAGE_SCALE, 1F);
+          matrixStack.scale((float) PAGE_SCALE, (float) PAGE_SCALE);
           renderPageLayer(graphics, leftMX, mY, partialTicks, leftElements, layer);
-          matrixStack.popPose();
+          matrixStack.popMatrix();
         }
 
         if(renderRight) {
-          matrixStack.pushPose();
+          matrixStack.pushMatrix();
           drawerTransform(matrixStack, true);
-          matrixStack.scale(PAGE_SCALE, PAGE_SCALE, 1F);
+          matrixStack.scale((float) PAGE_SCALE, (float) PAGE_SCALE);
           renderPageLayer(graphics, rightMX, mY, partialTicks, rightElements, layer);
-          matrixStack.popPose();
+          matrixStack.popMatrix();
         }
       }
     }
@@ -278,7 +272,7 @@ public class BookScreen extends Screen {
     return this.page < fullPageCount - 1 || this.book.getPageCount(this.advancementCache) % 2 != 0;
   }
 
-  private void renderCover(GuiGraphics graphics, Vector3f coverColor) {
+  private void renderCover(GuiGraphics graphics, int coverColor) {
     Font fontRenderer = getFontRenderer();
 
     Identifier cover = book.appearance.getCoverTexture();
@@ -286,62 +280,53 @@ public class BookScreen extends Screen {
     int centerX = this.width / 2 - PAGE_WIDTH_UNSCALED / 2;
     int centerY = this.height / 2 - PAGE_HEIGHT_UNSCALED / 2;
 
-    RenderSystem.setShaderColor(coverColor.x(), coverColor.y(), coverColor.z(), 1.0f);
-    graphics.blit(cover, centerX, centerY, 0, 0, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, cover, centerX, centerY, 0, 0, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE, coverColor);
 
-    PoseStack matrixStack = graphics.pose();
+    Matrix3x2fStack matrixStack = graphics.pose();
     if (!this.book.appearance.title.isEmpty()) {
-      graphics.blit(cover, centerX, centerY, 0, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, cover, centerX, centerY, 0, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
 
-      matrixStack.pushPose();
+      matrixStack.pushMatrix();
 
       int width = this.font.width(this.book.appearance.title);
       float scale = Mth.clamp((float)PAGE_WIDTH / width, 0F, 2.5F);
 
-      matrixStack.scale(scale, scale, 1F);
+      matrixStack.scale((float) scale, (float) scale);
 
       graphics.drawString(this.font, this.book.appearance.title, (int)((this.width / 2F) / scale + 3 - width / 2F), (int)((this.height / 2F - fontRenderer.lineHeight / 2F) / scale - 4), this.book.appearance.getCoverTextColor(), true);
-      matrixStack.popPose();
+      matrixStack.popMatrix();
     }
 
     if (!this.book.appearance.subtitle.isEmpty()) {
-      matrixStack.pushPose();
+      matrixStack.pushMatrix();
 
       int width = this.font.width(this.book.appearance.subtitle);
       float scale = Mth.clamp((float)PAGE_WIDTH / width, 0F, 1.5F);
 
-      matrixStack.scale(scale, scale, 1F);
+      matrixStack.scale((float) scale, (float) scale);
       graphics.drawString(this.font, this.book.appearance.subtitle, (int)((this.width / 2F) / scale + 7 - width / 2F), (int)((this.height / 2F + 100 - fontRenderer.lineHeight * 2) / scale), this.book.appearance.getCoverTextColor(), true);
-      matrixStack.popPose();
+      matrixStack.popMatrix();
     }
   }
 
-  private void renderUnderLayer(GuiGraphics graphics, Vector3f coverColor) {
-    graphics.setColor(coverColor.x(), coverColor.y(), coverColor.z(), 1f);
-    graphics.blit(this.book.appearance.getBookTexture(), this.width / 2 - PAGE_WIDTH_UNSCALED, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, 0, 0, PAGE_WIDTH_UNSCALED * 2, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
-    graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+  private void renderUnderLayer(GuiGraphics graphics, int coverColor) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, this.book.appearance.getBookTexture(), this.width / 2 - PAGE_WIDTH_UNSCALED, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, 0, 0, PAGE_WIDTH_UNSCALED * 2, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE, coverColor);
   }
 
   private void renderPageBackground(GuiGraphics graphics, boolean rightSide) {
-    Vector3f pageTint = splitRGB(this.book.appearance.getPageTint());
-    graphics.setColor(pageTint.x(), pageTint.y(), pageTint.z(), 1f);
+    int pageTint = 0xFF000000 | this.book.appearance.getPageTint();
     if(!rightSide) {
-      graphics.blit(book.appearance.getBookTexture(), this.width / 2 - PAGE_WIDTH_UNSCALED, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, 0, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, book.appearance.getBookTexture(), this.width / 2 - PAGE_WIDTH_UNSCALED, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, 0, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE, pageTint);
     } else {
-      graphics.blit(book.appearance.getBookTexture(), this.width / 2, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, book.appearance.getBookTexture(), this.width / 2, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, PAGE_WIDTH_UNSCALED, PAGE_HEIGHT_UNSCALED, TEX_SIZE, TEX_SIZE, pageTint);
     }
-    graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
   }
 
   private void renderPageLayer(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, List<BookElement> elements, ILayerRenderFunction layerFunc) {
-    RenderSystem.setShaderTexture(0, book.appearance.getCoverTexture());
-
     Font font = getFontRenderer();
 
     for (BookElement element : elements) {
       if (!drawText && element.isText()) continue;
-      RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
       layerFunc.draw(element, graphics, mouseX, mouseY, partialTicks, font);
     }
   }
@@ -460,8 +445,11 @@ public class BookScreen extends Screen {
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    super.keyPressed(keyCode, scanCode, modifiers);
+  public boolean keyPressed(KeyEvent event) {
+    int keyCode = event.key();
+    int scanCode = event.scancode();
+    int modifiers = event.modifiers();
+    super.keyPressed(new KeyEvent(keyCode, scanCode, modifiers));
 
     switch (keyCode) {
       case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_A -> {
@@ -478,7 +466,7 @@ public class BookScreen extends Screen {
       }
     }
 
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(new KeyEvent(keyCode, scanCode, modifiers));
   }
 
   @Override
@@ -495,7 +483,10 @@ public class BookScreen extends Screen {
   }
 
   @Override
-  public boolean mouseClicked(double originalMouseX, double originalMouseY, int mouseButton) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double originalMouseX = event.x();
+    double originalMouseY = event.y();
+    int mouseButton = event.button();
     boolean right = false;
 
     double mouseX = this.getMouseX(false);
@@ -519,11 +510,14 @@ public class BookScreen extends Screen {
       }
     }
 
-    return super.mouseClicked(originalMouseX, originalMouseY, mouseButton);
+    return super.mouseClicked(new MouseButtonEvent(originalMouseX, originalMouseY, new MouseButtonInfo(mouseButton, event.modifiers())), doubleClick);
   }
 
   @Override
-  public boolean mouseReleased(double originalMouseX, double originalMouseY, int mouseButton) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double originalMouseX = event.x();
+    double originalMouseY = event.y();
+    int mouseButton = event.button();
     boolean right = false;
     double mouseX = this.getMouseX(false);
     double mouseY = this.getMouseY();
@@ -542,11 +536,14 @@ public class BookScreen extends Screen {
     lastClick = null;
     lastDrag = null;
 
-    return super.mouseReleased(originalMouseX, originalMouseY, mouseButton);
+    return super.mouseReleased(new MouseButtonEvent(originalMouseX, originalMouseY, new MouseButtonInfo(mouseButton, event.modifiers())));
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+  public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = event.button();
     boolean right = false;
     mouseX = this.getMouseX(false);
     mouseY = this.getMouseY();
@@ -599,11 +596,11 @@ public class BookScreen extends Screen {
     return false;
   }
 
-  public void drawerTransform(PoseStack matrixStack, boolean rightSide) {
+  public void drawerTransform(Matrix3x2fStack matrixStack, boolean rightSide) {
     if (rightSide) {
-      matrixStack.translate(this.width / 2 + PAGE_PADDING_RIGHT + PAGE_MARGIN, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2 + PAGE_PADDING_TOP + PAGE_MARGIN, 0);
+      matrixStack.translate((float) (this.width / 2 + PAGE_PADDING_RIGHT + PAGE_MARGIN), (float) (this.height / 2 - PAGE_HEIGHT_UNSCALED / 2 + PAGE_PADDING_TOP + PAGE_MARGIN));
     } else {
-      matrixStack.translate(this.width / 2 - PAGE_WIDTH_UNSCALED + PAGE_PADDING_LEFT + PAGE_MARGIN, this.height / 2 - PAGE_HEIGHT_UNSCALED / 2 + PAGE_PADDING_TOP + PAGE_MARGIN, 0);
+      matrixStack.translate((float) (this.width / 2 - PAGE_WIDTH_UNSCALED + PAGE_PADDING_LEFT + PAGE_MARGIN), (float) (this.height / 2 - PAGE_HEIGHT_UNSCALED / 2 + PAGE_PADDING_TOP + PAGE_MARGIN));
     }
   }
 

@@ -1,7 +1,8 @@
 package slimeknights.mantle.client;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -92,7 +93,7 @@ public class ExtraHeartRenderHandler {
     if (!(renderViewEnity instanceof Player player)) {
       return;
     }
-    this.mc.getProfiler().push("health");
+    Profiler.get().push("health");
 
     // based on the top of Gui#renderPlayerHealth
     int tickCount = this.mc.gui.getGuiTicks();
@@ -224,8 +225,7 @@ public class ExtraHeartRenderHandler {
     }
 
     event.setCanceled(true);
-    RenderSystem.disableBlend();
-    this.mc.getProfiler().pop();
+    Profiler.get().pop();
     //noinspection UnstableApiUsage  I do what I want (more accurately, we override the renderer but want to let others still respond in post)
     NeoForge.EVENT_BUS.post(new RenderGuiLayerEvent.Post(graphics, event.getPartialTick(), event.getName(), event.getLayer()));
   }
@@ -329,11 +329,11 @@ public class ExtraHeartRenderHandler {
   private void renderHeartRow(GuiGraphics graphics, int x, int y, int indexOffset, int uOffset, int vOffset, int start, int end, boolean half) {
     // draw full hearts
     for (int i = start; i < end; i += 1) {
-      graphics.blit(ICON_HEARTS, x + HEART_OFFSET * i, y + offsets[i + indexOffset], uOffset, vOffset, HEART_SIZE, HEART_SIZE);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_HEARTS, x + HEART_OFFSET * i, y + offsets[i + indexOffset], uOffset, vOffset, HEART_SIZE, HEART_SIZE, 256, 256);
     }
     // draw half heart
     if (half) {
-      graphics.blit(ICON_HEARTS, x + HEART_OFFSET * end, y + offsets[end + indexOffset], uOffset + HEART_SIZE, vOffset, HEART_SIZE, HEART_SIZE);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_HEARTS, x + HEART_OFFSET * end, y + offsets[end + indexOffset], uOffset + HEART_SIZE, vOffset, HEART_SIZE, HEART_SIZE, 256, 256);
     }
   }
 

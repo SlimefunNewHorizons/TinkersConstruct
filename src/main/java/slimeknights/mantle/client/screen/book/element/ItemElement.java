@@ -1,5 +1,6 @@
 package slimeknights.mantle.client.screen.book.element;
 
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
@@ -101,10 +102,10 @@ public class ItemElement extends SizedBookElement {
     if (this.currentItem < this.itemCycle.size()) {
       // Lighting.turnBackOn(); TODO: still needed?
 
-      PoseStack matrices = graphics.pose();
-      matrices.pushPose();
-      matrices.translate(x, y, 0);
-      matrices.scale(scale, scale, 1.0F);
+      Matrix3x2fStack matrices = graphics.pose();
+      matrices.pushMatrix();
+      matrices.translate((float) x, (float) y);
+      matrices.scale((float) scale, (float) scale);
 
       ItemStack stack = this.itemCycle.get(this.currentItem);
       graphics.renderItem(stack, 0, 0);
@@ -112,7 +113,7 @@ public class ItemElement extends SizedBookElement {
       if (font == null) font = mc.font;
       graphics.renderItemDecorations(font, stack, 0, 0);
 
-      matrices.popPose();
+      matrices.popMatrix();
     }
   }
 

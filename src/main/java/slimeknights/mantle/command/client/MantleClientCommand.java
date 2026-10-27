@@ -1,5 +1,6 @@
 package slimeknights.mantle.command.client;
 
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
@@ -37,7 +38,7 @@ public class MantleClientCommand {
 
     // source command suggestions
     ClientSourcesCommand.registerMinecraft("atlases", (context, builder)
-      -> SharedSuggestionProvider.suggestResource(java.util.stream.Stream.of(InventoryMenu.BLOCK_ATLAS), builder));
+      -> SharedSuggestionProvider.suggestResource(java.util.stream.Stream.of(TextureAtlas.LOCATION_BLOCKS), builder));
     ClientSourcesCommand.registerMinecraft("blockstates", (context, builder)
       -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.BLOCK.keySet(), builder));
     ClientSourcesCommand.register("item_models", "models/item", ".json", (context, builder)

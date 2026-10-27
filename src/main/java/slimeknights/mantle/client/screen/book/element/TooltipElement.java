@@ -24,7 +24,7 @@ public class TooltipElement extends SizedBookElement {
   @Override
   public void drawOverlay(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, Font fontRenderer) {
     if (this.isHovered(mouseX, mouseY)) {
-      graphics.renderTooltip(fontRenderer, this.tooltips, Optional.empty(), mouseX, mouseY);
+      graphics.setTooltipForNextFrame(fontRenderer, this.tooltips, Optional.empty(), mouseX, mouseY);
     }
   }
 }

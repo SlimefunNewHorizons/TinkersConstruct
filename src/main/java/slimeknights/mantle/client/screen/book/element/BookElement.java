@@ -120,7 +120,7 @@ public abstract class BookElement {
       : textLines.stream().map(Component::getVisualOrderText).toList();
 
     // render the tooltip
-    graphics.renderTooltip(font, components, POSITIONER, mouseX, mouseY);
+    graphics.setTooltipForNextFrame(font, components, POSITIONER, mouseX, mouseY, false);
   }
 
   /**

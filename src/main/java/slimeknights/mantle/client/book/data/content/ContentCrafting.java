@@ -1,5 +1,10 @@
 package slimeknights.mantle.client.book.data.content;
 
+import java.util.Optional;
+import java.util.List;
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -108,6 +113,19 @@ public class ContentCrafting extends PageContent {
     }
   }
 
+  /** Checks if the recipe fits in the given grid */
+  private static boolean fits(Recipe<?> recipe, int width, int height) {
+    if (recipe instanceof ShapedRecipe shaped) {
+      return shaped.getWidth() <= width && shaped.getHeight() <= height;
+    }
+    return ((ShapelessRecipe) recipe).ingredients.size() <= width * height;
+  }
+
+  /** Gets the display data for an ingredient slot */
+  private static IngredientData getData(Optional<Ingredient> ingredient) {
+    return IngredientData.getItemStackData(NonNullList.of(ItemStack.EMPTY, ingredient.map(IngredientHelper::getItems).orElse(new ItemStack[0])));
+  }
+
   @Override
   public void load() {
     super.load();
@@ -123,10 +141,11 @@ public class ContentCrafting extends PageContent {
       if (level == null) {
         return;
       }
-      Recipe<?> recipe = level.getRecipeManager().byKey(recipeId).map(holder -> holder.value()).orElse(null);
-      if (recipe instanceof CraftingRecipe) {
+      // recipes only reach the client if their type is synced through RecipeAccessHelper
+      Recipe<?> recipe = RecipeAccessHelper.byKey(level, recipeId).map(holder -> holder.value()).orElse(null);
+      if (recipe instanceof ShapedRecipe || recipe instanceof ShapelessRecipe) {
         if(grid_size.equalsIgnoreCase("auto")) {
-          if(recipe.canCraftInDimensions(2, 2)) {
+          if(fits(recipe, 2, 2)) {
             grid_size = "small";
           } else {
             grid_size = "large";
@@ -138,29 +157,30 @@ public class ContentCrafting extends PageContent {
           case "small" -> w = h = 2;
         }
 
-        if (!recipe.canCraftInDimensions(w, h)) {
+        if (!fits(recipe, w, h)) {
           throw new BookLoadException("Recipe " + this.recipe + " cannot fit in a " + w + "x" + h + " crafting grid");
         }
 
-        result = IngredientData.getItemStackData(recipe.getResultItem(level.registryAccess()));
-
-        NonNullList<Ingredient> ingredients = recipe.getIngredients();
-
         if (recipe instanceof ShapedRecipe shaped) {
+          result = IngredientData.getItemStackData(shaped.result);
+          List<Optional<Ingredient>> ingredients = shaped.getIngredients();
           grid = new IngredientData[shaped.getHeight()][shaped.getWidth()];
 
           for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
-              grid[y][x] = IngredientData.getItemStackData(NonNullList.of(ItemStack.EMPTY, ingredients.get(x + y * grid[y].length).getItems()));
+              grid[y][x] = getData(ingredients.get(x + y * grid[y].length));
             }
           }
 
           return;
         }
 
+        ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
+        result = IngredientData.getItemStackData(shapeless.result);
+        List<Ingredient> ingredients = shapeless.ingredients;
         grid = new IngredientData[h][w];
         for (int i = 0; i < ingredients.size(); i++) {
-          grid[i / h][i % w] = IngredientData.getItemStackData(NonNullList.of(ItemStack.EMPTY, ingredients.get(i).getItems()));
+          grid[i / h][i % w] = getData(Optional.of(ingredients.get(i)));
         }
       }
     }

@@ -1,5 +1,7 @@
 package slimeknights.mantle.client.screen.book.element;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button.OnPress;
@@ -23,7 +25,7 @@ public class ArrowElement extends ButtonElement {
   @Override
   public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
     if (this.button != null && this.isHovered(mouseX, mouseY)) {
-      this.button.onPress();
+      this.button.onPress(new KeyEvent(InputConstants.KEY_RETURN, 0, 0));
     }
   }
 

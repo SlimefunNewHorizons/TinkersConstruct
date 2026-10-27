@@ -1,5 +1,8 @@
 package slimeknights.mantle.client.book.data.content;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -102,12 +105,12 @@ public class ContentSmelting extends PageContent {
     if (!StringUtils.isEmpty(this.recipe) && recipeId != null) {
       Level level = Minecraft.getInstance().level;
       assert level != null;
-      Recipe<?> recipe = level.getRecipeManager().byKey(recipeId).map(holder -> holder.value()).orElse(null);
+      Recipe<?> recipe = RecipeAccessHelper.byKey(level, recipeId).map(holder -> holder.value()).orElse(null);
 
-      if (recipe instanceof AbstractCookingRecipe) {
-        this.input = IngredientData.getItemStackData(NonNullList.of(ItemStack.EMPTY, recipe.getIngredients().get(0).getItems()));
-        this.cookTime = ((AbstractCookingRecipe) recipe).getCookingTime();
-        this.result = IngredientData.getItemStackData(recipe.getResultItem(level.registryAccess()));
+      if (recipe instanceof AbstractCookingRecipe cooking) {
+        this.input = IngredientData.getItemStackData(NonNullList.of(ItemStack.EMPTY, IngredientHelper.getItems(cooking.input())));
+        this.cookTime = cooking.cookingTime();
+        this.result = IngredientData.getItemStackData(cooking.assemble(new SingleRecipeInput(ItemStack.EMPTY), level.registryAccess()));
       }
     }
   }
