@@ -75,18 +75,26 @@ sourceSets.main {
                         'slimeknights/tconstruct/library/client/materials/MaterialTooltipCache.java',
                         'slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/SafeClient.java']
-            return details.file.isFile() && path.contains('/client/') && !keep.contains(path)
+            return details.file.isFile() && path.startsWith('slimeknights/tconstruct/') && path.contains('/client/') && !keep.contains(path)
         }
-        exclude 'slimeknights/**/*ClientEvents.java'
+        exclude 'slimeknights/tconstruct/**/*ClientEvents.java'
         exclude 'slimeknights/**/ClientEventBase.java'
         exclude 'slimeknights/tconstruct/shared/TinkerClient.java'
         exclude 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java'
-        exclude 'slimeknights/mantle/fluid/texture/Client*.java'
-        exclude 'slimeknights/mantle/fluid/texture/FluidTexture.java'
-        exclude 'slimeknights/mantle/fluid/texture/FluidTextureManager.java'
         // JEI integration is client code, ported with it
-        exclude 'slimeknights/mantle/plugin/jei/**'
+        exclude 'slimeknights/mantle/plugin/jei/**' // ported with the Tinkers JEI plugin
         exclude 'slimeknights/tconstruct/plugin/jei/**'
+        // Mantle client packages not ported yet, enabled one at a time
+        exclude { details ->
+            def path = details.relativePath.pathString
+            def pending = ['slimeknights/mantle/client/ClientEvents.java', 'slimeknights/mantle/client/ExtraHeartRenderHandler.java',
+                           'slimeknights/mantle/client/book/', 'slimeknights/mantle/client/screen/', 'slimeknights/mantle/command/client/',
+                           'slimeknights/mantle/client/model/', 'slimeknights/mantle/client/render/', 'slimeknights/mantle/fluid/texture/']
+            def keep = ['slimeknights/mantle/client/model/connected/ConnectedModelRegistry.java', 'slimeknights/mantle/client/book/BookHelper.java']
+            return details.file.isFile() && pending.any { path.startsWith(it) } && !keep.contains(path)
+        }
+        // notes of client extensions to register, not compiled
+        exclude 'slimeknights/tconstruct/shared/client/PendingClientExtensions.java'
         // These integrations have no NeoForge 1.21.1 API artifact yet. They are
         // intentionally isolated while the core port is brought up.
         exclude 'slimeknights/tconstruct/plugin/craftingtweaks/**'
