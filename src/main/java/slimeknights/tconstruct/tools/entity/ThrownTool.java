@@ -281,7 +281,7 @@ public class ThrownTool extends ThrownTrident implements ToolProjectile {
       if (!level().isClientSide()) {
         // play sound
         if (tool.getModifiers().getLevel(ModifierIds.channeling) == 0) {
-          this.playSound(tool.isBroken() ? SoundEvents.ITEM_BREAK : SoundEvents.TRIDENT_HIT, 1.0f, 1.0f);
+          this.playSound(tool.isBroken() ? SoundEvents.ITEM_BREAK.value() : SoundEvents.TRIDENT_HIT, 1.0f, 1.0f);
         }
         // update the stack so visual changes to the tool render (e.g. broken or fluid)
         // need to force since its the same instance, just NBT changes
@@ -447,7 +447,7 @@ public class ThrownTool extends ThrownTrident implements ToolProjectile {
     }
     this.charge = tag.getFloatOr(KEY_CHARGE, 0f);
     this.multiplier = tag.getFloatOr(KEY_MULTIPLIER, 0f);
-    this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
+    this.entityData.set(WATER_INERTIA, tag.getFloatOr(KEY_WATER_INERTIA, 0.6f));
     this.hitBlock = tag.getBooleanOr(KEY_HIT_BLOCK, false);
     if (tag.getDouble(KEY_ORIGINAL_SLOT).isPresent()) {
       this.originalSlot = tag.getIntOr(KEY_ORIGINAL_SLOT, 0);

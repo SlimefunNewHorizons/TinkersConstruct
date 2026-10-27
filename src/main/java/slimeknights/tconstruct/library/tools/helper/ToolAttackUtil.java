@@ -199,7 +199,7 @@ public class ToolAttackUtil {
     // missing: enchantment modifiers, we handle modifiers instead
 
     // calculate conditional damage from modifiers
-    float baseDamage = context.baseDamage;
+    float baseDamage = context.getBaseDamage();
     float damage = baseDamage;
     List<ModifierEntry> modifiers = tool.getModifierList();
     for (ModifierEntry entry : modifiers) {

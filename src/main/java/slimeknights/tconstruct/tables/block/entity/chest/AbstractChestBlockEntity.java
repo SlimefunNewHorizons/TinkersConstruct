@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tables.block.entity.chest;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.nbt.ListTag;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -60,16 +62,33 @@ public abstract class AbstractChestBlockEntity extends NameableBlockEntity {
     super.saveAdditional(tags, registries);
     // move the items from the serialized result
     // we don't care about the size and need it here for compat with old worlds
-    CompoundTag handlerNBT = itemHandler.serializeNBT(registries);
-    tags.put(KEY_ITEMS, handlerNBT.getListOrEmpty(KEY_ITEMS));
+    // same layout as the legacy item handler NBT, NeoForge handlers moved to value IO in 1.21.6
+    ListTag items = new ListTag();
+    for (int i = 0; i < itemHandler.getSlots(); i++) {
+      ItemStack stack = itemHandler.getStackInSlot(i);
+      if (!stack.isEmpty()) {
+        CompoundTag item = (CompoundTag) ValueIOHelper.saveStack(stack, registries);
+        item.putByte("Slot", (byte) i);
+        items.add(item);
+      }
+    }
+    tags.put(KEY_ITEMS, items);
   }
 
   /** Reads the inventory from NBT */
   public void readInventory(CompoundTag tags, HolderLookup.Provider registries) {
     // copy in just the items key for deserializing, don't want to change the size
-    CompoundTag handlerNBT = new CompoundTag();
-    handlerNBT.put(KEY_ITEMS, tags.getListOrEmpty(KEY_ITEMS));
-    itemHandler.deserializeNBT(registries, handlerNBT);
+    for (int i = 0; i < itemHandler.getSlots(); i++) {
+      itemHandler.setStackInSlot(i, ItemStack.EMPTY);
+    }
+    ListTag items = tags.getListOrEmpty(KEY_ITEMS);
+    for (int i = 0; i < items.size(); i++) {
+      CompoundTag item = items.getCompoundOrEmpty(i);
+      int slot = item.getByteOr("Slot", (byte) 0) & 255;
+      if (slot < itemHandler.getSlots()) {
+        itemHandler.setStackInSlot(slot, ValueIOHelper.parseStack(registries, item));
+      }
+    }
   }
 
   /** Compatibility overload for callers without direct registry access. */

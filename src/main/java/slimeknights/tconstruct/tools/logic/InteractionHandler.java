@@ -366,7 +366,7 @@ public class InteractionHandler {
   private static void setLeftClickEventResult(LeftClickBlock event, InteractionResult result) {
     if (result.consumesAction()) {
       // success means swing hand
-      if (result.shouldSwing()) {
+      if (result instanceof InteractionResult.Success success && success.swingSource() != InteractionResult.SwingSource.NONE) {
         event.getEntity().swing(event.getHand());
       }
       // don't cancel the result in survival as it does not actually prevent breaking the block, just causes really weird desyncs
@@ -511,7 +511,7 @@ public class InteractionHandler {
           }
         }
       } else {
-        event.setCanceled(true);
+        event.setBlocked(false);
       }
     }
   }

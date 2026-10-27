@@ -30,9 +30,8 @@ public class GlowBlock extends Block {
   public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
   public GlowBlock(Properties properties) {
-    super(properties);
+    super(properties.noLootTable());
     this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.DOWN));
-    this.drops = BuiltInLootTables.EMPTY;
   }
 
   private static final Map<Direction, VoxelShape> BOUNDS = new EnumMap<>(Direction.class);
@@ -115,7 +114,7 @@ public class GlowBlock extends Block {
     Direction facing = state.getValue(FACING);
     BlockPos placedOn = pos.relative(facing);
 
-    boolean isSolidSide = Block.isFaceFull(level.getBlockState(placedOn).getOcclusionShape(level, pos), facing.getOpposite());
+    boolean isSolidSide = Block.isFaceFull(level.getBlockState(placedOn).getOcclusionShape(), facing.getOpposite());
     boolean isLiquid = level.getBlockState(pos).getBlock() instanceof LiquidBlock;
 
     return !isLiquid && isSolidSide;

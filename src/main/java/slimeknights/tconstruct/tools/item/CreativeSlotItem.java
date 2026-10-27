@@ -60,6 +60,11 @@ public class CreativeSlotItem extends Item {
   }
 
   @Override
+  public Component getName(ItemStack stack) {
+    return Component.translatable(getDescriptionId(stack));
+  }
+
+  /** Gets the translation key for the slot in the stack */
   public String getDescriptionId(ItemStack stack) {
     SlotType slot = getSlot(stack);
     String originalKey = getDescriptionId();
@@ -102,7 +107,7 @@ public class CreativeSlotItem extends Item {
 
   /** Checks if the given player may apply this item */
   public static boolean canApply(Player player) {
-    return player.isCreative() || (Config.COMMON.quickApplyToolModifiersSurvival.get() && player.hasPermissions(MantleCommand.PERMISSION_GAME_COMMANDS));
+    return player.isCreative() || (Config.COMMON.quickApplyToolModifiersSurvival.get() && MantleCommand.PERMISSION_GAME_COMMANDS.check(player.permissions()));
   }
 
   /** Common logic between two stack methods */
@@ -129,7 +134,7 @@ public class CreativeSlotItem extends Item {
 
           // add the slot
           String name = slotType.getName();
-          int updated = slots.getInt(name) + amount;
+          int updated = slots.getIntOr(name, 0) + amount;
           if (updated == 0) {
             slots.remove(name);
           } else {

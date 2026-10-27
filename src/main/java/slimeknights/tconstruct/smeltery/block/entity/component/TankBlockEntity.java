@@ -157,9 +157,6 @@ public class TankBlockEntity extends SmelteryComponentBlockEntity implements ITa
     updateLight(this, tank);
   }
 
-  private HolderLookup.Provider registries() {
-    return level == null ? RegistryAccessUtil.BUILTIN : level.registryAccess();
-  }
 
   @Override
   protected boolean shouldSyncOnUpdate() {

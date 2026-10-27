@@ -68,7 +68,7 @@ public class CustomFireball extends Fireball implements ProjectileWithPower {
   }
 
   @Override
-  public boolean hurt(DamageSource pSource, float pAmount) {
+  public boolean hurtServer(ServerLevel level, DamageSource pSource, float pAmount) {
     return false;
   }
 
@@ -104,7 +104,7 @@ public class CustomFireball extends Fireball implements ProjectileWithPower {
       Entity target = hit.getEntity();
       Entity owner = this.getOwner();
       DamageSource source = CombatHelper.damageSource(TinkerEffects.needsEnderferenceOverride(target) ? enderferenceType : damageType, this, owner);
-      if (target.hurt(source, getDamage()) && owner instanceof LivingEntity && this.level() instanceof ServerLevel server) {
+      if (target.hurtOrSimulate(source, getDamage()) && owner instanceof LivingEntity && this.level() instanceof ServerLevel server) {
         EnchantmentHelper.doPostAttackEffects(server, target, source);
       }
     }

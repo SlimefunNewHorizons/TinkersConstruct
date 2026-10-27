@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.world.block;
 
+import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import lombok.Getter;
@@ -13,11 +14,11 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import slimeknights.tconstruct.common.TinkerTags;
 
-public class SlimeLeavesBlock extends LeavesBlock {
+public class SlimeLeavesBlock extends TintedParticleLeavesBlock {
   @Getter
   private final FoliageType foliageType;
   public SlimeLeavesBlock(Properties properties, FoliageType foliageType) {
-    super(properties);
+    super(0.01f, properties);
     this.foliageType = foliageType;
   }
 

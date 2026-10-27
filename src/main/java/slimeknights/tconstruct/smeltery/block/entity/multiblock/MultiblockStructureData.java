@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.multiblock;
 
+import net.minecraft.nbt.NbtOps;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -270,7 +271,7 @@ public class MultiblockStructureData {
   protected static ListTag writePosList(Collection<BlockPos> collection, BlockPos basePos) {
     ListTag list = new ListTag();
     for (BlockPos pos : collection) {
-      list.add(NbtUtils.writeBlockPos(pos.subtract(basePos)));
+      list.add(BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos.subtract(basePos)).getOrThrow());
     }
     return list;
   }

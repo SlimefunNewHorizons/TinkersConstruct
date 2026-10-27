@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import net.minecraft.world.item.component.TooltipDisplay;
 import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -302,7 +303,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
   }
 
   @Override
-  public void releaseUsing(ItemStack bow, Level level, LivingEntity living, int chargeRemaining) {
+  public boolean releaseUsing(ItemStack bow, Level level, LivingEntity living, int chargeRemaining) {
     ToolStack tool = ToolStack.from(bow);
 
     // call the stop using modifier hook
@@ -315,7 +316,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
     // specifically: broken, not fully charged, already have ammo
     ModDataNBT persistentData = tool.getPersistentData();
     if (tool.isBroken() || getUseDuration(bow) - chargeRemaining < persistentData.getInt(KEY_DRAWTIME) || persistentData.contains(KEY_CROSSBOW_AMMO, Tag.TAG_COMPOUND)) {
-      return;
+      return false;
     }
 
     // find ammo and store it on the bow
@@ -338,6 +339,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
         }
       }
     }
+    return true;
   }
 
   /** Re-publishes the mutable tool tag as an item component to trigger inventory synchronization. */
@@ -370,7 +372,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
         // copy the stack's tooltip if advanced
         if (tooltipFlag.isAdvanced()) {
           List<Component> nestedTooltip = new ArrayList<>();
-          heldStack.getItem().appendHoverText(heldStack, Item.TooltipContext.of(player.level()), nestedTooltip, tooltipFlag);
+          heldStack.getItem().appendHoverText(heldStack, Item.TooltipContext.of(player.level()), TooltipDisplay.DEFAULT, nestedTooltip::add, tooltipFlag);
           for (Component nested : nestedTooltip) {
             tooltips.add(Component.literal("  ").append(nested).withStyle(ChatFormatting.GRAY));
           }

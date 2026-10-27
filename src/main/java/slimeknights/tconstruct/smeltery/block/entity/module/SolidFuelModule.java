@@ -40,7 +40,7 @@ public class SolidFuelModule extends FuelModule {
   private int trySolidFuel(IItemHandler handler, boolean consume) {
     for (int i = 0; i < handler.getSlots(); i++) {
       ItemStack stack = handler.getStackInSlot(i);
-        int time = stack.getBurnTime(TinkerRecipeTypes.FUEL.get()) / 4;
+        int time = stack.getBurnTime(TinkerRecipeTypes.FUEL.get(), getLevel().fuelValues()) / 4;
       if (time > 0) {
         MeltingFuel solid = MeltingFuelLookup.getSolid();
         if (consume) {

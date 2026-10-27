@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.logic;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemUseAnimation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
@@ -335,7 +336,7 @@ public class ModifierEvents {
     // update airborn status
     event.setDistance(0.0F);
     if (!living.level().isClientSide()) {
-      living.hasImpulse = true;
+      living.needsSync = true;
       event.setCanceled(true);
       living.setOnGround(false); // need to be on ground for server to process this event
     }
@@ -420,7 +421,7 @@ public class ModifierEvents {
                 if (target.getType() == EntityType.PLAYER) {
                   TinkerNetwork.getInstance().sendVanillaPacket(new ClientboundSetEntityMotionPacket(projectile), target);
                 }
-                level.playSound(null, target.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.0F, 1.5F + level.random.nextFloat() * 0.4F);
+                level.playSound(null, target.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 1.0F, 1.5F + level.random.nextFloat() * 0.4F);
                 event.setCanceled(true);
                 // damage the shield, and stop using it if needed
                 if (ToolDamageUtil.damageAnimated(tool, 3, target, target.getUsedItemHand())) {
@@ -494,11 +495,11 @@ public class ModifierEvents {
             arrow.piercedAndKilledEntities.add(target);
           }
 
-          if (!level.isClientSide() && arrow.shotFromCrossbow() && owner instanceof ServerPlayer player) {
+          if (!level.isClientSide() && owner instanceof ServerPlayer player) {
             if (arrow.piercedAndKilledEntities != null) {
-              CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(player, arrow.piercedAndKilledEntities);
+              CriteriaTriggers.KILLED_BY_ARROW.trigger(player, arrow.piercedAndKilledEntities, arrow.getWeaponItem());
             } else if (!target.isAlive()) {
-              CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(player, List.of(target));
+              CriteriaTriggers.KILLED_BY_ARROW.trigger(player, List.of(target), arrow.getWeaponItem());
             }
           }
 
@@ -514,7 +515,7 @@ public class ModifierEvents {
           arrow.yRotO += 180.0F;
           if (!level.isClientSide() && arrow.getDeltaMovement().lengthSqr() < 1.0E-7D) {
             if (arrow.pickup == AbstractArrow.Pickup.ALLOWED) {
-              arrow.spawnAtLocation(arrow.getPickupItemStackOrigin().copy(), 0.1F);
+              arrow.spawnAtLocation((ServerLevel) level, arrow.getPickupItemStackOrigin().copy(), 0.1F);
             }
 
             ReusableProjectile.discard(projectile);

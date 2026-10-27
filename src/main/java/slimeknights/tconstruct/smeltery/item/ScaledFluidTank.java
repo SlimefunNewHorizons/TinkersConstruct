@@ -88,16 +88,16 @@ public class ScaledFluidTank extends FluidTank {
 
   /* NBT */
 
-  @Override
+  /** Reads the tank from NBT, NeoForge tanks moved to value IO in 1.21.6 */
   public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
     // scale the fluid on reading from NBT; as each instance should store the fluid relative to stack size 1
     FluidStack fluid = ValueIOHelper.parseFluid(registries, nbt);
     // Preserve tanks written before 1.20.5, which used FluidName/Amount/Tag.
     if (fluid.isEmpty() && nbt.getString("FluidName").isPresent()) {
       Identifier id = Identifier.tryParse(nbt.getStringOr("FluidName", ""));
-      Fluid legacyFluid = id == null ? Fluids.EMPTY : BuiltInRegistries.FLUID.get(id);
+      Fluid legacyFluid = id == null ? Fluids.EMPTY : BuiltInRegistries.FLUID.getValue(id);
       if (legacyFluid != null && legacyFluid != Fluids.EMPTY) {
-        fluid = new FluidStack(legacyFluid, nbt.getInt("Amount"));
+        fluid = new FluidStack(legacyFluid, nbt.getIntOr("Amount", 0));
         if (nbt.getCompound("Tag").isPresent()) {
           FluidStackUtil.setTag(fluid, nbt.getCompoundOrEmpty("Tag"));
         }
@@ -108,11 +108,14 @@ public class ScaledFluidTank extends FluidTank {
     return this;
   }
 
-  @Override
+  /** Writes the tank to NBT, NeoForge tanks moved to value IO in 1.21.6 */
   public CompoundTag writeToNBT(HolderLookup.Provider registries, CompoundTag nbt) {
     // Scale the fluid on writing to NBT, as each instance stores fluid relative to a stack size of 1.
     FluidStack fluid = this.fluid.copy();
     fluid.setAmount(fluid.getAmount() / scale);
-    return fluid.isEmpty() ? nbt : (CompoundTag)fluid.save(registries, nbt);
+    if (!fluid.isEmpty()) {
+      nbt.merge((CompoundTag)ValueIOHelper.saveFluid(fluid, registries));
+    }
+    return nbt;
   }
 }

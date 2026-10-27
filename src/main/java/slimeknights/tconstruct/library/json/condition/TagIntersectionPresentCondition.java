@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.condition;
 
+import slimeknights.mantle.util.TagHelper;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -56,7 +57,7 @@ public class TagIntersectionPresentCondition<T> implements ICondition {
   @Override
   public boolean test(IContext context) {
     // if there is just one tag, just needs to be filled
-    List<Collection<Holder<T>>> tags = names.stream().map(context::getTag).toList();
+    List<Collection<Holder<T>>> tags = names.stream().map(tag -> TagHelper.getTag(context, tag)).toList();
     if (tags.size() == 1) {
       return !tags.get(0).isEmpty();
     }

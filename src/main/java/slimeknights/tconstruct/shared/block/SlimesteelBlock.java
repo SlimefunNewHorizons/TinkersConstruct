@@ -26,7 +26,7 @@ public class SlimesteelBlock extends Block {
   }
 
   @Override
-  public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
+  public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, double fallDistance) {
     if (entityIn.isSuppressingBounce()) {
       super.fallOn(worldIn, state, pos, entityIn, fallDistance);
     } else {
@@ -35,9 +35,9 @@ public class SlimesteelBlock extends Block {
   }
 
   @Override
-  public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entity) {
+  public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entity) {
     if (entity.isSuppressingBounce()) {
-      super.updateEntityAfterFallOn(worldIn, entity);
+      super.updateEntityMovementAfterFallOn(worldIn, entity);
     } else {
       Vec3 vector3d = entity.getDeltaMovement();
       if (vector3d.y < 0) {

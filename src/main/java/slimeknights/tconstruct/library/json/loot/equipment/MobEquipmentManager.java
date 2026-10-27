@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.loot.equipment;
 
+import slimeknights.mantle.util.TagHelper;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.util.ExtraCodecs;
 import com.google.gson.JsonElement;
@@ -87,7 +88,7 @@ public class MobEquipmentManager extends SimpleJsonResourceReloadListener<JsonEl
           if (type.charAt(0) == '#') {
             // need to use the condition context to fetch tag values as they are not yet in the mananger
             TagKey<EntityType<?>> tag = Loadables.ENTITY_TYPE_TAG.parseString(type.substring(1), "entity");
-            for (Holder<EntityType<?>> holder : context.getTag(tag)) {
+            for (Holder<EntityType<?>> holder : TagHelper.getTag(context, tag)) {
               parsed.computeIfAbsent(holder.value(), ifAbsent).addAll(equipment);
             }
           } else {

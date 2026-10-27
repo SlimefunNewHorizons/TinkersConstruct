@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.item;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -34,7 +35,7 @@ public class CheeseBlockItem extends BlockItem {
           player.drop(cheese, false);
         }
       } else {
-        living.spawnAtLocation(cheese);
+        living.spawnAtLocation((ServerLevel) living.level(), cheese);
       }
 
     }

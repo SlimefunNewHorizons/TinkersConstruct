@@ -94,7 +94,7 @@ public class StatOverrideModifier extends NoLevelsModifier implements ToolStatsM
     processStats(persistentData, KEY_BONUS, (stat, tag) -> update(builder, stat, tag));
     processStats(persistentData, KEY_MULTIPLY, (stat, tag) -> {
       if (stat instanceof INumericToolStat<?> numeric && TagUtil.isNumeric(tag)) {
-        numeric.multiply(builder, ((NumericTag)tag).getAsFloat());
+        numeric.multiply(builder, ((NumericTag)tag).floatValue());
       }
     });
   }

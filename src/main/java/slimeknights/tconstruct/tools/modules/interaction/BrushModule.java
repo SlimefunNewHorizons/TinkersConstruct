@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.interaction;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -116,7 +117,7 @@ public enum BrushModule implements ModifierModule, GeneralInteractionModifierHoo
 
     // brush the block
     if (!level.isClientSide()) {
-      return level.getBlockEntity(blockHit.getBlockPos()) instanceof BrushableBlockEntity brushable && brushable.brush(level.getGameTime(), player, blockHit.getDirection());
+      return level.getBlockEntity(blockHit.getBlockPos()) instanceof BrushableBlockEntity brushable && level instanceof ServerLevel server && brushable.brush(level.getGameTime(), server, player, blockHit.getDirection(), player.getMainHandItem());
     }
     return false;
   }

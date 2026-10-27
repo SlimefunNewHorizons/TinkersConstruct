@@ -281,9 +281,9 @@ public class ModifiableArrow extends AbstractArrow implements ToolProjectile, Re
     CompoundTag tag = ValueIOHelper.read(input);
     super.readAdditionalSaveData(input);
     if (tag.getCompound(KEY_STACK).isPresent()) {
-      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompound(KEY_STACK)));
+      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompoundOrEmpty(KEY_STACK)));
     }
-    this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
+    this.entityData.set(WATER_INERTIA, tag.getFloatOr(KEY_WATER_INERTIA, 0.6f));
     this.dealtDamage = tag.getBooleanOr(KEY_DEALT_DAMAGE, false);
     if (tag.getList(KEY_TASKS).isPresent()) {
       this.tasks = Schedule.deserialize(tag.getListOrEmpty(KEY_TASKS));

@@ -65,7 +65,7 @@ public enum BannerModule implements ModifierModule, DisplayNameModifierHook, Too
     // color the tooltip the color of the first pattern
     ListTag patterns = tool.getPersistentData().getList(patternKey(entry.getId()), ListTag.TAG_COMPOUND);
     if (!patterns.isEmpty()) {
-      return name.copy().withStyle(name.getStyle().withColor(DyeColor.byId(patterns.getCompound(0).getInt(KEY_DYE)).getTextColor()));
+      return name.copy().withStyle(name.getStyle().withColor(DyeColor.byId(patterns.getCompoundOrEmpty(0).getIntOr(KEY_DYE, 0)).getTextColor()));
     }
     return name;
   }

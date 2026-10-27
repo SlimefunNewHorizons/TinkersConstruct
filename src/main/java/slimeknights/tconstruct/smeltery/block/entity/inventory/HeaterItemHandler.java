@@ -16,6 +16,7 @@ public class HeaterItemHandler extends SingleItemHandler<MantleBlockEntity> {
   @Override
   protected boolean isItemValid(ItemStack stack) {
     // fuel module divides by 4, so anything 3 or less is treated as 0
-    return stack.getBurnTime(TinkerRecipeTypes.FUEL.get()) > 3;
+    // fuel values come from the level since 1.21.2
+    return parent.getLevel() != null && stack.getBurnTime(TinkerRecipeTypes.FUEL.get(), parent.getLevel().fuelValues()) > 3;
   }
 }

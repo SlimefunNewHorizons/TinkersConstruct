@@ -122,7 +122,7 @@ public class OverslimeCraftingTableRecipe extends CustomRecipe {
         }
         repairNeeded -= repairPerItem;
       }
-      if (stack.hasCraftingRemainingItem()) {
+      if (!stack.getCraftingRemainder().isEmpty()) {
         list.set(i, stack.getCraftingRemainder());
       }
     }
@@ -143,11 +143,6 @@ public class OverslimeCraftingTableRecipe extends CustomRecipe {
 
     // step 2: consume as many items as are needed to do the repair
     return getRemainingItems(inv, ingredient, repairNeeded, repairPerItem);
-  }
-
-  @Override
-  public boolean canCraftInDimensions(int width, int height) {
-    return width * height >= 2;
   }
 
   @Override

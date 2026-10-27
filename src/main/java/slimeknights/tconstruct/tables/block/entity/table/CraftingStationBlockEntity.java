@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tables.block.entity.table;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -247,7 +250,7 @@ public class CraftingStationBlockEntity extends RetexturedTableBlockEntity imple
   public void syncRecipe(Player player) {
     // must have a last recipe and a server world
     if (this.lastRecipe != null && this.level != null && !this.level.isClientSide() && player instanceof ServerPlayer) {
-      TinkerNetwork.getInstance().sendTo(new UpdateCraftingRecipePacket(this.worldPosition, this.lastRecipe.id()), (ServerPlayer) player);
+      TinkerNetwork.getInstance().sendTo(new UpdateCraftingRecipePacket(this.worldPosition, this.lastRecipe.id().identifier()), (ServerPlayer) player);
     }
   }
 
@@ -255,8 +258,8 @@ public class CraftingStationBlockEntity extends RetexturedTableBlockEntity imple
    * Updates the recipe from the server
    * @param recipe  New recipe
    */
-  public void updateRecipe(net.minecraft.resources.ResourceLocation id, CraftingRecipe recipe) {
-    this.lastRecipe = new RecipeHolder<>(id, recipe);
+  public void updateRecipe(Identifier id, CraftingRecipe recipe) {
+    this.lastRecipe = new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, id), recipe);
     this.craftingResult.clearContent();
   }
 }

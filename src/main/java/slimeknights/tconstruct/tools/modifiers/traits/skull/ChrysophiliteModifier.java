@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.traits.skull;
 
+import net.minecraft.server.level.ServerLevel;
 import lombok.Getter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
@@ -118,7 +119,7 @@ public class ChrysophiliteModifier extends NoLevelsModifier implements Equipment
               stack.setDamageValue(stack.getMaxDamage() - random.nextInt(1 + random.nextInt(Math.max(stack.getMaxDamage() - 3, 1))));
             }
             // remove stack to prevent further drops
-            event.getDrops().add(target.spawnAtLocation(stack));
+            event.getDrops().add(target.spawnAtLocation((ServerLevel) target.level(), stack));
             target.setItemSlot(slot, ItemStack.EMPTY);
           }
         }

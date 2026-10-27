@@ -1,5 +1,13 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import java.util.stream.Stream;
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
+import net.minecraft.world.item.crafting.SmithingTrimRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.core.Holder;
 import lombok.Getter;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.RegistryAccess;
@@ -51,6 +59,25 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
     ModifierRecipeLookup.addRecipeModifier(null, TinkerModifiers.trim);
   }
 
+  /** Finds the trim pattern for the template, templates are defined by smithing trim recipes since 1.21.5 */
+  @Nullable
+  private static Holder<TrimPattern> findPattern(ItemStack template) {
+    for (RecipeHolder<SmithingRecipe> holder : RecipeAccessHelper.byType(null, RecipeType.SMITHING)) {
+      if (holder.value() instanceof SmithingTrimRecipe trim && trim.templateIngredient().map(ingredient -> ingredient.test(template)).orElse(false)) {
+        return trim.pattern;
+      }
+    }
+    return null;
+  }
+
+  /** Gets all trim templates */
+  private static List<ItemStack> getTemplates() {
+    return RecipeAccessHelper.byType(null, RecipeType.SMITHING).stream()
+      .flatMap(holder -> holder.value() instanceof SmithingTrimRecipe trim ? trim.templateIngredient().stream() : Stream.empty())
+      .flatMap(ingredient -> IngredientHelper.getDisplayItems(ingredient).stream())
+      .toList();
+  }
+
   /** Match for the trim item finding method */
   private record TrimItems(ItemStack template, ItemStack material) {}
 
@@ -63,7 +90,7 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
       ItemStack stack = inv.getInput(i);
       if (!stack.isEmpty()) {
         // find the two matching tags, but ensure no duplicates
-        if (stack.is(ItemTags.TRIM_TEMPLATES)) {
+        if (findPattern(stack) != null) {
           if (!template.isEmpty()) {
             return null;
           }
@@ -103,14 +130,14 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
       return RecipeResult.pass();
     }
     // validate the material nad pattern items
-    Reference<TrimMaterial> material = TrimMaterials.getFromIngredient(access, trimItems.material).orElse(null);
+    Holder<TrimMaterial> material = TrimMaterials.getFromIngredient(access, trimItems.material).orElse(null);
     if (material == null) {
       return RecipeResult.failure(KEY_INVALID_MATERIAL, trimItems.material.getDisplayName());
     }
     ToolStack original = inv.getTinkerable();
-    Reference<TrimPattern> pattern = null;
+    Holder<TrimPattern> pattern = null;
     if (!original.hasTag(TinkerTags.Items.TRIM_NO_PATTERN)) {
-      pattern = TrimPatterns.getFromTemplate(access, trimItems.template).orElse(null);
+      pattern = findPattern(trimItems.template);
       if (pattern == null) {
         return RecipeResult.failure(KEY_INVALID_PATTERN, trimItems.template.getDisplayName());
       }
@@ -120,9 +147,9 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
     ToolStack tool = inv.getTinkerable().copy();
     ModDataNBT persistentData = tool.getPersistentData();
     ModifierId modifier = TinkerModifiers.trim.getId();
-    persistentData.putString(TrimModule.materialKey(modifier), material.key().identifier().toString());
+    persistentData.putString(TrimModule.materialKey(modifier), material.unwrapKey().orElseThrow().identifier().toString());
     if (pattern != null) {
-      persistentData.putString(TrimModule.patternKey(modifier), pattern.key().identifier().toString());
+      persistentData.putString(TrimModule.patternKey(modifier), pattern.unwrapKey().orElseThrow().identifier().toString());
     }
 
     // add the modifier if missing
@@ -146,14 +173,13 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
   @Override
   public List<IDisplayModifierRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
-      List<ItemStack> trims = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, ItemTags.TRIM_TEMPLATES)
-                                            .map(ItemStack::new).toList();
+      List<ItemStack> trims = getTemplates();
       List<ItemStack> toolInputs = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, TinkerTags.Items.TRIM)
                                                  .map(IModifiableDisplay::getDisplayStack).toList();
       if (!trims.isEmpty() && !toolInputs.isEmpty()) {
         Identifier id = getId();
         displayRecipes = access.lookupOrThrow(Registries.TRIM_MATERIAL).listElements()
-          .map(material -> new DisplayRecipe(id, toolInputs, trims, material))
+          .map(material -> new DisplayRecipe(id, toolInputs, trims, material, access))
           .collect(Collectors.toList());
       } else {
         displayRecipes = List.of();
@@ -179,12 +205,14 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
     private final Identifier materialKey;
     private final String materialName;
 
-    public DisplayRecipe(Identifier id, List<ItemStack> tools, List<ItemStack> trim, Reference<TrimMaterial> holder) {
+    public DisplayRecipe(Identifier id, List<ItemStack> tools, List<ItemStack> trim, Reference<TrimMaterial> holder, RegistryAccess access) {
       this.recipeId = id;
       TrimMaterial material = holder.value();
       toolWithoutModifier = tools;
       this.trim = trim;
-      this.material = List.of(new ItemStack(material.ingredient().value()));
+      // materials are defined by an item component since 1.21.5
+      this.material = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, ItemTags.TRIM_MATERIALS).map(ItemStack::new)
+        .filter(stack -> TrimMaterials.getFromIngredient(access, stack).filter(found -> found.is(holder)).isPresent()).toList();
       this.variant = material.description().plainCopy();
 
       this.materialName = holder.key().identifier().toString();

@@ -334,7 +334,7 @@ public class MeltingModuleInventory implements IItemHandlerModifiable {
    */
   public void readFromTag(CompoundTag nbt, HolderLookup.Provider registries) {
     if (!strictSize) {
-      int newSize = nbt.getByte(TAG_SIZE) & 255;
+      int newSize = nbt.getByteOr(TAG_SIZE, (byte) 0) & 255;
       if (newSize != modules.length) {
         modules = Arrays.copyOf(modules, newSize);
       }
@@ -350,7 +350,7 @@ public class MeltingModuleInventory implements IItemHandlerModifiable {
     for (int i = 0; i < list.size(); i++) {
       CompoundTag item = list.getCompoundOrEmpty(i);
       if (item.getByte(TAG_SLOT).isPresent()) {
-        int slot = item.getByte(TAG_SLOT) & 255;
+        int slot = item.getByteOr(TAG_SLOT, (byte) 0) & 255;
         if (validSlot(slot)) {
           getModule(slot).readFromTag(item, registries);
         }

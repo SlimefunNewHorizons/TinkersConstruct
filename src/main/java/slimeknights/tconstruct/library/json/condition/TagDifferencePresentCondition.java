@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.condition;
 
+import slimeknights.mantle.util.TagHelper;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -60,7 +61,7 @@ public class TagDifferencePresentCondition<T> implements ICondition {
   @Override
   public boolean test(IContext context) {
     // get the base tag
-    Collection<Holder<T>> base = context.getTag(this.base);
+    Collection<Holder<T>> base = TagHelper.getTag(context, this.base);
     if (base == null || base.isEmpty()) {
       return false;
     }
@@ -74,7 +75,7 @@ public class TagDifferencePresentCondition<T> implements ICondition {
     for (Holder<T> entry : base) {
       // find the first item contained in no subtracted tags
       for (TagKey<T> tag : subtracted) {
-        if (context.getTag(tag).contains(entry)) {
+        if (TagHelper.getTag(context, tag).contains(entry)) {
           continue itemLoop;
         }
       }

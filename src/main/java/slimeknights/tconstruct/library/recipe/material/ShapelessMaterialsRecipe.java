@@ -44,14 +44,14 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
   }
 
   public ShapelessMaterialsRecipe(ShapelessRecipe recipe, int partCount, List<MaterialVariantId> extraMaterials) {
-    super(recipe.getGroup(), recipe.category(), recipe.getResultItem(RegistryAccess.EMPTY).copy(), recipe.getIngredients());
+    super(recipe.group(), recipe.category(), recipe.result.copy(), recipe.ingredients);
     this.partCount = partCount;
     this.extraMaterials = extraMaterials;
   }
 
   @Override
   public List<Ingredient> getParts() {
-    return getIngredients();
+    return ingredients;
   }
 
   @Override
@@ -61,7 +61,7 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
 
   @Override
   public ItemStack assemble(CraftingInput inventory, HolderLookup.Provider registries) {
-    return ShapedMaterialsRecipe.assemble(super.assemble(inventory, registries), inventory, getIngredients(), partCount, false, extraMaterials);
+    return ShapedMaterialsRecipe.assemble(super.assemble(inventory, registries), inventory, ingredients, partCount, false, extraMaterials);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
         JsonObject json = element.getAsJsonObject();
         ShapelessRecipe vanilla = RecipeSerializer.SHAPELESS_RECIPE.codec().codec().parse(JsonOps.INSTANCE, element).getOrThrow(JsonParseException::new);
         int parts = json.has("parts") ? json.get("parts").getAsInt() : 0;
-        if (parts < 1 || parts > vanilla.getIngredients().size()) {
+        if (parts < 1 || parts > vanilla.ingredients.size()) {
           throw new JsonSyntaxException("Parts must be between 1 and the number of ingredients");
         }
         return new ShapelessMaterialsRecipe(vanilla, parts, MATERIAL_FIELD.get(json));

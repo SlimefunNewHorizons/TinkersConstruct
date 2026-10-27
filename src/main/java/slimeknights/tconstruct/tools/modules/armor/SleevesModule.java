@@ -79,8 +79,9 @@ public enum SleevesModule implements ModifierModule, GeneralInteractionModifierH
               player.stopUsingItem();
             }
             // handle result
-            inventory.setStack(tool, modifier, selected, result.getObject());
-            return result.getResult();
+            ItemStack transformed = result instanceof InteractionResult.Success success ? success.heldItemTransformedTo() : null;
+            inventory.setStack(tool, modifier, selected, transformed != null ? transformed : ammo);
+            return result;
           } else {
             // toggle if we just were unable to use the item
             return InteractionResult.PASS;

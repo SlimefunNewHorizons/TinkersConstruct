@@ -1,5 +1,8 @@
 package slimeknights.mantle.recipe.helper;
 
+import net.neoforged.fml.util.thread.EffectiveSide;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -49,6 +52,12 @@ public final class RecipeAccessHelper {
   public static RecipeMap getRecipeMap(@Nullable Level level) {
     if (level instanceof ServerLevel server) {
       return server.recipeAccess().recipeMap();
+    }
+    if (level == null && EffectiveSide.get().isServer()) {
+      MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+      if (server != null) {
+        return server.getRecipeManager().recipeMap();
+      }
     }
     return clientRecipes;
   }

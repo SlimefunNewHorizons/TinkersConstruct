@@ -100,7 +100,7 @@ public class IslandPiece extends TemplateStructurePiece {
       }
       case "tconstruct:slime_tall_grass" -> {
         if (rand.nextBoolean()) {
-          Optional<Block> plant = this.structure.getGrasses().getRandomValue(rand);
+          Optional<Block> plant = this.structure.getGrasses().getRandom(rand);
           if (plant.isPresent()) {
             Block block = plant.get();
             BlockState state = block.defaultBlockState();
@@ -149,7 +149,7 @@ public class IslandPiece extends TemplateStructurePiece {
 
   /** Gets a registry, or falls back to builtin */
   private static <T> Registry<T> getRegistry(ResourceKey<? extends Registry<T>> registryKey, Registry<T> builtIn, StructurePieceSerializationContext context) {
-    Optional<? extends Registry<T>> registry = context.registryAccess().registry(registryKey);
+    Optional<? extends Registry<T>> registry = context.registryAccess().lookup(registryKey);
     if (registry.isPresent()) {
       return registry.get();
     } else {

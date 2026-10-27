@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.logic;
 
+import net.minecraft.core.component.DataComponents;
 import com.google.common.collect.Multiset;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -239,7 +239,7 @@ public class ToolEvents {
     }
     // I cannot think of a reason to run when invulnerable
     DamageSource source = event.getSource();
-    if (entity.isInvulnerableTo(source)) {
+    if (entity.level() instanceof ServerLevel server && entity.isInvulnerableTo(server, source)) {
       return;
     }
 
@@ -425,7 +425,7 @@ public class ToolEvents {
               }
             } else {
               // if not our armor, damage using vanilla like logic
-              if (!armorStack.isEmpty() && armorStack.canBeHurtBy(source) && armorStack.getItem() instanceof ArmorItem) {
+              if (!armorStack.isEmpty() && armorStack.canBeHurtBy(source) && armorStack.has(DataComponents.EQUIPPABLE)) {
                 armorStack.hurtAndBreak(damageMissed, entity, slotType);
               }
             }

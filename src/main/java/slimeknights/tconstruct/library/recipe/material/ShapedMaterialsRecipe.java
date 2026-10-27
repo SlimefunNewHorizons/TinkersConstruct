@@ -46,7 +46,7 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
   private final List<MaterialVariantId> extraMaterials;
 
   public ShapedMaterialsRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
-                               NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification,
+                               List<Optional<Ingredient>> ingredients, ItemStack result, boolean showNotification,
                                List<Ingredient> parts, List<MaterialVariantId> extraMaterials) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), result, showNotification);
     this.parts = parts;
@@ -55,7 +55,7 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
   }
 
   public ShapedMaterialsRecipe(ShapedRecipe base, List<Ingredient> parts, List<MaterialVariantId> extraMaterials) {
-    super(base.getGroup(), base.category(), base.pattern, base.getResultItem(RegistryAccess.EMPTY).copy(), base.showNotification());
+    super(base.group(), base.category(), base.pattern, base.result.copy(), base.showNotification());
     this.parts = parts;
     this.checkRepeats = parts.stream().unordered().distinct().count() == parts.size();
     this.extraMaterials = extraMaterials;

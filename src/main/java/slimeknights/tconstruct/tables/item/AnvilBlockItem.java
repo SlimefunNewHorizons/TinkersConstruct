@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tables.item;
 
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
 import java.util.ArrayList;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -55,7 +57,7 @@ public class AnvilBlockItem extends MaterialBlockItem {
   @Override
   public Component getName(ItemStack stack) {
     // don't put tool material in name
-    return Component.translatable(this.getDescriptionId(stack));
+    return Component.translatable(this.getDescriptionId());
   }
 
   @Override
@@ -63,7 +65,9 @@ public class AnvilBlockItem extends MaterialBlockItem {
     List<Component> tooltip = new ArrayList<>();
     try {
         // ditch the super call advanced tooltip material ID, we will handle it ourselves later
-        this.getBlock().appendHoverText(stack, context, tooltip, flag);
+        if (this.getBlock() instanceof IBlockTooltip block) {
+          block.appendHoverText(stack, context, display, tooltip::add, flag);
+        }
         MaterialVariantId material = getMaterial(stack);
         if (!IMaterial.UNKNOWN_ID.equals(material)) {
           // put tool material in tooltip. Its technically below texture but the two should never coexist.
@@ -81,7 +85,7 @@ public class AnvilBlockItem extends MaterialBlockItem {
 
   @Nullable
   @Override
-  public String getCreatorModId(ItemStack stack) {
+  public String getCreatorModId(HolderLookup.Provider registries, ItemStack stack) {
     // reset to default, just show the anvil ID. Material variants mean less here
     return BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace();
   }

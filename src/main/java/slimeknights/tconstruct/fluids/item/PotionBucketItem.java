@@ -48,15 +48,6 @@ public class PotionBucketItem extends PotionItem {
   }
 
   @Override
-  public String getDescriptionId(ItemStack stack) {
-    String bucketKey = PotionUtils.getName(PotionUtils.getPotionContents(stack), getDescriptionId() + ".effect.");
-    if (Util.canTranslate(bucketKey)) {
-      return bucketKey;
-    }
-    return super.getDescriptionId();
-  }
-
-  @Override
   public Component getName(ItemStack stack) {
     String bucketKey = PotionUtils.getName(PotionUtils.getPotionContents(stack), getDescriptionId() + ".effect.");
     if (Util.canTranslate(bucketKey)) {

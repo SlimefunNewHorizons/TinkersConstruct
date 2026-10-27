@@ -30,7 +30,8 @@ public class ProxyItemTank<T extends MantleBlockEntity & IFluidTankUpdater> exte
     // can only store items that are fluid handlers, though allow blacklist in case something is really broken
     // blacklist is mostly used for items that don't support incremental filling, as this block really isn't good at working with them
     // we check the container item so we don't have to put every bucket in the tag. Not bothering with complex container items; odds are item stack sensitive just returns the same item
-    Item craftRemainingItem = stack.getItem().getCraftingRemainingItem();
+    ItemStack craftRemainder = stack.getItem().getCraftingRemainder();
+    Item craftRemainingItem = craftRemainder.isEmpty() ? null : craftRemainder.getItem();
     return !stack.is(TinkerTags.Items.PROXY_TANK_BLACKLIST)
       && (craftRemainingItem == null || !RegistryHelper.contains(TinkerTags.Items.PROXY_TANK_BLACKLIST, craftRemainingItem))
       && TransferHelper.getFluidHandler(stack) != null;

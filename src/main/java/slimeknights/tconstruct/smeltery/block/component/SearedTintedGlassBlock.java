@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.component;
 
+import net.minecraft.world.level.lighting.LightEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,6 +17,6 @@ public class SearedTintedGlassBlock extends SearedGlassBlock {
 
   @Override
   protected int getLightBlock(BlockState state) {
-    return world.getMaxLightLevel();
+    return LightEngine.MAX_LEVEL;
   }
 }

@@ -342,7 +342,7 @@ public class FaucetBlockEntity extends MantleBlockEntity {
     compound.putBoolean(TAG_STOP, stopPouring);
     compound.putBoolean(TAG_LAST_REDSTONE, lastRedstoneState);
     if (!drained.isEmpty()) {
-      compound.put(TAG_DRAINED, ValueIOHelper.saveStack(drained, registries));
+      compound.put(TAG_DRAINED, ValueIOHelper.saveFluid(drained, registries));
     }
   }
 
@@ -355,12 +355,12 @@ public class FaucetBlockEntity extends MantleBlockEntity {
     lastRedstoneState = compound.getBooleanOr(TAG_LAST_REDSTONE, false);
     // fluids
     if (compound.getCompound(TAG_DRAINED).isPresent()) {
-      drained = ValueIOHelper.parseFluid(registries, compound.getCompound(TAG_DRAINED));
+      drained = ValueIOHelper.parseFluid(registries, compound.getCompoundOrEmpty(TAG_DRAINED));
     } else {
       drained = FluidStack.EMPTY;
     }
     if (compound.getCompound(TAG_RENDER_FLUID).isPresent()) {
-      renderFluid = ValueIOHelper.parseFluid(registries, compound.getCompound(TAG_RENDER_FLUID));
+      renderFluid = ValueIOHelper.parseFluid(registries, compound.getCompoundOrEmpty(TAG_RENDER_FLUID));
     } else {
       renderFluid = FluidStack.EMPTY;
     }

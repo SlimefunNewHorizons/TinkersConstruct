@@ -154,7 +154,7 @@ public class FaucetBlock extends Block implements EntityBlock {
 
   /* Display */
 
-  private static final Vector3f RED = new Vector3f(1.0F, 0.0F, 0.0F);
+  private static final int RED = 0xFF0000;
 
   /**
    * Adds particles to the faucet

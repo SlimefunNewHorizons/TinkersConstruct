@@ -26,7 +26,7 @@ public enum DirtType implements StringRepresentable {
   public static final DirtType[] TINKER = {EARTH, SKY, ICHOR, ENDER};
 
   /** ToolMaterial needed to harvest dirt blocks of this type */
-  private final Tiers harvestTier;
+  private final ToolMaterial harvestTier;
   /** Color for this block on maps */
   private final MapColor mapColor;
   @Getter
@@ -36,7 +36,7 @@ public enum DirtType implements StringRepresentable {
   /** Tag for dirt blocks of this type, including blocks with grass on top */
   private final TagKey<Block> blockTag;
 
-  DirtType(Tiers harvestTier, MapColor mapColor) {
+  DirtType(ToolMaterial harvestTier, MapColor mapColor) {
     this.harvestTier = harvestTier;
     this.mapColor = mapColor;
     this.blockTag = BlockTags.create(TConstruct.getResource("slimy_soil/" + this.getSerializedName()));

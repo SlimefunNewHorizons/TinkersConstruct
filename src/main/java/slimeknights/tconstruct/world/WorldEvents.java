@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.world;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -47,12 +48,12 @@ public class WorldEvents {
     if (source != null) {
       Entity entity = source.getEntity();
       if (entity instanceof Creeper creeper) {
-        if (creeper.canDropMobsSkull()) {
+        if (creeper.isPowered() && !creeper.droppedSkulls && event.getEntity().level() instanceof ServerLevel server) {
           LivingEntity dying = event.getEntity();
           TinkerHeadType headType = TinkerHeadType.fromEntityType(dying.getType());
           if (headType != null && Config.COMMON.headDrops.get(headType).get()) {
-            creeper.increaseDroppedSkulls();
-            event.getDrops().add(dying.spawnAtLocation(TinkerWorld.heads.get(headType)));
+            creeper.droppedSkulls = true;
+            event.getDrops().add(dying.spawnAtLocation(server, TinkerWorld.heads.get(headType)));
           }
         }
       }

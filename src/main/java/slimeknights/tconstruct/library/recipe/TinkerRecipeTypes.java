@@ -54,7 +54,7 @@ public class TinkerRecipeTypes {
   /** Sends our recipe types to clients for screens, JEI and books, as recipes only exist on the server since 1.21.2. Book pages also show vanilla crafting and cooking */
   public static void syncToClient() {
     TYPES.getEntries().forEach(holder -> RecipeAccessHelper.syncToClient(holder.get()));
-    RecipeAccessHelper.syncToClient(RecipeType.CRAFTING, RecipeType.SMELTING, RecipeType.BLASTING, RecipeType.SMOKING, RecipeType.CAMPFIRE_COOKING);
+    RecipeAccessHelper.syncToClient(RecipeType.CRAFTING, RecipeType.SMELTING, RecipeType.BLASTING, RecipeType.SMOKING, RecipeType.CAMPFIRE_COOKING, RecipeType.SMITHING);
   }
 
   public static void init(IEventBus bus) {

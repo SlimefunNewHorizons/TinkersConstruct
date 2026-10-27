@@ -44,9 +44,9 @@ public class CongealedSlimeBlock extends Block {
   }
 
   @Override
-  public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entity) {
+  public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entity) {
     if (entity.isSuppressingBounce() || !(entity instanceof LivingEntity) && !(entity instanceof ItemEntity)) {
-      super.updateEntityAfterFallOn(worldIn, entity);
+      super.updateEntityMovementAfterFallOn(worldIn, entity);
       // this is mostly needed to prevent XP orbs from bouncing. which completely breaks the game.
       return;
     }
@@ -61,12 +61,12 @@ public class CongealedSlimeBlock extends Block {
         entity.setOnGround(false);
       }
     } else {
-      super.updateEntityAfterFallOn(worldIn, entity);
+      super.updateEntityMovementAfterFallOn(worldIn, entity);
     }
   }
 
   @Override
-  public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
+  public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, double fallDistance) {
     // no fall damage on congealed slime
     entityIn.causeFallDamage(fallDistance, 0.0F, worldIn.damageSources().fall());
   }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.condition;
 
+import slimeknights.mantle.util.TagHelper;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class TagNotEmptyCondition<T> implements LootItemCondition, ICondition {
 
   @Override
   public boolean test(IContext context) {
-    return !context.getTag(tag).isEmpty();
+    return !TagHelper.getTag(context, tag).isEmpty();
   }
 
   @Override

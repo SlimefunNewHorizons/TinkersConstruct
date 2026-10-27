@@ -21,7 +21,7 @@ public class TinkersChestBlock extends ChestBlock {
     ItemStack stack = new ItemStack(this);
     BlockEntityHelper.get(TinkersChestBlockEntity.class, world, pos).ifPresent(te -> {
       if (te.hasColor()) {
-        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(te.getColor(), true));
+        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(te.getColor()));
       }
     });
     return stack;

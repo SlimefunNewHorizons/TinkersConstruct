@@ -20,7 +20,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class TeleportHelper {
-  private static final Set<Relative> PACKET_FLAGS = EnumSet.of(Relative.X, Relative.Y, Relative.Z, Relative.X_ROT, Relative.Y_ROT);
 
   /** Randomly teleports an entity, mostly copied from chorus fruit */
   @CanIgnoreReturnValue
@@ -85,7 +84,7 @@ public class TeleportHelper {
 
       // this logic only runs serverside, so need to use the server controller logic to move the player
       if (entity instanceof ServerPlayer playerMP) {
-        playerMP.connection.teleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), playerMP.getYRot(), playerMP.getXRot(), PACKET_FLAGS);
+        playerMP.connection.teleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), playerMP.getYRot(), playerMP.getXRot());
       } else {
         entity.setPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
       }

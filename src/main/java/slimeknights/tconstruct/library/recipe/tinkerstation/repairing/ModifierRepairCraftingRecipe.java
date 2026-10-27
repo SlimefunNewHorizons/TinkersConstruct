@@ -106,11 +106,6 @@ public class ModifierRepairCraftingRecipe extends CustomRecipe implements IModif
   }
 
   @Override
-  public boolean canCraftInDimensions(int width, int height) {
-    return (width * height) >= 2;
-  }
-
-  @Override
   public RecipeSerializer getSerializer() {
     return TinkerModifiers.craftingModifierRepair.get();
   }

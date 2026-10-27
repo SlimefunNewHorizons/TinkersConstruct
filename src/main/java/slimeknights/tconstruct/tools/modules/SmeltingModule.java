@@ -175,7 +175,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
           stack = ValueIOHelper.parseStack(level.registryAccess(), entry);
           recipe = findRecipe(recipeType, stack, level, modifier.getId());
           if (recipe != null) {
-            time = recipe.value().getCookingTime();
+            time = recipe.value().cookingTime();
           }
           entry.putInt(TAG_TIME, time);
         }
@@ -244,7 +244,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
                   // shrink stack
                   InventoryModule.writeStack(stack, slot, entry);
                   // update time to cook again
-                  entry.putInt(TAG_TIME, cookingRecipe.getCookingTime());
+                  entry.putInt(TAG_TIME, cookingRecipe.cookingTime());
                 }
 
                 // play sound
@@ -252,7 +252,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
                   level.playSound(null, holder.getX(), holder.getY(), holder.getZ(), SoundEvents.GENERIC_EXTINGUISH_FIRE, holder.getSoundSource(), 1, 1);
 
                   // grant XP
-                  float experience = cookingRecipe.getExperience();
+                  float experience = cookingRecipe.experience();
                   if (experience > 0 && level instanceof ServerLevel serverLevel) {
                     int floored = Mth.floor(experience);
                     float fraction = Mth.frac(experience);

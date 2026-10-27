@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SlimeTallGrassBlock extends BushBlock implements IShearable {
+public class SlimeTallGrassBlock extends VegetationBlock implements IShearable {
   public static final MapCodec<SlimeTallGrassBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     StringRepresentable.fromEnum(FoliageType::values).fieldOf("foliage_type").forGetter(SlimeTallGrassBlock::getFoliageType),
     propertiesCodec()

@@ -37,13 +37,8 @@ public class CopperCanItem extends Item {
   }
 
   @Override
-  public boolean hasCraftingRemainingItem(ItemStack stack) {
-    return getFluid(stack) != Fluids.EMPTY;
-  }
-
-  @Override
-  public ItemStack getCraftingRemainingItem(ItemStack stack) {
-    if (hasCraftingRemainingItem(stack)) {
+  public ItemStack getCraftingRemainder(ItemStack stack) {
+    if (getFluid(stack) != Fluids.EMPTY) {
       return new ItemStack(this);
     }
     return ItemStack.EMPTY;

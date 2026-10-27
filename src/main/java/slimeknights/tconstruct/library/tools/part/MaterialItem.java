@@ -172,11 +172,4 @@ public class MaterialItem extends Item implements IMaterialItem {
     }
   }
 
-  @Override
-  public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
-    if (nbt != null) {
-      verifyTag(nbt);
-    }
-  }
 }

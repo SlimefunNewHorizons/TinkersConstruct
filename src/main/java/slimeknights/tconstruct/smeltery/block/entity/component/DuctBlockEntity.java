@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.component;
 
+import net.minecraft.world.level.storage.ValueInput;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -94,8 +95,8 @@ public class DuctBlockEntity extends SmelteryFluidIO implements MenuProvider {
   }
 
   @Override
-  public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-    super.handleUpdateTag(tag, registries);
+  public void handleUpdateTag(ValueInput input) {
+    super.handleUpdateTag(input);
     if (level != null && level.isClientSide()) {
       updateFluid();
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.ability.tool;
 
+import net.minecraft.world.item.ItemStack;
 import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionHand;
@@ -58,7 +59,7 @@ public class ParryingModifier extends OffhandAttackModifier implements ItemAbili
   @Override
   public void onFinishUsing(IToolStackView tool, ModifierEntry modifier, LivingEntity entity) {
     if (entity instanceof Player player) {
-      player.getCooldowns().addCooldown(tool, (int)(20 / tool.getStats().get(ToolStats.ATTACK_SPEED)));
+      player.getCooldowns().addCooldown(new ItemStack(tool.getItem()), (int)(20 / tool.getStats().get(ToolStats.ATTACK_SPEED)));
     }
   }
 

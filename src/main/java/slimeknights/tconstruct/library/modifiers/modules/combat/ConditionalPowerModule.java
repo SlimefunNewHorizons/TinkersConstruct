@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.combat;
 
+import slimeknights.tconstruct.library.utils.TagUtil;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.nbt.Tag;
@@ -107,10 +108,10 @@ public record ConditionalPowerModule(IJsonPredicate<LivingEntity> target, IJsonP
       persistentData.putBoolean(key, true);
       if (TinkerPredicate.matches(this.target, target) && TinkerPredicate.matches(this.holder, attacker)) {
         float multiplier = 1;
-        if (persistentData.getDouble(AMMO_MULTIPLIER).isPresent()) {
+        if (persistentData.contains(AMMO_MULTIPLIER, TagUtil.TAG_ANY_NUMERIC)) {
           multiplier *= persistentData.getFloat(AMMO_MULTIPLIER);
         }
-        if (persistentData.getDouble(BOW_MULTIPLIER).isPresent()) {
+        if (persistentData.contains(BOW_MULTIPLIER, TagUtil.TAG_ANY_NUMERIC)) {
           multiplier *= persistentData.getFloat(BOW_MULTIPLIER);
         }
         if (projectile instanceof AbstractArrow arrow) {

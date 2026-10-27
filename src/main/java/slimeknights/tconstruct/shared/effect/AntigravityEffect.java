@@ -83,7 +83,7 @@ public class AntigravityEffect extends TinkerEffect {
           if (height > 0.0F) {
             hit.getBlock().fallOn(level, hit, above, living, height);
           }
-          hit.getBlock().updateEntityAfterFallOn(level, living);
+          hit.getBlock().updateEntityMovementAfterFallOn(level, living);
         }
         lastVelocity.update(0);
       } else {
@@ -138,7 +138,7 @@ public class AntigravityEffect extends TinkerEffect {
   public boolean antigravityJump(Player player) {
     // must be on the ground, not swimming, not on a ladder, and have antigravity to jump
     // jump reversal is handled in ModifierEvents to ensure ordering between that and the attribute boost
-    if (player.verticalCollision && !player.verticalCollisionBelow && !player.isInWaterOrBubble()
+    if (player.verticalCollision && !player.verticalCollisionBelow && !player.isInWater()
       && player.hasEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(this)) && player.getAttributeValue(Attributes.GRAVITY) < 0 && !player.onClimbable()) {
       player.jumpFromGround();
       return true;

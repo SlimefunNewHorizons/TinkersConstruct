@@ -32,7 +32,7 @@ public enum FoliageType implements StringRepresentable {
   /* Block color for this slime type */
   private final int color;
   /** ToolMaterial needed to harvest dirt blocks of this type */
-  private final Tiers harvestTier;
+  private final ToolMaterial harvestTier;
   /** Color for this block on maps */
   private final MapColor mapColor;
   /** If true, this block type has fungus foliage instead of grass */
@@ -44,7 +44,7 @@ public enum FoliageType implements StringRepresentable {
   /** Tag for grass blocks with this foliage type */
   private final TagKey<Block> grassBlockTag;
 
-  FoliageType(int color, Tiers harvestTier, MapColor mapColor, boolean nether) {
+  FoliageType(int color, ToolMaterial harvestTier, MapColor mapColor, boolean nether) {
     this.color = color;
     this.harvestTier = harvestTier;
     this.mapColor = mapColor;

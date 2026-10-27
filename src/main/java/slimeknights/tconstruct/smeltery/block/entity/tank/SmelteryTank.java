@@ -295,7 +295,7 @@ public class SmelteryTank<T extends MantleBlockEntity & ISmelteryTankHandler> im
   public CompoundTag write(CompoundTag nbt, HolderLookup.Provider registries) {
     ListTag list = new ListTag();
     for (FluidStack liquid : fluids) {
-      list.add(ValueIOHelper.saveStack(liquid, registries));
+      list.add(ValueIOHelper.saveFluid(liquid, registries));
     }
     nbt.put(TAG_FLUIDS, list);
     nbt.putInt(TAG_CAPACITY, capacity);

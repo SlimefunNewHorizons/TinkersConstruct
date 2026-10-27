@@ -83,7 +83,7 @@ public class Util {
    * @return  Translation key
    */
   public static String makeTranslationKey(String base, @Nullable Identifier name) {
-    return net.minecraft.Util.makeDescriptionId(base, name);
+    return net.minecraft.util.Util.makeDescriptionId(base, name);
   }
 
   /**
@@ -160,7 +160,7 @@ public class Util {
   public static Direction directionFromOffset(BlockPos pos, BlockPos neighbor) {
     BlockPos offset = neighbor.subtract(pos);
     for (Direction direction : Direction.values()) {
-      if (direction.getNormal().equals(offset)) {
+      if (direction.getUnitVec3i().equals(offset)) {
         return direction;
       }
     }

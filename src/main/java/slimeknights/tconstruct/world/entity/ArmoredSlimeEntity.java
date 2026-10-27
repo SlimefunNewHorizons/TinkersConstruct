@@ -93,7 +93,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
       LocalDate localdate = LocalDate.now();
       if (localdate.get(ChronoField.MONTH_OF_YEAR) == 10 && localdate.get(ChronoField.DAY_OF_MONTH) == 31 && this.random.nextFloat() < 0.25F) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.CARVED_PUMPKIN));
-        this.armorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
+        this.setDropChance(EquipmentSlot.HEAD, 0.0F);
       }
     }
 
@@ -122,7 +122,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
   protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
     int looting = 0;
     ItemStack stack = this.getItemBySlot(EquipmentSlot.HEAD);
-    float slotChance = this.getEquipmentDropChance(EquipmentSlot.HEAD);
+    float slotChance = this.getDropChances().byEquipment(EquipmentSlot.HEAD);
     // items do not always drop if a large slime, increases chance of inheritance
     // small slimes always drop, no losing gear
     if (slotChance > 0.25f && getSize() > 1) {
@@ -135,7 +135,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
           int max = stack.getMaxDamage();
           stack.setDamageValue(max - this.random.nextInt(1 + this.random.nextInt(Math.max(max - 3, 1))));
         }
-        this.spawnAtLocation(stack);
+        this.spawnAtLocation(level, stack);
         this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
       }
     }
@@ -163,11 +163,11 @@ public abstract class ArmoredSlimeEntity extends Slime {
       }
 
       // spawn all children
-      float dropChance = getEquipmentDropChance(EquipmentSlot.HEAD);
+      float dropChance = getDropChances().byEquipment(EquipmentSlot.HEAD);
       for(int i = 0; i < count; ++i) {
         float x = ((i % 2) - 0.5F) * offset;
         float z = ((i / 2) - 0.5F) * offset;
-        ArmoredSlimeEntity slime = this.getType().create(level);
+        ArmoredSlimeEntity slime = this.getType().create(level, EntitySpawnReason.TRIGGERED);
         assert slime != null;
         if (this.isPersistenceRequired()) {
           slime.setPersistenceRequired();
@@ -185,7 +185,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
         } else if (dropChance < 1 && random.nextFloat() < 0.25) {
           slime.setItemSlot(EquipmentSlot.HEAD, helmet.copy());
         }
-        slime.moveTo(this.getX() + x, this.getY() + 0.5D, this.getZ() + z, this.random.nextFloat() * 360.0F, 0.0F);
+        slime.snapTo(this.getX() + x, this.getY() + 0.5D, this.getZ() + z, this.random.nextFloat() * 360.0F, 0.0F);
         level.addFreshEntity(slime);
       }
     }

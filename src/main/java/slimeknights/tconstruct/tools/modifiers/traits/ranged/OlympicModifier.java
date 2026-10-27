@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.traits.ranged;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
@@ -86,7 +87,7 @@ public class OlympicModifier extends Modifier implements ProjectileLaunchModifie
         Item nugget = getNugget(targetEntity.distanceToSqr(startCompound.getDoubleOr("X", 0d), startCompound.getDoubleOr("Y", 0d), startCompound.getDoubleOr("Z", 0d)));
         if (nugget != Items.AIR) {
           // spawn and play sound
-          targetEntity.spawnAtLocation(nugget);
+          targetEntity.spawnAtLocation((ServerLevel) targetEntity.level(), nugget);
           if (attacker != null) {
             level.playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
           }

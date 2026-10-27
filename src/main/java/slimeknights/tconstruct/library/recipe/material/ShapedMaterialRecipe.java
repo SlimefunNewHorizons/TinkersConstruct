@@ -44,20 +44,20 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
   private final List<MaterialVariantId> extraMaterials;
 
   public ShapedMaterialRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
-                              NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification,
+                              List<Optional<Ingredient>> ingredients, ItemStack result, boolean showNotification,
                               List<MaterialVariantId> extraMaterials) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), result, showNotification);
     this.extraMaterials = extraMaterials;
   }
 
   public ShapedMaterialRecipe(ShapedRecipe recipe, List<MaterialVariantId> extraMaterials) {
-    super(recipe.getGroup(), recipe.category(), recipe.pattern, recipe.getResultItem(RegistryAccess.EMPTY).copy(), recipe.showNotification());
+    super(recipe.group(), recipe.category(), recipe.pattern, recipe.result.copy(), recipe.showNotification());
     this.extraMaterials = extraMaterials;
   }
 
   @Deprecated(forRemoval = true)
   public ShapedMaterialRecipe(Identifier id, String group, CraftingBookCategory category, int width, int height,
-                              NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification) {
+                              List<Optional<Ingredient>> ingredients, ItemStack result, boolean showNotification) {
     this(id, group, category, width, height, ingredients, result, showNotification, List.of());
   }
 
@@ -69,8 +69,8 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
   @Nullable
   public MaterialValueIngredient getMaterial() {
     if (material == null) {
-      for (Ingredient ingredient : getIngredients()) {
-        if (ingredient.getCustomIngredient() instanceof MaterialValueIngredient materialValue) {
+      for (Optional<Ingredient> ingredient : getIngredients()) {
+        if (ingredient.isPresent() && ingredient.get().getCustomIngredient() instanceof MaterialValueIngredient materialValue) {
           material = material == null ? materialValue : material.merge(materialValue);
         }
       }

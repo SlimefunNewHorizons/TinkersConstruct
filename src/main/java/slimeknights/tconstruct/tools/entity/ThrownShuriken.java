@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.entity;
 
+import net.minecraft.server.level.ServerLevel;
 import slimeknights.mantle.util.ValueIOHelper;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -186,7 +187,7 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
     }
 
     // update position
-    this.checkInsideBlocks();
+    this.applyEffectsFromBlocks();
     Vec3 movement = this.getDeltaMovement();
     double x = this.getX() + movement.x;
     double y = this.getY() + movement.y;
@@ -243,7 +244,7 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
     Level level = level();
     if (!level.isClientSide()) {
       if ((!hit || reclaim) && !this.isRemoved()) {
-        this.spawnAtLocation(stack.copy());
+        this.spawnAtLocation((ServerLevel) this.level(), stack.copy());
       } else {
         level.broadcastEntityEvent(this, (byte) 3); // TODO: find the proper constant for this event ID
       }
@@ -257,7 +258,7 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
 
     // TODO: can we stick in the block like an arrow instead?
     if (!this.isRemoved()) {
-      this.spawnAtLocation(stack.copy());
+      this.spawnAtLocation((ServerLevel) this.level(), stack.copy());
       this.discard();
     }
   }
@@ -331,9 +332,9 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
     CompoundTag tag = ValueIOHelper.read(input);
     super.readAdditionalSaveData(input);
     if (tag.getCompound(KEY_STACK).isPresent()) {
-      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompound(KEY_STACK)));
+      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompoundOrEmpty(KEY_STACK)));
     }
-    this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
+    this.entityData.set(WATER_INERTIA, tag.getFloatOr(KEY_WATER_INERTIA, 0.6f));
     if (tag.getList(KEY_TASKS).isPresent()) {
       this.tasks = Schedule.deserialize(tag.getListOrEmpty(KEY_TASKS));
     }

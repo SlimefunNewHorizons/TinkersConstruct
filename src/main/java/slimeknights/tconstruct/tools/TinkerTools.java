@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.component.BlocksAttacks;
 import static slimeknights.tconstruct.library.tools.definition.ModifiableArmorMaterial.ARMOR_TYPES;
 
 import net.minecraft.core.component.DataComponents;
@@ -287,8 +289,13 @@ public final class TinkerTools extends TinkerModule {
       DispenserBlock.registerBehavior(TinkerTools.shuriken.get(), ModifiableShurikenDispenserBehavior.INSTANCE);
       DispenserBlock.registerBehavior(TinkerTools.throwingAxe.get(), ModifiableShurikenDispenserBehavior.INSTANCE);
       ModifierUtil.registerShieldDisabler(entity -> {
-        if (entity instanceof Player player && player.isBlocking()) {
-          player.disableShield();
+        // shields are disabled through their blocking component since 1.21.5, vanilla's axe disables for 5 seconds
+        if (entity instanceof Player player && player.level() instanceof ServerLevel server) {
+          ItemStack blocking = player.getItemBlockingWith();
+          BlocksAttacks blocks = blocking == null ? null : blocking.get(DataComponents.BLOCKS_ATTACKS);
+          if (blocks != null) {
+            blocks.disable(server, player, 5, blocking);
+          }
         }
       }, EntityType.PLAYER);
     });

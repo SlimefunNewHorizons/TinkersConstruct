@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.world.worldgen.trees;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.serialization.Codec;
@@ -145,7 +146,7 @@ public class ExtraRootVariantPlacer extends MangroveRootPlacer {
     @SuppressWarnings("deprecation")
     @CanIgnoreReturnValue
     public Builder canGrowThroughTag(TagKey<Block> tag) {
-      return canGrowThrough(BuiltInRegistries.BLOCK.getOrCreateTag(tag));
+      return canGrowThrough(IngredientHelper.tagHolder(BuiltInRegistries.BLOCK, tag));
     }
 
     /** Builds the final placer */

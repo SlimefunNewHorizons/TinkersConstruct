@@ -5,7 +5,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -121,7 +120,7 @@ public class EnchantmentConvertingRecipe extends AbstractWorktableRecipe {
       }
       // call the method directly on item as the method on itemstack conisiders if its current enchanted
       // we want to match even unenchanted items, better error
-    } else if (!tool.getItem().isEnchantable(tool)) {
+    } else if (!tool.isEnchantable()) {
       return false;
     }
     return ModifierRecipe.checkMatch(inv, inputs);
@@ -269,7 +268,7 @@ public class EnchantmentConvertingRecipe extends AbstractWorktableRecipe {
       Set<ModifierId> modifiers = getMatchingModifiers().stream().map(ModifierEntry::getId).collect(Collectors.toSet());
       tools = ModifierManager.INSTANCE.getEquivalentEnchantments(modifiers::contains)
         .flatMap(enchantment -> IntStream.rangeClosed(1, enchantment.value().getMaxLevel())
-          .mapToObj(level -> EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment, level))))
+          .mapToObj(level -> EnchantmentHelper.createBook(new EnchantmentInstance(enchantment, level))))
         .toList();
     }
     return tools;

@@ -53,7 +53,7 @@ public enum BlockInteractFluidEffect implements FluidEffect<FluidEffectContext.B
         // but that won't happen, right? will need to consider another workaround in that case.
         stack.shrink(1);
         stack.setDamageValue(0);
-        level.playSound(null, context.getClickedPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, context.getClickedPos(), SoundEvents.ITEM_BREAK.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
       }
     }
   }
@@ -141,7 +141,7 @@ public enum BlockInteractFluidEffect implements FluidEffect<FluidEffectContext.B
       ItemStack original = heldItem.copy();
       if (player != null && (useBlock == TriState.TRUE || (useItem == TriState.DEFAULT && !skipBlock))) {
         var itemResult = state.useItemOn(heldItem, world, player, hand, hitResult);
-        InteractionResult result = itemResult.result();
+        InteractionResult result = itemResult;
         if (!result.consumesAction() && itemResult == net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND) {
           result = state.useWithoutItem(world, player, hitResult);
         }

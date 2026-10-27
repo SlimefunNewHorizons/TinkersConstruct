@@ -63,12 +63,7 @@ public class TankItem extends BlockTooltipItem {
   }
 
   @Override
-  public boolean hasCraftingRemainingItem(ItemStack stack) {
-    return isFilled(stack);
-  }
-
-  @Override
-  public ItemStack getCraftingRemainingItem(ItemStack stack) {
+  public ItemStack getCraftingRemainder(ItemStack stack) {
     return isFilled(stack) ? new ItemStack(this) : ItemStack.EMPTY;
   }
 
@@ -232,7 +227,7 @@ public class TankItem extends BlockTooltipItem {
       // copyWithCount), so mutate a private copy to avoid corrupting the shared instance
       CompoundTag nbt = ItemStackUtil.getTag(stack);
       nbt = nbt == null ? new CompoundTag() : nbt.copy();
-      nbt.put(NBTTags.TANK, tank.writeToNBT(RegistryAccessUtil.BUILTIN, new CompoundTag()));
+      nbt.put(NBTTags.TANK, ValueIOHelper.writeTank(tank, RegistryAccessUtil.BUILTIN, new CompoundTag()));
       ItemStackUtil.setTag(stack, nbt);
     }
     return stack;
@@ -265,7 +260,7 @@ public class TankItem extends BlockTooltipItem {
 
   /** Gets the serialized fluid stack from a tank tag, accepting both supported layouts. */
   private static CompoundTag unwrapFluidTag(CompoundTag nbt) {
-    return nbt.getCompound(FLUID_TAG).isPresent() ? nbt.getCompound(FLUID_TAG) : nbt;
+    return nbt.getCompound(FLUID_TAG).orElse(nbt);
   }
 
   /** Creates a stack with the given fluid and amount, not validated. */

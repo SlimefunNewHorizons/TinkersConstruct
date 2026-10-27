@@ -25,12 +25,12 @@ public abstract class ShurikenEntityBase extends ThrowableItemProjectile impleme
     super(type, worldIn);
   }
 
-  public ShurikenEntityBase(EntityType<? extends ShurikenEntityBase> type, double x, double y, double z, Level worldIn) {
-    super(type, x, y, z, worldIn);
+  public ShurikenEntityBase(EntityType<? extends ShurikenEntityBase> type, double x, double y, double z, Level worldIn, ItemStack stack) {
+    super(type, x, y, z, worldIn, stack);
   }
 
-  public ShurikenEntityBase(EntityType<? extends ShurikenEntityBase> type, LivingEntity livingEntityIn, Level worldIn) {
-    super(type, livingEntityIn, worldIn);
+  public ShurikenEntityBase(EntityType<? extends ShurikenEntityBase> type, LivingEntity livingEntityIn, Level worldIn, ItemStack stack) {
+    super(type, livingEntityIn, worldIn, stack);
   }
 
     /**

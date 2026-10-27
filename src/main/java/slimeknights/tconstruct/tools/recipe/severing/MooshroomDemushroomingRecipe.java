@@ -4,7 +4,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.cow.MushroomCow;
-import net.minecraft.world.entity.animal.cow.MushroomCow.MushroomType;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -34,7 +34,7 @@ public class MooshroomDemushroomingRecipe extends SeveringRecipe {
   public ItemStack getOutput(Entity entity) {
     if (entity instanceof MushroomCow mooshroom) {
       if (!mooshroom.isBaby()) {
-        return new ItemStack(mooshroom.getVariant() == MushroomType.BROWN ? Items.BROWN_MUSHROOM : Items.RED_MUSHROOM, 5);
+        return new ItemStack(mooshroom.getVariant() == MushroomCow.Variant.BROWN ? Items.BROWN_MUSHROOM : Items.RED_MUSHROOM, 5);
       }
     }
     return ItemStack.EMPTY;

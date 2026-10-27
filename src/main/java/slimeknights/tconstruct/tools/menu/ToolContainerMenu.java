@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.menu;
 
+import net.minecraft.server.level.ServerLevel;
 import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
@@ -275,7 +276,9 @@ public class ToolContainerMenu extends AbstractContainerMenu {
   public void slotsChanged(Container pContainer) {
     super.slotsChanged(pContainer);
     if (craftingContainer != null && resultContainer != null) {
-      CraftingMenu.slotChangedCraftingGrid(this, player.level(), player, craftingContainer, resultContainer, null);
+      if (player.level() instanceof ServerLevel server) {
+      CraftingMenu.slotChangedCraftingGrid(this, server, player, craftingContainer, resultContainer, null);
+    }
     }
   }
 

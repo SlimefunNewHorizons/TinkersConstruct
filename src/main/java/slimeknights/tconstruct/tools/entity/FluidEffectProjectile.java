@@ -325,9 +325,10 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
   public void recreateFromPacket(ClientboundAddEntityPacket packet) {
     // copied from llama spit
     super.recreateFromPacket(packet);
-    double x = packet.getXa();
-    double y = packet.getYa();
-    double z = packet.getZa();
+    Vec3 movement = packet.getMovement();
+    double x = movement.x;
+    double y = movement.y;
+    double z = movement.z;
     for(int i = 0; i < 7; i++) {
       double offset = 0.4D + 0.1D * i;
       this.level().addParticle(ParticleTypes.SPIT, this.getX(), this.getY(), this.getZ(), x * offset, y, z * offset);
@@ -361,12 +362,12 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     super.readAdditionalSaveData(input);
     this.power = nbt.getFloatOr(KEY_POWER, 0f);
     this.knockback = nbt.getFloatOr(KEY_KNOCKBACK, 0f);
-    this.entityData.set(WATER_INERTIA, nbt.getFloat(KEY_WATER_INERTIA));
+    this.entityData.set(WATER_INERTIA, nbt.getFloatOr(KEY_WATER_INERTIA, 0.6f));
     if (nbt.contains(KEY_CANNON)) {
       this.cannon = nbt.read(KEY_CANNON, BlockPos.CODEC).orElse(null);
     } else {
       this.cannon = null;
     }
-    setFluid(ValueIOHelper.parseFluid(this.registryAccess(), nbt.getCompound(KEY_FLUID)));
+    setFluid(ValueIOHelper.parseFluid(this.registryAccess(), nbt.getCompoundOrEmpty(KEY_FLUID)));
   }
 }

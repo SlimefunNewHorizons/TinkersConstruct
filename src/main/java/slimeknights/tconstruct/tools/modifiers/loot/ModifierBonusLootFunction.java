@@ -77,7 +77,7 @@ public class ModifierBonusLootFunction extends LootItemConditionalFunction {
 
   @Override
   protected ItemStack run(ItemStack stack, LootContext context) {
-    int level = ModifierUtil.getModifierLevel(context.getParam(LootContextParams.TOOL), modifier);
+    int level = ModifierUtil.getModifierLevel(context.getParameter(LootContextParams.TOOL), modifier);
     if (!includeBase) {
       level--;
     }

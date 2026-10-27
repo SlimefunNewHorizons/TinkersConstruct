@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools.modules.ranged.ammo;
 
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -99,10 +101,12 @@ public enum TippedModule implements ModifierModule, ProjectileLaunchModifierHook
         int oldHurtTime = target.invulnerableTime;
         target.invulnerableTime = 0;
         // not a problem if the ID is invalid, will just do nothing
-        for (MobEffectInstance instance : BuiltInRegistries.POTION.get(id).getEffects()) {
+        for (MobEffectInstance instance : BuiltInRegistries.POTION.getValue(id).getEffects()) {
           MobEffect effect = instance.getEffect().value();
           if (effect.isInstantenous()) {
-            effect.applyInstantenousEffect(projectile, projectile.getOwner(), target, instance.getAmplifier(), 1f / (divisor * 0.75f));
+            if (target.level() instanceof ServerLevel server) {
+              effect.applyInstantenousEffect(server, projectile, projectile.getOwner(), target, instance.getAmplifier(), 1f / (divisor * 0.75f));
+            }
           } else {
             target.addEffect(new MobEffectInstance(instance.getEffect(), Math.max(instance.mapDuration(i -> i / divisor), 1), instance.getAmplifier(), instance.isAmbient(), instance.isVisible()), source);
           }
@@ -123,7 +127,7 @@ public enum TippedModule implements ModifierModule, ProjectileLaunchModifierHook
     if (toolData.contains(key, Tag.TAG_STRING)) {
       Identifier id = Identifier.tryParse(toolData.getString(key));
       if (id != null) {
-        Holder<Potion> potion = BuiltInRegistries.POTION.getHolder(id).orElse(null);
+        Holder<Potion> potion = BuiltInRegistries.POTION.get(id).orElse(null);
         if (potion != null) {
           PotionUtils.addPotionTooltip(potion.value().getEffects(), tooltip, 1f / getDivisor(modifier));
         }
@@ -138,12 +142,12 @@ public enum TippedModule implements ModifierModule, ProjectileLaunchModifierHook
     if (toolData.contains(key, Tag.TAG_STRING)) {
       Identifier id = Identifier.tryParse(toolData.getString(key));
       if (id != null) {
-        Holder<Potion> potion = BuiltInRegistries.POTION.getHolder(id).orElse(null);
+        Holder<Potion> potion = BuiltInRegistries.POTION.get(id).orElse(null);
         if (potion != null) {
           // formats as Tipped <level> (<potion>)
           return Component.translatable(FORMAT,
             RomanNumeralHelper.getNumeral(entry.getLevel()),
-            Component.translatable(Potion.getName(Optional.of(potion), "item.minecraft.potion.effect."))
+            Component.translatable(PotionUtils.getName(new PotionContents(potion), "item.minecraft.potion.effect."))
           ).withStyle(style -> style.withColor(PotionUtils.getColor(potion)));
         }
       }

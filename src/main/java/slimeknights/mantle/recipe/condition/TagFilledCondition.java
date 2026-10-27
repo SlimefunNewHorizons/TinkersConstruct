@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.condition;
 
+import slimeknights.mantle.util.TagHelper;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -36,8 +37,7 @@ public class TagFilledCondition<T> extends TagCondition<T> implements LootItemCo
 
   @Override
   public boolean test(IContext context) {
-    // shortcut: the condition context only knows if a tag exists, not its size; an empty tag file counts as filled, check contents once NeoForge exposes them
-    return context.isTagLoaded(tag);
+    return !TagHelper.getTag(context, tag).isEmpty();
   }
 
   @Override

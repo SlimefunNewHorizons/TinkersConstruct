@@ -163,7 +163,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
       if (recipe == null || !recipe.matches(this.inventoryWrapper, this.level)) {
         RecipeHolder<ITinkerStationRecipe> holder = manager.getRecipeFor(TinkerRecipeTypes.TINKER_STATION.get(), this.inventoryWrapper, this.level).orElse(null);
         recipe = holder == null ? null : holder.value();
-        lastRecipeId = holder == null ? null : holder.id();
+        lastRecipeId = holder == null ? null : holder.id().identifier();
       }
 
       // if we have a recipe, fetch its result
