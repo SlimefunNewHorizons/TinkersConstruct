@@ -6,9 +6,7 @@
       "tag": "c:nuggets/chromium"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/chromium"
-  },
+  "ingredient": "#c:nuggets/chromium",
   "result": {
     "amount": 10,
     "tag": "c:molten_chromium"

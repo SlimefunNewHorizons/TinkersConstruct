@@ -2,13 +2,11 @@
   "type": "tconstruct:melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "allomancy:cadmium_flakes"
+      "type": "neoforge:registered",
+      "value": "allomancy:cadmium_flakes"
     }
   ],
-  "ingredient": {
-    "item": "allomancy:cadmium_flakes"
-  },
+  "ingredient": "allomancy:cadmium_flakes",
   "result": {
     "amount": 30,
     "tag": "c:molten_cadmium"

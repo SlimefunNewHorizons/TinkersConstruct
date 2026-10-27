@@ -43,7 +43,11 @@ public final class IngredientHelper {
 
   /** Checks if the ingredient is {@link #EMPTY} or otherwise matches nothing */
   public static boolean isEmpty(Ingredient ingredient) {
-    return ingredient.getCustomIngredient() == EmptyIngredient.INSTANCE || ingredient.isEmpty();
+    if (ingredient.getCustomIngredient() == EmptyIngredient.INSTANCE) {
+      return true;
+    }
+    // tags bind after recipes load since 1.21.2, an unbound tag is not known to be empty
+    return !ingredient.isCustom() && ingredient.getValues().isBound() && ingredient.isEmpty();
   }
 
   /** Gets the stacks to display for the ingredient, replacement for {@code Ingredient#getItems()} */

@@ -6,9 +6,7 @@
       "tag": "tconstruct:melting/silver/tools_costing_3"
     }
   ],
-  "ingredient": {
-    "tag": "tconstruct:melting/silver/tools_costing_3"
-  },
+  "ingredient": "#tconstruct:melting/silver/tools_costing_3",
   "result": {
     "amount": 270,
     "tag": "c:molten_silver",

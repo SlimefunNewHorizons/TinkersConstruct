@@ -6,9 +6,7 @@
       "tag": "c:ingots/lumium"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/lumium"
-  },
+  "ingredient": "#c:ingots/lumium",
   "result": {
     "amount": 90,
     "tag": "c:molten_lumium"

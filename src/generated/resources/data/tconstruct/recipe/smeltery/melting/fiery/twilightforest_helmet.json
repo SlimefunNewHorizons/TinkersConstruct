@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:fiery_helmet"
+      "type": "neoforge:registered",
+      "value": "twilightforest:fiery_helmet"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:fiery_helmet"
-  },
+  "ingredient": "twilightforest:fiery_helmet",
   "result": {
     "amount": 1250,
     "fluid": "tconstruct:fiery_liquid",

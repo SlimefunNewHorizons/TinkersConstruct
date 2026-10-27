@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "mekanism:bronze_shield"
+      "type": "neoforge:registered",
+      "value": "mekanism:bronze_shield"
     }
   ],
-  "ingredient": {
-    "item": "mekanism:bronze_shield"
-  },
+  "ingredient": "mekanism:bronze_shield",
   "result": {
     "amount": 540,
     "tag": "c:molten_bronze",

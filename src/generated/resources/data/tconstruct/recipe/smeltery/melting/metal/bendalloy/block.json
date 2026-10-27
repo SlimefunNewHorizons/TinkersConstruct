@@ -6,9 +6,7 @@
       "tag": "c:storage_blocks/bendalloy"
     }
   ],
-  "ingredient": {
-    "tag": "c:storage_blocks/bendalloy"
-  },
+  "ingredient": "#c:storage_blocks/bendalloy",
   "result": {
     "amount": 810,
     "tag": "c:molten_bendalloy"

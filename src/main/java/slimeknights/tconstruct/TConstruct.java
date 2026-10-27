@@ -81,7 +81,7 @@ public class TConstruct {
     bus.register(new TinkerAttributes());
     // world
     bus.register(new TinkerWorld());
-    bus.register(new TinkerStructures());
+    new TinkerStructures(); // no listeners left after datagen moved, still load its registries
     // tools
     bus.register(new TinkerTables());
     bus.register(new TinkerModifiers());

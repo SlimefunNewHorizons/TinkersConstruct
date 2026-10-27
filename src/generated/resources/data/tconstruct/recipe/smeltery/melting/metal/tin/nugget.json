@@ -6,9 +6,7 @@
       "tag": "c:nuggets/tin"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/tin"
-  },
+  "ingredient": "#c:nuggets/tin",
   "result": {
     "amount": 10,
     "tag": "c:molten_tin"

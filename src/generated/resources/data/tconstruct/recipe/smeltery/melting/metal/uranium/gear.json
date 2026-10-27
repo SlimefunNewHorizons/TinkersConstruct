@@ -6,9 +6,7 @@
       "tag": "c:gears/uranium"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/uranium"
-  },
+  "ingredient": "#c:gears/uranium",
   "result": {
     "amount": 360,
     "tag": "c:molten_uranium"

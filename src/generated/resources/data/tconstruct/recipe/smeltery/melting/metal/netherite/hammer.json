@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "tools_complement:netherite_hammer"
+      "type": "neoforge:registered",
+      "value": "tools_complement:netherite_hammer"
     }
   ],
-  "ingredient": {
-    "item": "tools_complement:netherite_hammer"
-  },
+  "ingredient": "tools_complement:netherite_hammer",
   "result": {
     "amount": 90,
     "tag": "c:molten_netherite",

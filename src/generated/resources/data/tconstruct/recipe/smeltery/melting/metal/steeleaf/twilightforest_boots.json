@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:steeleaf_boots"
+      "type": "neoforge:registered",
+      "value": "twilightforest:steeleaf_boots"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:steeleaf_boots"
-  },
+  "ingredient": "twilightforest:steeleaf_boots",
   "result": {
     "amount": 360,
     "fluid": "tconstruct:molten_steeleaf",

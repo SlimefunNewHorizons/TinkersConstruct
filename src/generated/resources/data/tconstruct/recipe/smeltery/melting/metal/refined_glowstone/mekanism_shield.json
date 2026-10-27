@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "mekanism:refined_glowstone_shield"
+      "type": "neoforge:registered",
+      "value": "mekanism:refined_glowstone_shield"
     }
   ],
-  "ingredient": {
-    "item": "mekanism:refined_glowstone_shield"
-  },
+  "ingredient": "mekanism:refined_glowstone_shield",
   "result": {
     "amount": 540,
     "tag": "c:molten_refined_glowstone",

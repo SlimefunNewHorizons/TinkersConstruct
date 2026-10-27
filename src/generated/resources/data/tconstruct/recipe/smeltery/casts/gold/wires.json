@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "c:wires"
-  },
+  "cast": "#c:wires",
   "cast_consumed": true,
   "neoforge:conditions": [
     {

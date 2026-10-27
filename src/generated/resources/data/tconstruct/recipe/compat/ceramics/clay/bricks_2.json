@@ -7,18 +7,10 @@
     }
   ],
   "ingredient": [
-    {
-      "item": "ceramics:dark_bricks_slab"
-    },
-    {
-      "item": "ceramics:dragon_bricks_slab"
-    },
-    {
-      "item": "ceramics:terracotta_faucet"
-    },
-    {
-      "item": "ceramics:terracotta_channel"
-    }
+    "ceramics:dark_bricks_slab",
+    "ceramics:dragon_bricks_slab",
+    "ceramics:terracotta_faucet",
+    "ceramics:terracotta_channel"
   ],
   "result": {
     "amount": 500,

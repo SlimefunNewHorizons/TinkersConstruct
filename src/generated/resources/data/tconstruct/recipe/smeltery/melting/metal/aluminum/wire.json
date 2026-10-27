@@ -6,9 +6,7 @@
       "tag": "c:wires/aluminum"
     }
   ],
-  "ingredient": {
-    "tag": "c:wires/aluminum"
-  },
+  "ingredient": "#c:wires/aluminum",
   "result": {
     "amount": 45,
     "tag": "c:molten_aluminum"

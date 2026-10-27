@@ -100,6 +100,7 @@ import slimeknights.tconstruct.world.worldgen.trees.SlimeTree;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -383,7 +384,10 @@ public final class TinkerWorld extends TinkerModule {
       };
       TinkerWorld.heads.forEach(head -> DispenserBlock.registerBehavior(head, dispenseArmor));
       // heads in firework stars
-      TinkerWorld.heads.forEach(head -> FireworkStarRecipe.SHAPE_BY_ITEM.put(head.asItem(), FireworkExplosion.Shape.CREEPER));
+      // the vanilla map is immutable since 1.21.2, the access transformer lets us swap in a copy
+      Map<Item, FireworkExplosion.Shape> shapes = new HashMap<>(FireworkStarRecipe.SHAPE_BY_ITEM);
+      TinkerWorld.heads.forEach(head -> shapes.put(head.asItem(), FireworkExplosion.Shape.CREEPER));
+      FireworkStarRecipe.SHAPE_BY_ITEM = Map.copyOf(shapes);
     });
 
     // flammability

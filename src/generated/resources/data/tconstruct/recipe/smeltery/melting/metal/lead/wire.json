@@ -6,9 +6,7 @@
       "tag": "c:wires/lead"
     }
   ],
-  "ingredient": {
-    "tag": "c:wires/lead"
-  },
+  "ingredient": "#c:wires/lead",
   "result": {
     "amount": 45,
     "tag": "c:molten_lead"

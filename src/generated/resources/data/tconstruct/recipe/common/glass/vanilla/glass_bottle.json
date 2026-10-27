@@ -8,9 +8,7 @@
     }
   ],
   "key": {
-    "#": {
-      "tag": "c:glass/colorless"
-    }
+    "#": "#c:glass/colorless"
   },
   "pattern": [
     "# #",

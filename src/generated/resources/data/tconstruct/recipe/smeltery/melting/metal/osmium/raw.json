@@ -13,9 +13,7 @@
       "tag": "c:raw_materials/osmium"
     }
   ],
-  "ingredient": {
-    "tag": "c:raw_materials/osmium"
-  },
+  "ingredient": "#c:raw_materials/osmium",
   "rate": "metal",
   "result": {
     "amount": 90,

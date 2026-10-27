@@ -1,16 +1,15 @@
 {
   "type": "tconstruct:molding_table",
-  "material": {
-    "tag": "tconstruct:casts/sand"
+  "material": "#tconstruct:casts/sand",
+  "pattern": {
+    "neoforge:ingredient_type": "neoforge:compound",
+    "children": [
+      {
+        "neoforge:ingredient_type": "tconstruct:material",
+        "item": "tconstruct:boots_plating"
+      },
+      "tconstruct:boots_plating_dummy"
+    ]
   },
-  "pattern": [
-    {
-      "type": "tconstruct:material",
-      "item": "tconstruct:boots_plating"
-    },
-    {
-      "item": "tconstruct:boots_plating_dummy"
-    }
-  ],
   "result": "tconstruct:boots_plating_sand_cast"
 }

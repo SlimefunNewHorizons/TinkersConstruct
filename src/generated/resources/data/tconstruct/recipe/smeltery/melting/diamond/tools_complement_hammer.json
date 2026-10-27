@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "tools_complement:diamond_hammer"
+      "type": "neoforge:registered",
+      "value": "tools_complement:diamond_hammer"
     }
   ],
-  "ingredient": {
-    "item": "tools_complement:diamond_hammer"
-  },
+  "ingredient": "tools_complement:diamond_hammer",
   "result": {
     "amount": 1300,
     "fluid": "tconstruct:molten_diamond",

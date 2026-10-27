@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:ironwood_shovel"
+      "type": "neoforge:registered",
+      "value": "twilightforest:ironwood_shovel"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:ironwood_shovel"
-  },
+  "ingredient": "twilightforest:ironwood_shovel",
   "result": {
     "amount": 90,
     "tag": "c:molten_iron",

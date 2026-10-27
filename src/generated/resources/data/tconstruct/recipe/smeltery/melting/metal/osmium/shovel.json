@@ -6,9 +6,7 @@
       "tag": "c:tools/shovels/osmium"
     }
   ],
-  "ingredient": {
-    "tag": "c:tools/shovels/osmium"
-  },
+  "ingredient": "#c:tools/shovels/osmium",
   "result": {
     "amount": 90,
     "tag": "c:molten_osmium",

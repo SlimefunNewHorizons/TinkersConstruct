@@ -1,5 +1,6 @@
 package slimeknights.mantle.data;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
@@ -33,7 +34,7 @@ public interface JsonCodec<T> extends Codec<T> {
   @Override
   default <O> DataResult<Pair<T,O>> decode(DynamicOps<O> ops, O input) {
     try {
-      return DataResult.success(Pair.of(deserialize(ops.convertTo(JsonOps.INSTANCE, input), ops), input));
+      return DataResult.success(Pair.of(RegistryOpsScope.with(ops, () -> deserialize(ops.convertTo(JsonOps.INSTANCE, input), ops)), input));
     } catch (JsonParseException e) {
       Mantle.logger.warn("Unable to decode {}", codecError(), e);
       return DataResult.error(e::getMessage);

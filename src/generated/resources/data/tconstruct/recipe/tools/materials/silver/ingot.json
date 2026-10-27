@@ -6,9 +6,7 @@
       "tag": "c:ingots/silver"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/silver"
-  },
+  "ingredient": "#c:ingots/silver",
   "material": "tconstruct:silver",
   "needed": 1,
   "value": 1

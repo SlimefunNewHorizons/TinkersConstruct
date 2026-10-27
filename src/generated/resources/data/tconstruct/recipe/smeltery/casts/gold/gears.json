@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "c:gears"
-  },
+  "cast": "#c:gears",
   "cast_consumed": true,
   "neoforge:conditions": [
     {

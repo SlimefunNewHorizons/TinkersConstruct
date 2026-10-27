@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.crafting;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import java.util.List;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -91,7 +92,7 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
       @Override
       public ShapedRetexturedRecipe deserialize(JsonElement element, DynamicOps<?> ops) {
         JsonObject json = element.getAsJsonObject();
-        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);
+        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(RegistryOpsScope.get(), json).getOrThrow(JsonParseException::new);
         JsonElement textureJson = json.get("texture");
         if (textureJson == null) throw new JsonSyntaxException("Missing texture ingredient");
         Ingredient texture;
@@ -101,9 +102,9 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
           JsonObject key = json.getAsJsonObject("key");
           JsonElement ingredientJson = key == null ? null : key.get(symbol);
           if (ingredientJson == null) throw new JsonSyntaxException("Texture symbol '" + symbol + "' is not defined in key");
-          texture = Ingredient.CODEC.parse(JsonOps.INSTANCE, ingredientJson).getOrThrow(JsonParseException::new);
+          texture = Ingredient.CODEC.parse(RegistryOpsScope.get(), ingredientJson).getOrThrow(JsonParseException::new);
         } else {
-          texture = Ingredient.CODEC.parse(JsonOps.INSTANCE, textureJson).getOrThrow(JsonParseException::new);
+          texture = Ingredient.CODEC.parse(RegistryOpsScope.get(), textureJson).getOrThrow(JsonParseException::new);
           Mantle.logger.warn("Using deprecated full ingredient format for mantle:crafting_shaped_retextured texture");
         }
         return new ShapedRetexturedRecipe(base, texture, json.has("match_all") && json.get("match_all").getAsBoolean());
@@ -111,8 +112,8 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
 
       @Override
       public JsonElement serialize(ShapedRetexturedRecipe recipe, DynamicOps<?> ops) {
-        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
-        json.add("texture", Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, recipe.texture).getOrThrow(JsonParseException::new));
+        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(RegistryOpsScope.get(), recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
+        json.add("texture", Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), recipe.texture).getOrThrow(JsonParseException::new));
         if (recipe.matchAll) json.addProperty("match_all", true);
         return json;
       }

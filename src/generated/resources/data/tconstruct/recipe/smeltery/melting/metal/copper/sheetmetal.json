@@ -6,9 +6,7 @@
       "tag": "c:sheetmetals/copper"
     }
   ],
-  "ingredient": {
-    "tag": "c:sheetmetals/copper"
-  },
+  "ingredient": "#c:sheetmetals/copper",
   "result": {
     "amount": 90,
     "tag": "c:molten_copper"

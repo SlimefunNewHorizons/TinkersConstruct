@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:fiery_boots"
+      "type": "neoforge:registered",
+      "value": "twilightforest:fiery_boots"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:fiery_boots"
-  },
+  "ingredient": "twilightforest:fiery_boots",
   "result": {
     "amount": 1000,
     "fluid": "tconstruct:fiery_liquid",

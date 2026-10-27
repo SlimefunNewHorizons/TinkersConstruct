@@ -6,9 +6,7 @@
       "tag": "c:storage_blocks/constantan"
     }
   ],
-  "ingredient": {
-    "tag": "c:storage_blocks/constantan"
-  },
+  "ingredient": "#c:storage_blocks/constantan",
   "result": {
     "amount": 810,
     "tag": "c:molten_constantan"

@@ -2,13 +2,11 @@
   "type": "tconstruct:melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "allomancy:aluminum_flakes"
+      "type": "neoforge:registered",
+      "value": "allomancy:aluminum_flakes"
     }
   ],
-  "ingredient": {
-    "item": "allomancy:aluminum_flakes"
-  },
+  "ingredient": "allomancy:aluminum_flakes",
   "result": {
     "amount": 30,
     "tag": "c:molten_aluminum"

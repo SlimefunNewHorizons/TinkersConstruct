@@ -1,5 +1,6 @@
 package slimeknights.mantle.data.loadable;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DynamicOps;
 import slimeknights.mantle.data.JsonCodec;
@@ -13,7 +14,7 @@ public record LoadableCodec<T>(Loadable<T> loadable, TypedMap context) implement
 
   @Override
   public T deserialize(JsonElement element, DynamicOps<?> ops) {
-    return loadable.convert(element, "codec", context);
+    return RegistryOpsScope.with(ops, () -> loadable.convert(element, "codec", context));
   }
 
   @Override

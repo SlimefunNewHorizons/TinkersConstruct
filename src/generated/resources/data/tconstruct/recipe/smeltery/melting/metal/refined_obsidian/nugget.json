@@ -6,9 +6,7 @@
       "tag": "c:nuggets/refined_obsidian"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/refined_obsidian"
-  },
+  "ingredient": "#c:nuggets/refined_obsidian",
   "result": {
     "amount": 10,
     "tag": "c:molten_refined_obsidian"

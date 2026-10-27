@@ -2,20 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "tconstruct:scorched_brick"
-    },
+    "B": "tconstruct:scorched_brick",
     "G": {
-      "type": "tconstruct:no_container",
+      "neoforge:ingredient_type": "tconstruct:no_container",
       "match": {
-        "type": "neoforge:compound",
+        "neoforge:ingredient_type": "neoforge:compound",
         "children": [
-        {
-          "item": "tconstruct:scorched_ingot_gauge"
-        },
-        {
-          "item": "tconstruct:scorched_fuel_gauge"
-        }
+          "tconstruct:scorched_ingot_gauge",
+          "tconstruct:scorched_fuel_gauge"
         ]
       }
     }

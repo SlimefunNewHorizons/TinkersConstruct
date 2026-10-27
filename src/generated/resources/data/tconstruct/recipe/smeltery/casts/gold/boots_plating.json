@@ -1,14 +1,15 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": [
-    {
-      "type": "tconstruct:material",
-      "item": "tconstruct:boots_plating"
-    },
-    {
-      "item": "tconstruct:boots_plating_dummy"
-    }
-  ],
+  "cast": {
+    "neoforge:ingredient_type": "neoforge:compound",
+    "children": [
+      {
+        "neoforge:ingredient_type": "tconstruct:material",
+        "item": "tconstruct:boots_plating"
+      },
+      "tconstruct:boots_plating_dummy"
+    ]
+  },
   "cast_consumed": true,
   "cooling_time": 57,
   "fluid": {

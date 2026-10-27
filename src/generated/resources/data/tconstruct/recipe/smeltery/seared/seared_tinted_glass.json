@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "G": {
-      "tag": "c:glass/tinted"
-    },
-    "b": {
-      "item": "tconstruct:seared_brick"
-    }
+    "G": "#c:glass/tinted",
+    "b": "tconstruct:seared_brick"
   },
   "pattern": [
     " b ",

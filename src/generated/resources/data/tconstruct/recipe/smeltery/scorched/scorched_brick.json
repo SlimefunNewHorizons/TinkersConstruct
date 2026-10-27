@@ -3,9 +3,7 @@
   "category": "misc",
   "cookingtime": 200,
   "experience": 0.3,
-  "ingredient": {
-    "item": "tconstruct:nether_grout"
-  },
+  "ingredient": "tconstruct:nether_grout",
   "result": {
     "id": "tconstruct:scorched_brick"
   }

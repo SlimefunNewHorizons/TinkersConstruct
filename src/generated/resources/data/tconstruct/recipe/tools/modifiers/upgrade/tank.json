@@ -3,9 +3,9 @@
   "allow_crystal": true,
   "inputs": [
     {
-      "type": "tconstruct:no_container",
-      "match": {
-        "tag": "tconstruct:tanks"
+      "ingredient": {
+        "neoforge:ingredient_type": "tconstruct:no_container",
+        "match": "#tconstruct:tanks"
       }
     }
   ],
@@ -13,12 +13,11 @@
   "slots": {
     "upgrades": 1
   },
-  "tools": [
-    {
-      "tag": "tconstruct:modifiable/held"
-    },
-    {
-      "tag": "tconstruct:modifiable/armor"
-    }
-  ]
+  "tools": {
+    "neoforge:ingredient_type": "neoforge:compound",
+    "children": [
+      "#tconstruct:modifiable/held",
+      "#tconstruct:modifiable/armor"
+    ]
+  }
 }

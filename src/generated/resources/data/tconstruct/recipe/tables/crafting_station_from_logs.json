@@ -2,12 +2,8 @@
   "type": "mantle:crafting_shaped_retextured",
   "category": "misc",
   "key": {
-    "p": {
-      "item": "tconstruct:pattern"
-    },
-    "w": {
-      "tag": "minecraft:logs"
-    }
+    "p": "tconstruct:pattern",
+    "w": "#minecraft:logs"
   },
   "match_all": false,
   "pattern": [

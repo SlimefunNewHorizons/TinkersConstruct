@@ -3,13 +3,13 @@
   "allow_crystal": false,
   "inputs": [
     {
-      "item": "tconstruct:greenheart_planks"
+      "ingredient": "tconstruct:greenheart_planks"
     },
     {
-      "item": "tconstruct:earth_slime_sapling"
+      "ingredient": "tconstruct:earth_slime_sapling"
     },
     {
-      "item": "tconstruct:greenheart_planks"
+      "ingredient": "tconstruct:greenheart_planks"
     }
   ],
   "result": {
@@ -17,21 +17,11 @@
     "value": "tconstruct:earthslime"
   },
   "tools": [
-    {
-      "item": "tconstruct:slime_helmet"
-    },
-    {
-      "item": "tconstruct:slimy_chestplate"
-    },
-    {
-      "item": "tconstruct:slime_leggings"
-    },
-    {
-      "item": "tconstruct:slime_boots"
-    },
-    {
-      "item": "tconstruct:slime_wings"
-    }
+    "tconstruct:slime_helmet",
+    "tconstruct:slimy_chestplate",
+    "tconstruct:slime_leggings",
+    "tconstruct:slime_boots",
+    "tconstruct:slime_wings"
   ],
   "variant_formatter": "tconstruct:material"
 }

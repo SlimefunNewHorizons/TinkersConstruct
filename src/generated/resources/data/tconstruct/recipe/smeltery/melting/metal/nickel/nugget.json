@@ -6,9 +6,7 @@
       "tag": "c:nuggets/nickel"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/nickel"
-  },
+  "ingredient": "#c:nuggets/nickel",
   "result": {
     "amount": 10,
     "tag": "c:molten_nickel"

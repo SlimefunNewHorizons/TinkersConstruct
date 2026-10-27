@@ -6,9 +6,7 @@
       "tag": "c:sheetmetals/gold"
     }
   ],
-  "ingredient": {
-    "tag": "c:sheetmetals/gold"
-  },
+  "ingredient": "#c:sheetmetals/gold",
   "result": {
     "amount": 90,
     "tag": "c:molten_gold"

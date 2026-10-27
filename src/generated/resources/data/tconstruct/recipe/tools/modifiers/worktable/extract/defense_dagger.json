@@ -2,10 +2,10 @@
   "type": "tconstruct:extract_modifier",
   "inputs": [
     {
-      "item": "tconstruct:earth_slime_crystal"
+      "ingredient": "tconstruct:earth_slime_crystal"
     },
     {
-      "item": "minecraft:wet_sponge"
+      "ingredient": "minecraft:wet_sponge"
     }
   ],
   "leftovers": [
@@ -27,7 +27,7 @@
   },
   "name": "defense",
   "tools": {
-    "amount_needed": 2,
-    "item": "tconstruct:dagger"
+    "ingredient": "tconstruct:dagger",
+    "amount_needed": 2
   }
 }

@@ -8,15 +8,9 @@
     }
   ],
   "key": {
-    "G": {
-      "tag": "c:glass/colorless"
-    },
-    "O": {
-      "item": "minecraft:obsidian"
-    },
-    "S": {
-      "item": "minecraft:nether_star"
-    }
+    "G": "#c:glass/colorless",
+    "O": "minecraft:obsidian",
+    "S": "minecraft:nether_star"
   },
   "pattern": [
     "GGG",

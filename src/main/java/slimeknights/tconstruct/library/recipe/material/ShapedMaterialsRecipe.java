@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -151,7 +152,7 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
       @Override
       public ShapedMaterialsRecipe deserialize(JsonElement element, DynamicOps<?> ops) {
         JsonObject json = element.getAsJsonObject();
-        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(JsonOps.INSTANCE, element).getOrThrow(JsonParseException::new);
+        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(RegistryOpsScope.get(), element).getOrThrow(JsonParseException::new);
         JsonElement partsElement = json.get("parts");
         if (partsElement == null) throw new JsonSyntaxException("Missing parts in shaped materials recipe");
         List<Ingredient> parts = new ArrayList<>();
@@ -162,18 +163,18 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
             String symbol = partPattern.substring(i, i + 1);
             JsonElement ingredient = key == null ? null : key.get(symbol);
             if (ingredient == null) throw new JsonSyntaxException("Parts references undefined symbol '" + symbol + "'");
-            parts.add(Ingredient.CODEC.parse(JsonOps.INSTANCE, ingredient).getOrThrow(JsonParseException::new));
+            parts.add(Ingredient.CODEC.parse(RegistryOpsScope.get(), ingredient).getOrThrow(JsonParseException::new));
           }
         } else {
-          parts.addAll(Ingredient.CODEC.listOf().parse(JsonOps.INSTANCE, partsElement).getOrThrow(JsonParseException::new));
+          parts.addAll(Ingredient.CODEC.listOf().parse(RegistryOpsScope.get(), partsElement).getOrThrow(JsonParseException::new));
         }
         return new ShapedMaterialsRecipe(base, List.copyOf(parts), MATERIAL_FIELD.get(json));
       }
 
       @Override
       public JsonElement serialize(ShapedMaterialsRecipe recipe, DynamicOps<?> ops) {
-        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
-        json.add("parts", Ingredient.CODEC.listOf().encodeStart(JsonOps.INSTANCE, recipe.parts).getOrThrow(JsonParseException::new));
+        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(RegistryOpsScope.get(), recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
+        json.add("parts", Ingredient.CODEC.listOf().encodeStart(RegistryOpsScope.get(), recipe.parts).getOrThrow(JsonParseException::new));
         MATERIAL_FIELD.serialize(recipe, json);
         return json;
       }

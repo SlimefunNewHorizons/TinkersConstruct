@@ -2,17 +2,11 @@
   "type": "mantle:crafting_shaped_retextured",
   "category": "misc",
   "key": {
-    "p": {
-      "item": "tconstruct:pattern"
-    },
+    "p": "tconstruct:pattern",
     "w": {
-      "type": "neoforge:difference",
-      "base": {
-        "tag": "tconstruct:tables"
-      },
-      "subtracted": {
-        "item": "tconstruct:crafting_station"
-      }
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#tconstruct:tables",
+      "subtracted": "tconstruct:crafting_station"
     }
   },
   "match_all": false,

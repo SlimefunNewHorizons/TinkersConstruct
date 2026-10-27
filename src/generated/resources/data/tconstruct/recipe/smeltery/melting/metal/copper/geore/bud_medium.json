@@ -13,9 +13,7 @@
       "tag": "c:geore_medium_buds/copper"
     }
   ],
-  "ingredient": {
-    "tag": "c:geore_medium_buds/copper"
-  },
+  "ingredient": "#c:geore_medium_buds/copper",
   "rate": "metal",
   "result": {
     "amount": 180,

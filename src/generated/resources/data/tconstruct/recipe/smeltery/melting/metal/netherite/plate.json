@@ -6,9 +6,7 @@
       "tag": "c:plates/netherite"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/netherite"
-  },
+  "ingredient": "#c:plates/netherite",
   "result": {
     "amount": 90,
     "tag": "c:molten_netherite"

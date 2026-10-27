@@ -6,9 +6,7 @@
       "tag": "c:armors/boots/copper"
     }
   ],
-  "ingredient": {
-    "tag": "c:armors/boots/copper"
-  },
+  "ingredient": "#c:armors/boots/copper",
   "result": {
     "amount": 360,
     "tag": "c:molten_copper",

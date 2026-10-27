@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "type": "tconstruct:material",
+      "neoforge:ingredient_type": "tconstruct:material",
       "item": "tconstruct:fake_storage_block",
       "material": {
         "type": "tconstruct:has_part",

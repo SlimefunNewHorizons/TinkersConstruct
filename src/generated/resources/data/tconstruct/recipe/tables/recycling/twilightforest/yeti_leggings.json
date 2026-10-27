@@ -6,16 +6,12 @@
       "modid": "twilightforest"
     }
   ],
-  "pattern": {
-    "item": "tconstruct:venom_bottle"
-  },
+  "pattern": "tconstruct:venom_bottle",
   "results": {
     "tconstruct:maille": {
       "count": 7,
       "item": "twilightforest:alpha_yeti_fur"
     }
   },
-  "tool": {
-    "item": "twilightforest:yeti_leggings"
-  }
+  "tool": "twilightforest:yeti_leggings"
 }

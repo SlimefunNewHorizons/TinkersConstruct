@@ -2,12 +2,8 @@
   "type": "mantle:crafting_shaped_retextured",
   "category": "redstone",
   "key": {
-    "#": {
-      "tag": "tconstruct:foundry_bricks"
-    },
-    "C": {
-      "tag": "c:ingots/gold"
-    }
+    "#": "#tconstruct:foundry_bricks",
+    "C": "#c:ingots/gold"
   },
   "match_all": false,
   "pattern": [

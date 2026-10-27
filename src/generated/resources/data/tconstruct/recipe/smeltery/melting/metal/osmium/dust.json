@@ -6,9 +6,7 @@
       "tag": "c:dusts/osmium"
     }
   ],
-  "ingredient": {
-    "tag": "c:dusts/osmium"
-  },
+  "ingredient": "#c:dusts/osmium",
   "result": {
     "amount": 90,
     "tag": "c:molten_osmium"

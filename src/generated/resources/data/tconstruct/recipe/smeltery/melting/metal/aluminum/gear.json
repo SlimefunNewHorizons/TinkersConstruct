@@ -6,9 +6,7 @@
       "tag": "c:gears/aluminum"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/aluminum"
-  },
+  "ingredient": "#c:gears/aluminum",
   "result": {
     "amount": 360,
     "tag": "c:molten_aluminum"

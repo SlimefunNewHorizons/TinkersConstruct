@@ -6,9 +6,7 @@
       "tag": "c:dusts/constantan"
     }
   ],
-  "ingredient": {
-    "tag": "c:dusts/constantan"
-  },
+  "ingredient": "#c:dusts/constantan",
   "result": {
     "amount": 90,
     "tag": "c:molten_constantan"

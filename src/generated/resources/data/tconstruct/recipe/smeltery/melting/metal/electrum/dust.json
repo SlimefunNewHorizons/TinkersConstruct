@@ -6,9 +6,7 @@
       "tag": "c:dusts/electrum"
     }
   ],
-  "ingredient": {
-    "tag": "c:dusts/electrum"
-  },
+  "ingredient": "#c:dusts/electrum",
   "result": {
     "amount": 90,
     "tag": "c:molten_electrum"

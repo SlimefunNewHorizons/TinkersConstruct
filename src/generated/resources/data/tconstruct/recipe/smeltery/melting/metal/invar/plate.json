@@ -6,9 +6,7 @@
       "tag": "c:plates/invar"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/invar"
-  },
+  "ingredient": "#c:plates/invar",
   "result": {
     "amount": 90,
     "tag": "c:molten_invar"

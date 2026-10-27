@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.ingredient;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.Holder;
@@ -121,7 +122,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
 
   /** Compatibility helper for older Mantle data generators. */
   public JsonElement toJson() {
-    return Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, toVanilla()).getOrThrow(JsonParseException::new);
+    return Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), toVanilla()).getOrThrow(JsonParseException::new);
   }
 
   private JsonObject serializeBody() {
@@ -134,7 +135,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
       json.add("fluid", element);
     }
     if (display != null) {
-      json.add("display", Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, display).getOrThrow(JsonParseException::new));
+      json.add("display", Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), display).getOrThrow(JsonParseException::new));
     }
     return json;
   }
@@ -147,7 +148,7 @@ public final class FluidContainerIngredient implements ICustomIngredient {
       fluidIngredient = FluidIngredient.LOADABLE.convert(json, "fluid");
     }
     Ingredient display = json.has("display")
-      ? Ingredient.CODEC.parse(JsonOps.INSTANCE, JsonHelper.getElement(json, "display")).getOrThrow(JsonParseException::new)
+      ? Ingredient.CODEC.parse(RegistryOpsScope.get(), JsonHelper.getElement(json, "display")).getOrThrow(JsonParseException::new)
       : null;
     return new FluidContainerIngredient(fluidIngredient, display);
   }

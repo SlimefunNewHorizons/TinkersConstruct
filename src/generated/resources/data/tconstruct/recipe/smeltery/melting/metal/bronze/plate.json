@@ -6,9 +6,7 @@
       "tag": "c:plates/bronze"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/bronze"
-  },
+  "ingredient": "#c:plates/bronze",
   "result": {
     "amount": 90,
     "tag": "c:molten_bronze"

@@ -10,8 +10,6 @@
       }
     }
   ],
-  "input": {
-    "item": "minecraft:splash_potion"
-  },
+  "input": "minecraft:splash_potion",
   "result": "minecraft:glass_bottle"
 }

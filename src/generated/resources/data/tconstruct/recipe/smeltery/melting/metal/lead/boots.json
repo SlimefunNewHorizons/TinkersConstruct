@@ -6,9 +6,7 @@
       "tag": "c:armors/boots/lead"
     }
   ],
-  "ingredient": {
-    "tag": "c:armors/boots/lead"
-  },
+  "ingredient": "#c:armors/boots/lead",
   "result": {
     "amount": 360,
     "tag": "c:molten_lead",

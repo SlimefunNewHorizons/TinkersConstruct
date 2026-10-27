@@ -11,10 +11,8 @@
     "tconstruct:repair_kit",
     "tconstruct:tool_handle"
   ],
-  "pattern": {
-    "item": "tconstruct:venom_bottle"
-  },
+  "pattern": "tconstruct:venom_bottle",
   "tools": {
-    "item": "tconstruct:minotaur_axe"
+    "ingredient": "tconstruct:minotaur_axe"
   }
 }

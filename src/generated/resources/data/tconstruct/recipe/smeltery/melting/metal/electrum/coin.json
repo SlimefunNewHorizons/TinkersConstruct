@@ -6,9 +6,7 @@
       "tag": "c:coins/electrum"
     }
   ],
-  "ingredient": {
-    "tag": "c:coins/electrum"
-  },
+  "ingredient": "#c:coins/electrum",
   "result": {
     "amount": 30,
     "tag": "c:molten_electrum"

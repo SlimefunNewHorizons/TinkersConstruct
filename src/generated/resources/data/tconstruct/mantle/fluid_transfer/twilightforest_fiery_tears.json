@@ -2,15 +2,13 @@
   "type": "mantle:empty_item",
   "conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:fiery_tears"
+      "type": "neoforge:registered",
+      "value": "twilightforest:fiery_tears"
     }
   ],
   "fluid": {
     "amount": 250,
     "fluid": "tconstruct:fiery_liquid"
   },
-  "input": {
-    "item": "twilightforest:fiery_tears"
-  }
+  "input": "twilightforest:fiery_tears"
 }

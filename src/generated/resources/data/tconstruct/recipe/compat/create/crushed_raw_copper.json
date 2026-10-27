@@ -1,16 +1,14 @@
 {
   "type": "tconstruct:melting",
-  "ingredient": {
-    "item": "create:crushed_raw_copper"
-  },
+  "ingredient": "create:crushed_raw_copper",
   "neoforge:conditions": [
     {
       "type": "neoforge:mod_loaded",
       "modid": "create"
     },
     {
-      "type": "neoforge:item_exists",
-      "item": "create:crushed_raw_copper"
+      "type": "neoforge:registered",
+      "value": "create:crushed_raw_copper"
     }
   ],
   "result": {

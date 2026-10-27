@@ -6,9 +6,7 @@
       "tag": "c:gears/electrum"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/electrum"
-  },
+  "ingredient": "#c:gears/electrum",
   "result": {
     "amount": 360,
     "tag": "c:molten_electrum"

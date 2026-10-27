@@ -1,16 +1,15 @@
 {
   "type": "tconstruct:molding_table",
-  "material": {
-    "tag": "tconstruct:casts/sand"
+  "material": "#tconstruct:casts/sand",
+  "pattern": {
+    "neoforge:ingredient_type": "neoforge:compound",
+    "children": [
+      {
+        "neoforge:ingredient_type": "tconstruct:material",
+        "item": "tconstruct:helmet_plating"
+      },
+      "tconstruct:helmet_plating_dummy"
+    ]
   },
-  "pattern": [
-    {
-      "type": "tconstruct:material",
-      "item": "tconstruct:helmet_plating"
-    },
-    {
-      "item": "tconstruct:helmet_plating_dummy"
-    }
-  ],
   "result": "tconstruct:helmet_plating_sand_cast"
 }

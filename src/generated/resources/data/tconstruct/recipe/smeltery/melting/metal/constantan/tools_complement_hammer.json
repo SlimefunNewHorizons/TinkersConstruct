@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "tools_complement:constantan_hammer"
+      "type": "neoforge:registered",
+      "value": "tools_complement:constantan_hammer"
     }
   ],
-  "ingredient": {
-    "item": "tools_complement:constantan_hammer"
-  },
+  "ingredient": "tools_complement:constantan_hammer",
   "result": {
     "amount": 1170,
     "tag": "c:molten_constantan",

@@ -6,9 +6,7 @@
       "tag": "c:plates/gold"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/gold"
-  },
+  "ingredient": "#c:plates/gold",
   "result": {
     "amount": 90,
     "tag": "c:molten_gold"

@@ -6,9 +6,7 @@
       "tag": "c:nuggets/cadmium"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/cadmium"
-  },
+  "ingredient": "#c:nuggets/cadmium",
   "result": {
     "amount": 10,
     "tag": "c:molten_cadmium"

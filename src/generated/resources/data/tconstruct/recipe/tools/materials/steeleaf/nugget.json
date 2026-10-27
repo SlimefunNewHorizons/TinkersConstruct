@@ -6,9 +6,7 @@
       "tag": "c:nuggets/steeleaf"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/steeleaf"
-  },
+  "ingredient": "#c:nuggets/steeleaf",
   "material": "tconstruct:steeleaf",
   "needed": 9,
   "value": 1

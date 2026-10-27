@@ -6,9 +6,7 @@
       "tag": "c:gears/steel"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/steel"
-  },
+  "ingredient": "#c:gears/steel",
   "result": {
     "amount": 360,
     "tag": "c:molten_steel"

@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "mekanism:osmium_shield"
+      "type": "neoforge:registered",
+      "value": "mekanism:osmium_shield"
     }
   ],
-  "ingredient": {
-    "item": "mekanism:osmium_shield"
-  },
+  "ingredient": "mekanism:osmium_shield",
   "result": {
     "amount": 540,
     "tag": "c:molten_osmium",

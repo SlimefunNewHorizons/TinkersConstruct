@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.util.ExtraCodecs;
@@ -161,12 +162,12 @@ public class StationSlotLayoutLoader extends SimpleJsonResourceReloadListener<Js
   private static class IngredientSerializer implements JsonSerializer<Ingredient>, JsonDeserializer<Ingredient> {
     @Override
     public Ingredient deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-      return Ingredient.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);
+      return Ingredient.CODEC.parse(RegistryOpsScope.get(), json).getOrThrow(JsonParseException::new);
     }
 
     @Override
     public JsonElement serialize(Ingredient ingredient, Type typeOfSrc, JsonSerializationContext context) {
-      return Ingredient.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, ingredient).getOrThrow(JsonParseException::new);
+      return Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), ingredient).getOrThrow(JsonParseException::new);
     }
   }
 }

@@ -6,9 +6,7 @@
       "modid": "ceramics"
     }
   ],
-  "ingredient": {
-    "item": "ceramics:unfired_clay_plate"
-  },
+  "ingredient": "ceramics:unfired_clay_plate",
   "result": {
     "amount": 250,
     "fluid": "tconstruct:molten_clay"

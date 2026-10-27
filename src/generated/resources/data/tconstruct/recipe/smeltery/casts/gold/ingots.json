@@ -1,20 +1,19 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": [
-    {
-      "type": "neoforge:difference",
-      "base": {
-        "tag": "c:ingots"
+  "cast": {
+    "neoforge:ingredient_type": "neoforge:compound",
+    "children": [
+      {
+        "neoforge:ingredient_type": "neoforge:difference",
+        "base": "#c:ingots",
+        "subtracted": "tconstruct:fake_ingot"
       },
-      "subtracted": {
+      {
+        "neoforge:ingredient_type": "tconstruct:material",
         "item": "tconstruct:fake_ingot"
       }
-    },
-    {
-      "type": "tconstruct:material",
-      "item": "tconstruct:fake_ingot"
-    }
-  ],
+    ]
+  },
   "cast_consumed": true,
   "cooling_time": 57,
   "fluid": {

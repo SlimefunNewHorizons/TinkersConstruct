@@ -1,13 +1,11 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "item": "minecraft:wheat"
-  },
+  "cast": "minecraft:wheat",
   "cast_consumed": true,
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "farmersdelight:wheat_dough"
+      "type": "neoforge:registered",
+      "value": "farmersdelight:wheat_dough"
     }
   ],
   "cooling_time": 50,

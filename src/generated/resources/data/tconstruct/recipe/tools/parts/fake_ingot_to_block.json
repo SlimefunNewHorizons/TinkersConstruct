@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "#": {
-      "type": "tconstruct:material",
+      "neoforge:ingredient_type": "tconstruct:material",
       "item": "tconstruct:fake_ingot",
       "material": {
         "type": "tconstruct:has_part",

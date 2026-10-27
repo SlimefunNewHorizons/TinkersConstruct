@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "c:ingots/iron"
-  },
+  "cast": "#c:ingots/iron",
   "cast_consumed": true,
   "neoforge:conditions": [
     {

@@ -23,6 +23,7 @@ import net.minecraft.core.Registry;
 import org.jetbrains.annotations.Contract;
 import slimeknights.mantle.Mantle;
 import slimeknights.mantle.data.loadable.Loadable;
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import slimeknights.mantle.data.loadable.common.BlockStateLoadable;
 import slimeknights.mantle.network.NetworkWrapper;
 import slimeknights.mantle.network.packet.ISimplePacket;
@@ -369,12 +370,13 @@ public class JsonHelper {
 
   /** Parses the given JSON element using the passed codec */
   public static <T> T parse(Codec<T> codec, JsonElement json) throws JsonParseException {
-    return codec.parse(new Dynamic<>(JsonOps.INSTANCE, json)).getOrThrow(JsonParseException::new);
+    // registry ops so codecs reading holders, like ingredients, work during reloads
+    return codec.parse(RegistryOpsScope.get(), json).getOrThrow(JsonParseException::new);
   }
 
   /** Serializes the given object using the passed codec */
   public static <T> JsonElement serialize(Codec<T> codec, T object) {
-    return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow(JsonParseException::new);
+    return codec.encodeStart(RegistryOpsScope.get(), object).getOrThrow(JsonParseException::new);
   }
 
 

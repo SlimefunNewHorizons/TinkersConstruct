@@ -6,9 +6,7 @@
       "tag": "c:coins/tin"
     }
   ],
-  "ingredient": {
-    "tag": "c:coins/tin"
-  },
+  "ingredient": "#c:coins/tin",
   "result": {
     "amount": 30,
     "tag": "c:molten_tin"

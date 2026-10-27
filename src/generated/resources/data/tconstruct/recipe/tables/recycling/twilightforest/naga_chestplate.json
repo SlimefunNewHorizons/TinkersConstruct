@@ -6,16 +6,12 @@
       "modid": "twilightforest"
     }
   ],
-  "pattern": {
-    "item": "tconstruct:venom_bottle"
-  },
+  "pattern": "tconstruct:venom_bottle",
   "results": {
     "tconstruct:scale": {
       "count": 8,
       "item": "twilightforest:naga_scale"
     }
   },
-  "tool": {
-    "item": "twilightforest:naga_chestplate"
-  }
+  "tool": "twilightforest:naga_chestplate"
 }

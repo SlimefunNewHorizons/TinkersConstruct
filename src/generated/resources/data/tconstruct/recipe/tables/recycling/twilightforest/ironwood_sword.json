@@ -6,9 +6,7 @@
       "modid": "twilightforest"
     }
   ],
-  "pattern": {
-    "item": "tconstruct:venom_bottle"
-  },
+  "pattern": "tconstruct:venom_bottle",
   "results": {
     "tconstruct:ingot": {
       "count": 2,
@@ -16,11 +14,7 @@
     }
   },
   "tool": [
-    {
-      "item": "twilightforest:ironwood_sword"
-    },
-    {
-      "item": "twilightforest:ironwood_hoe"
-    }
+    "twilightforest:ironwood_sword",
+    "twilightforest:ironwood_hoe"
   ]
 }

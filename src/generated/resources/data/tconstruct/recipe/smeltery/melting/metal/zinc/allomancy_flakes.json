@@ -2,13 +2,11 @@
   "type": "tconstruct:melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "allomancy:zinc_flakes"
+      "type": "neoforge:registered",
+      "value": "allomancy:zinc_flakes"
     }
   ],
-  "ingredient": {
-    "item": "allomancy:zinc_flakes"
-  },
+  "ingredient": "allomancy:zinc_flakes",
   "result": {
     "amount": 30,
     "tag": "c:molten_zinc"

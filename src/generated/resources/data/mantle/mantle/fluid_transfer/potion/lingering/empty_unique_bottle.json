@@ -7,9 +7,7 @@
       "tag": "c:bottles/lingering"
     }
   ],
-  "input": {
-    "item": "minecraft:lingering_potion"
-  },
+  "input": "minecraft:lingering_potion",
   "result": {
     "tag": "c:bottles/lingering"
   }

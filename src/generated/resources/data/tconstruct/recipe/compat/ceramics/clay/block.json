@@ -7,24 +7,12 @@
     }
   ],
   "ingredient": [
-    {
-      "item": "ceramics:dark_bricks"
-    },
-    {
-      "item": "ceramics:dark_bricks_stairs"
-    },
-    {
-      "item": "ceramics:dark_bricks_wall"
-    },
-    {
-      "item": "ceramics:dragon_bricks"
-    },
-    {
-      "item": "ceramics:dragon_bricks_stairs"
-    },
-    {
-      "item": "ceramics:dragon_bricks_wall"
-    }
+    "ceramics:dark_bricks",
+    "ceramics:dark_bricks_stairs",
+    "ceramics:dark_bricks_wall",
+    "ceramics:dragon_bricks",
+    "ceramics:dragon_bricks_stairs",
+    "ceramics:dragon_bricks_wall"
   ],
   "result": {
     "amount": 1000,

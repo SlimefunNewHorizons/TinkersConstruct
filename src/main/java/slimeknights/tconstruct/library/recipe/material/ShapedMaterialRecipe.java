@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -137,7 +138,7 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
       @Override
       public ShapedMaterialRecipe deserialize(JsonElement element, DynamicOps<?> ops) {
         JsonObject json = element.getAsJsonObject();
-        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(JsonOps.INSTANCE, element).getOrThrow(JsonParseException::new);
+        ShapedRecipe base = ShapedRecipe.Serializer.CODEC.codec().parse(RegistryOpsScope.get(), element).getOrThrow(JsonParseException::new);
         ShapedMaterialRecipe recipe = new ShapedMaterialRecipe(base, MATERIAL_FIELD.get(json));
         if (recipe.getMaterial() == null) throw new JsonSyntaxException("Invalid material ingredients for shaped material recipe");
         return recipe;
@@ -145,7 +146,7 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
 
       @Override
       public JsonElement serialize(ShapedMaterialRecipe recipe, DynamicOps<?> ops) {
-        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
+        JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(RegistryOpsScope.get(), recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
         MATERIAL_FIELD.serialize(recipe, json);
         return json;
       }

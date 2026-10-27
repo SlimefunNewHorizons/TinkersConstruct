@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:ironwood_helmet"
+      "type": "neoforge:registered",
+      "value": "twilightforest:ironwood_helmet"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:ironwood_helmet"
-  },
+  "ingredient": "twilightforest:ironwood_helmet",
   "result": {
     "amount": 450,
     "tag": "c:molten_iron",

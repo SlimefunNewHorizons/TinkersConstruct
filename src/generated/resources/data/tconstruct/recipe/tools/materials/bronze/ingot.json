@@ -6,9 +6,7 @@
       "tag": "c:ingots/bronze"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/bronze"
-  },
+  "ingredient": "#c:ingots/bronze",
   "material": "tconstruct:bronze",
   "needed": 1,
   "value": 1

@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "mekanism:refined_obsidian_shield"
+      "type": "neoforge:registered",
+      "value": "mekanism:refined_obsidian_shield"
     }
   ],
-  "ingredient": {
-    "item": "mekanism:refined_obsidian_shield"
-  },
+  "ingredient": "mekanism:refined_obsidian_shield",
   "result": {
     "amount": 540,
     "tag": "c:molten_refined_obsidian",

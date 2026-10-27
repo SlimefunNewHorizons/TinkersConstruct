@@ -2,13 +2,11 @@
   "type": "tconstruct:damagable_melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:steeleaf_chestplate"
+      "type": "neoforge:registered",
+      "value": "twilightforest:steeleaf_chestplate"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:steeleaf_chestplate"
-  },
+  "ingredient": "twilightforest:steeleaf_chestplate",
   "result": {
     "amount": 720,
     "fluid": "tconstruct:molten_steeleaf",

@@ -3,13 +3,13 @@
   "allow_crystal": false,
   "inputs": [
     {
-      "item": "minecraft:magma_block"
+      "ingredient": "minecraft:magma_block"
     },
     {
-      "item": "minecraft:magma_cream"
+      "ingredient": "minecraft:magma_cream"
     },
     {
-      "item": "minecraft:magma_block"
+      "ingredient": "minecraft:magma_block"
     }
   ],
   "result": {
@@ -17,21 +17,11 @@
     "value": "tconstruct:magma"
   },
   "tools": [
-    {
-      "item": "tconstruct:slime_helmet"
-    },
-    {
-      "item": "tconstruct:slimy_chestplate"
-    },
-    {
-      "item": "tconstruct:slime_leggings"
-    },
-    {
-      "item": "tconstruct:slime_boots"
-    },
-    {
-      "item": "tconstruct:slime_wings"
-    }
+    "tconstruct:slime_helmet",
+    "tconstruct:slimy_chestplate",
+    "tconstruct:slime_leggings",
+    "tconstruct:slime_boots",
+    "tconstruct:slime_wings"
   ],
   "variant_formatter": "tconstruct:material"
 }

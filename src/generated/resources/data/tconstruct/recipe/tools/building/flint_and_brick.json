@@ -2,18 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
+    "minecraft:flint",
     {
-      "item": "minecraft:flint"
-    },
-    {
-      "type": "neoforge:compound",
+      "neoforge:ingredient_type": "neoforge:compound",
       "children": [
-        {
-          "item": "tconstruct:seared_brick"
-        },
-        {
-          "item": "tconstruct:scorched_brick"
-        }
+        "tconstruct:seared_brick",
+        "tconstruct:scorched_brick"
       ]
     }
   ],

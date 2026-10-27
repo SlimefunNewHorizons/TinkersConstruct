@@ -6,9 +6,7 @@
       "tag": "c:dusts/steel"
     }
   ],
-  "ingredient": {
-    "tag": "c:dusts/steel"
-  },
+  "ingredient": "#c:dusts/steel",
   "result": {
     "amount": 90,
     "tag": "c:molten_steel"

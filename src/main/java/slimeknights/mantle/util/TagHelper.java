@@ -4,22 +4,17 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
-import net.neoforged.neoforge.common.conditions.ConditionContext;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Helpers to aid in reading and writing of NBT
@@ -27,29 +22,37 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TagHelper {
-  /** NeoForge only exposes whether a tag exists since 1.21.2, its context holds the pending tags */
-  private static final Field PENDING_TAGS = ObfuscationReflectionHelper.findField(ConditionContext.class, "pendingTags");
+  /** Tag contents being loaded, recorded by {@code MappedRegistryMixin} as tags are not bound while recipe conditions run */
+  private static final Map<ResourceKey<?>, Map<? extends TagKey<?>, ? extends List<? extends Holder<?>>>> PENDING_TAGS = new ConcurrentHashMap<>();
+
+  /** Records the tags a registry is about to bind, called by {@code MappedRegistryMixin} */
+  public static void setPendingTags(ResourceKey<?> registry, Map<? extends TagKey<?>, ? extends List<? extends Holder<?>>> tags) {
+    PENDING_TAGS.put(registry, tags);
+  }
+
+  /** Checks if the tag is being loaded, used to resolve tags before they bind */
+  public static boolean isPendingTag(TagKey<?> key) {
+    Map<? extends TagKey<?>, ? extends List<? extends Holder<?>>> pending = PENDING_TAGS.get(key.registry());
+    return pending != null && pending.containsKey(key);
+  }
 
   /**
    * Gets the contents of a tag while conditions are evaluated. NeoForge only exposes {@link IContext#isTagLoaded} since 1.21.2,
-   * but its context holds the pending tags, opened by the access transformer.
+   * as tags bind after recipes load, so the contents come from the tags being loaded.
    * @return  Tag contents, empty if the context cannot see tags
    */
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings("unchecked")
   public static <T> Collection<Holder<T>> getTag(IContext context, TagKey<T> key) {
-    if (context instanceof ConditionContext conditions) {
-      HolderLookup.RegistryLookup lookup;
-      try {
-        lookup = ((Map<ResourceKey<?>, HolderLookup.RegistryLookup<?>>) PENDING_TAGS.get(conditions)).get(key.registry());
-      } catch (IllegalAccessException e) {
-        throw new IllegalStateException("Failed to read pending tags", e);
-      }
-      if (lookup != null) {
-        return ((Optional<HolderSet.Named<T>>) lookup.get(key)).map(set -> (Collection<Holder<T>>) set.stream().toList()).orElse(List.of());
-      }
-    }
     if (context instanceof DataLoadedConditionContext loaded) {
       return loaded.getTag(key);
+    }
+    if (!context.isTagLoaded(key)) {
+      return List.of();
+    }
+    Map<? extends TagKey<?>, ? extends List<? extends Holder<?>>> pending = PENDING_TAGS.get(key.registry());
+    if (pending != null) {
+      List<? extends Holder<?>> contents = pending.get(key);
+      return contents == null ? List.of() : (Collection<Holder<T>>) contents;
     }
     return List.of();
   }

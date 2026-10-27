@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.core.Holder;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
@@ -202,7 +203,7 @@ public class MaterialIngredient extends NestedIngredient {
 
   private JsonObject serializeBody() {
     JsonObject result = new JsonObject();
-    result.add("match", Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, nested).getOrThrow(JsonParseException::new));
+    result.add("match", Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), nested).getOrThrow(JsonParseException::new));
     Serializer.MATERIAL_FIELD.serialize(this, result);
     return result;
   }
@@ -235,13 +236,16 @@ public class MaterialIngredient extends NestedIngredient {
       // if we have match, parse as a nested object. Without match, just parse the object as vanilla
       Ingredient ingredient;
       if (json.has("match")) {
-        ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, json.get("match")).getOrThrow(JsonParseException::new);
+        ingredient = Ingredient.CODEC.parse(RegistryOpsScope.get(), json.get("match")).getOrThrow(JsonParseException::new);
       } else {
         JsonObject copy = json.deepCopy();
         copy.remove("type");
+        copy.remove("neoforge:ingredient_type");
         copy.remove("material");
         copy.remove("tag");
-        ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, copy).getOrThrow(JsonParseException::new);
+        // inline items use the pre 1.21.2 object format, which vanilla ingredients no longer read
+        com.google.gson.JsonElement nested = copy.size() == 1 && copy.has("item") ? copy.get("item") : copy;
+        ingredient = Ingredient.CODEC.parse(RegistryOpsScope.get(), nested).getOrThrow(JsonParseException::new);
       }
       IJsonPredicate<MaterialVariantId> material = MATERIAL_FIELD.get(json);
       // deprecated tag field

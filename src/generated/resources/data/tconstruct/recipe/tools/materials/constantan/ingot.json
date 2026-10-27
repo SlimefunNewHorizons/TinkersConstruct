@@ -6,9 +6,7 @@
       "tag": "c:ingots/constantan"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/constantan"
-  },
+  "ingredient": "#c:ingots/constantan",
   "material": "tconstruct:constantan",
   "needed": 1,
   "value": 1

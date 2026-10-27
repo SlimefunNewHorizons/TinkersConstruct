@@ -6,9 +6,7 @@
       "tag": "c:ingots/aluminum"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/aluminum"
-  },
+  "ingredient": "#c:ingots/aluminum",
   "material": "tconstruct:aluminum",
   "needed": 1,
   "value": 1

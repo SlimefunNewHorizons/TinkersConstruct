@@ -6,9 +6,7 @@
       "tag": "c:plates/lumium"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/lumium"
-  },
+  "ingredient": "#c:plates/lumium",
   "result": {
     "amount": 90,
     "tag": "c:molten_lumium"

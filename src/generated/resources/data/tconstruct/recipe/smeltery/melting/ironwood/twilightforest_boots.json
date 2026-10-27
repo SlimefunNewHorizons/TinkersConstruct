@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:ironwood_boots"
+      "type": "neoforge:registered",
+      "value": "twilightforest:ironwood_boots"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:ironwood_boots"
-  },
+  "ingredient": "twilightforest:ironwood_boots",
   "result": {
     "amount": 360,
     "tag": "c:molten_iron",

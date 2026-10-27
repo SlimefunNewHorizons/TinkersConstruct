@@ -6,16 +6,12 @@
       "modid": "twilightforest"
     }
   ],
-  "pattern": {
-    "item": "tconstruct:venom_bottle"
-  },
+  "pattern": "tconstruct:venom_bottle",
   "results": {
     "tconstruct:ingot": {
       "count": 7,
       "tag": "c:ingots/ironwood"
     }
   },
-  "tool": {
-    "item": "twilightforest:ironwood_leggings"
-  }
+  "tool": "twilightforest:ironwood_leggings"
 }

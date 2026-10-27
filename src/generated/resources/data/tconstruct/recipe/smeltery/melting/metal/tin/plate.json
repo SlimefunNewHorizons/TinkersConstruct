@@ -6,9 +6,7 @@
       "tag": "c:plates/tin"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/tin"
-  },
+  "ingredient": "#c:plates/tin",
   "result": {
     "amount": 90,
     "tag": "c:molten_tin"

@@ -6,9 +6,7 @@
       "tag": "c:coins/steel"
     }
   ],
-  "ingredient": {
-    "tag": "c:coins/steel"
-  },
+  "ingredient": "#c:coins/steel",
   "result": {
     "amount": 30,
     "tag": "c:molten_steel"

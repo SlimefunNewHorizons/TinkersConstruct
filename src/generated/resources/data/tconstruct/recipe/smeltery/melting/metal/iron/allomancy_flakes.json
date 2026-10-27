@@ -2,13 +2,11 @@
   "type": "tconstruct:melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "allomancy:iron_flakes"
+      "type": "neoforge:registered",
+      "value": "allomancy:iron_flakes"
     }
   ],
-  "ingredient": {
-    "item": "allomancy:iron_flakes"
-  },
+  "ingredient": "allomancy:iron_flakes",
   "result": {
     "amount": 30,
     "tag": "c:molten_iron"

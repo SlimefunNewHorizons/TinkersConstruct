@@ -6,9 +6,7 @@
       "modid": "ceramics"
     }
   ],
-  "ingredient": {
-    "item": "ceramics:kiln"
-  },
+  "ingredient": "ceramics:kiln",
   "result": {
     "amount": 4250,
     "fluid": "tconstruct:molten_clay"

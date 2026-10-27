@@ -6,9 +6,7 @@
       "tag": "c:geore_blocks/iron"
     }
   ],
-  "ingredient": {
-    "tag": "c:geore_blocks/iron"
-  },
+  "ingredient": "#c:geore_blocks/iron",
   "result": {
     "amount": 360,
     "tag": "c:molten_iron"

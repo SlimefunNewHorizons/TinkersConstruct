@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -78,7 +79,7 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
       @Override
       public ShapelessMaterialsRecipe deserialize(JsonElement element, DynamicOps<?> ops) {
         JsonObject json = element.getAsJsonObject();
-        ShapelessRecipe vanilla = RecipeSerializer.SHAPELESS_RECIPE.codec().codec().parse(JsonOps.INSTANCE, element).getOrThrow(JsonParseException::new);
+        ShapelessRecipe vanilla = RecipeSerializer.SHAPELESS_RECIPE.codec().codec().parse(RegistryOpsScope.get(), element).getOrThrow(JsonParseException::new);
         int parts = json.has("parts") ? json.get("parts").getAsInt() : 0;
         if (parts < 1 || parts > vanilla.ingredients.size()) {
           throw new JsonSyntaxException("Parts must be between 1 and the number of ingredients");
@@ -88,7 +89,7 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
 
       @Override
       public JsonElement serialize(ShapelessMaterialsRecipe recipe, DynamicOps<?> ops) {
-        JsonObject json = RecipeSerializer.SHAPELESS_RECIPE.codec().codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
+        JsonObject json = RecipeSerializer.SHAPELESS_RECIPE.codec().codec().encodeStart(RegistryOpsScope.get(), recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
         json.addProperty("parts", recipe.partCount);
         MATERIAL_FIELD.serialize(recipe, json);
         return json;

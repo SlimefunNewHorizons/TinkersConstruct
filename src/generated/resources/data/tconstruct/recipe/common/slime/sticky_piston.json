@@ -8,12 +8,8 @@
     }
   ],
   "key": {
-    "#": {
-      "tag": "c:slimeballs"
-    },
-    "P": {
-      "item": "minecraft:piston"
-    }
+    "#": "#c:slimeballs",
+    "P": "minecraft:piston"
   },
   "pattern": [
     "#",

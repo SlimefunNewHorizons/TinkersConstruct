@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "c:dusts/glowstone"
-  },
+  "cast": "#c:dusts/glowstone",
   "cast_consumed": true,
   "neoforge:conditions": [
     {

@@ -6,9 +6,7 @@
       "tag": "c:gears/lumium"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/lumium"
-  },
+  "ingredient": "#c:gears/lumium",
   "result": {
     "amount": 360,
     "tag": "c:molten_lumium"

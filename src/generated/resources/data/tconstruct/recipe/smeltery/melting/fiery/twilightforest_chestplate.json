@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:fiery_chestplate"
+      "type": "neoforge:registered",
+      "value": "twilightforest:fiery_chestplate"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:fiery_chestplate"
-  },
+  "ingredient": "twilightforest:fiery_chestplate",
   "result": {
     "amount": 2000,
     "fluid": "tconstruct:fiery_liquid",

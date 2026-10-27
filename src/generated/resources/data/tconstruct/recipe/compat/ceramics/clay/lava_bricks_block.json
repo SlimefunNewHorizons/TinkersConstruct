@@ -13,15 +13,9 @@
     }
   ],
   "ingredient": [
-    {
-      "item": "ceramics:lava_bricks"
-    },
-    {
-      "item": "ceramics:lava_bricks_stairs"
-    },
-    {
-      "item": "ceramics:lava_bricks_wall"
-    }
+    "ceramics:lava_bricks",
+    "ceramics:lava_bricks_stairs",
+    "ceramics:lava_bricks_wall"
   ],
   "result": {
     "amount": 1000,

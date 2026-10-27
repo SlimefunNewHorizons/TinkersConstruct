@@ -6,7 +6,8 @@
   "mixins": [
     "BlockItemMixin",
     "BlockPropertiesMixin",
-    "ItemPropertiesMixin"
+    "ItemPropertiesMixin",
+    "MappedRegistryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

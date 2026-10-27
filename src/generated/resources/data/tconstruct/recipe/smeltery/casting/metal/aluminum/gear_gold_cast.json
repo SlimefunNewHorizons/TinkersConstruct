@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "tconstruct:casts/multi_use/gear"
-  },
+  "cast": "#tconstruct:casts/multi_use/gear",
   "neoforge:conditions": [
     {
       "type": "mantle:tag_filled",

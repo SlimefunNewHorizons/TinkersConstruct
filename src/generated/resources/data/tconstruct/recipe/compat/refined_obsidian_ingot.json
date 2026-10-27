@@ -1,8 +1,6 @@
 {
   "type": "tconstruct:casting_table",
-  "cast": {
-    "tag": "c:dusts/refined_obsidian"
-  },
+  "cast": "#c:dusts/refined_obsidian",
   "cast_consumed": true,
   "neoforge:conditions": [
     {

@@ -2,13 +2,11 @@
   "type": "tconstruct:melting",
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "allomancy:copper_flakes"
+      "type": "neoforge:registered",
+      "value": "allomancy:copper_flakes"
     }
   ],
-  "ingredient": {
-    "item": "allomancy:copper_flakes"
-  },
+  "ingredient": "allomancy:copper_flakes",
   "result": {
     "amount": 30,
     "tag": "c:molten_copper"

@@ -6,11 +6,7 @@
       "tag": "c:gears"
     }
   ],
-  "material": {
-    "tag": "tconstruct:casts/sand"
-  },
-  "pattern": {
-    "tag": "c:gears"
-  },
+  "material": "#tconstruct:casts/sand",
+  "pattern": "#c:gears",
   "result": "tconstruct:gear_sand_cast"
 }

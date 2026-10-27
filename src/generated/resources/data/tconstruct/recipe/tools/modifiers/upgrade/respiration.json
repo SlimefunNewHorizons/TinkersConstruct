@@ -3,19 +3,19 @@
   "allow_crystal": true,
   "inputs": [
     {
-      "tag": "minecraft:fishes"
+      "ingredient": "#minecraft:fishes"
     },
     {
-      "tag": "c:glass/colorless"
+      "ingredient": "#c:glass/colorless"
     },
     {
-      "tag": "minecraft:fishes"
+      "ingredient": "#minecraft:fishes"
     },
     {
-      "item": "minecraft:kelp"
+      "ingredient": "minecraft:kelp"
     },
     {
-      "item": "minecraft:kelp"
+      "ingredient": "minecraft:kelp"
     }
   ],
   "level": {
@@ -25,7 +25,5 @@
   "slots": {
     "upgrades": 1
   },
-  "tools": {
-    "tag": "tconstruct:modifiable/armor/helmets"
-  }
+  "tools": "#tconstruct:modifiable/armor/helmets"
 }

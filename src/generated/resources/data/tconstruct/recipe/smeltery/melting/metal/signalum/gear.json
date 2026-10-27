@@ -6,9 +6,7 @@
       "tag": "c:gears/signalum"
     }
   ],
-  "ingredient": {
-    "tag": "c:gears/signalum"
-  },
+  "ingredient": "#c:gears/signalum",
   "result": {
     "amount": 360,
     "tag": "c:molten_signalum"

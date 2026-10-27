@@ -6,9 +6,7 @@
       "tag": "tconstruct:melting/invar/tools_costing_3"
     }
   ],
-  "ingredient": {
-    "tag": "tconstruct:melting/invar/tools_costing_3"
-  },
+  "ingredient": "#tconstruct:melting/invar/tools_costing_3",
   "result": {
     "amount": 270,
     "tag": "c:molten_invar",

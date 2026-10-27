@@ -8,15 +8,9 @@
     }
   ],
   "key": {
-    "E": {
-      "item": "minecraft:ender_eye"
-    },
-    "G": {
-      "tag": "c:glass/colorless"
-    },
-    "T": {
-      "item": "minecraft:ghast_tear"
-    }
+    "E": "minecraft:ender_eye",
+    "G": "#c:glass/colorless",
+    "T": "minecraft:ghast_tear"
   },
   "pattern": [
     "GGG",

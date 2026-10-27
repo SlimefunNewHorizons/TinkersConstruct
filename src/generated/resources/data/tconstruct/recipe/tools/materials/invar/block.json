@@ -6,9 +6,7 @@
       "tag": "c:storage_blocks/invar"
     }
   ],
-  "ingredient": {
-    "tag": "c:storage_blocks/invar"
-  },
+  "ingredient": "#c:storage_blocks/invar",
   "leftover": {
     "count": 1,
     "tag": "c:ingots/invar"

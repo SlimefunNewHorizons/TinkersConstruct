@@ -1,16 +1,14 @@
 {
   "type": "tconstruct:melting",
-  "ingredient": {
-    "item": "create:crushed_raw_aluminum"
-  },
+  "ingredient": "create:crushed_raw_aluminum",
   "neoforge:conditions": [
     {
       "type": "neoforge:mod_loaded",
       "modid": "create"
     },
     {
-      "type": "neoforge:item_exists",
-      "item": "create:crushed_raw_aluminum"
+      "type": "neoforge:registered",
+      "value": "create:crushed_raw_aluminum"
     }
   ],
   "result": {

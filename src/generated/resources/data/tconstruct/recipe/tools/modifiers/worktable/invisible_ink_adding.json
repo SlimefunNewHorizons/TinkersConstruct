@@ -5,12 +5,12 @@
   "data_key": "tconstruct:invisible_modifiers",
   "inputs": [
     {
-      "type": "mantle:fluid_container",
-      "amount": 250,
-      "display": {
-        "item": "tconstruct:sky_slime_bottle"
-      },
-      "tag": "tconstruct:sky_slime"
+      "ingredient": {
+        "neoforge:ingredient_type": "mantle:fluid_container",
+        "amount": 250,
+        "display": "tconstruct:sky_slime_bottle",
+        "tag": "tconstruct:sky_slime"
+      }
     }
   ],
   "modifier_predicate": {
@@ -18,7 +18,5 @@
     "inverted_type": "tconstruct:tag",
     "tag": "tconstruct:invisible_ink_blacklist"
   },
-  "tools": {
-    "tag": "tconstruct:modifiable"
-  }
+  "tools": "#tconstruct:modifiable"
 }

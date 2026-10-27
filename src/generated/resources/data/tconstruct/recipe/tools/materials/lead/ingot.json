@@ -6,9 +6,7 @@
       "tag": "c:ingots/lead"
     }
   ],
-  "ingredient": {
-    "tag": "c:ingots/lead"
-  },
+  "ingredient": "#c:ingots/lead",
   "material": "tconstruct:lead",
   "needed": 1,
   "value": 1

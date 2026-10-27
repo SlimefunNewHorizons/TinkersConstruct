@@ -6,9 +6,7 @@
       "tag": "c:plates/uranium"
     }
   ],
-  "ingredient": {
-    "tag": "c:plates/uranium"
-  },
+  "ingredient": "#c:plates/uranium",
   "result": {
     "amount": 90,
     "tag": "c:molten_uranium"

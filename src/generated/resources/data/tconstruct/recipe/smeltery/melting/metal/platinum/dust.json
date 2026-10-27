@@ -6,9 +6,7 @@
       "tag": "c:dusts/platinum"
     }
   ],
-  "ingredient": {
-    "tag": "c:dusts/platinum"
-  },
+  "ingredient": "#c:dusts/platinum",
   "result": {
     "amount": 90,
     "tag": "c:molten_platinum"

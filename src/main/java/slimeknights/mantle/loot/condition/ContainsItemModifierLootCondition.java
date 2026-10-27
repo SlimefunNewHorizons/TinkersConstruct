@@ -1,5 +1,7 @@
 package slimeknights.mantle.loot.condition;
 
+import slimeknights.mantle.util.JsonHelper;
+import slimeknights.mantle.data.loadable.common.RegistryOpsScope;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,7 +48,7 @@ public class ContainsItemModifierLootCondition implements ILootModifierCondition
   public JsonObject serialize(JsonSerializationContext context) {
     JsonObject json = new JsonObject();
     json.addProperty("type", ID.toString());
-    json.add("ingredient", Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, ingredient).getOrThrow(JsonParseException::new));
+    json.add("ingredient", Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), ingredient).getOrThrow(JsonParseException::new));
     if (amountNeeded != 1) {
       json.addProperty("needed", amountNeeded);
     }
@@ -56,7 +58,7 @@ public class ContainsItemModifierLootCondition implements ILootModifierCondition
   /** Parses this from JSON */
   public static ContainsItemModifierLootCondition deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
     JsonObject json = GsonHelper.convertToJsonObject(element, "condition");
-    Ingredient ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(json, "ingredient")).getOrThrow(JsonParseException::new);
+    Ingredient ingredient = Ingredient.CODEC.parse(RegistryOpsScope.get(), JsonHelper.getElement(json, "ingredient")).getOrThrow(JsonParseException::new);
     int needed = GsonHelper.getAsInt(json, "needed", 1);
     return new ContainsItemModifierLootCondition(ingredient, needed);
   }

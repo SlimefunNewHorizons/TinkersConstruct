@@ -9,13 +9,11 @@
   ],
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "twilightforest:ironwood_chestplate"
+      "type": "neoforge:registered",
+      "value": "twilightforest:ironwood_chestplate"
     }
   ],
-  "ingredient": {
-    "item": "twilightforest:ironwood_chestplate"
-  },
+  "ingredient": "twilightforest:ironwood_chestplate",
   "result": {
     "amount": 720,
     "tag": "c:molten_iron",

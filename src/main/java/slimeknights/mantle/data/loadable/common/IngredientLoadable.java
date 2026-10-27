@@ -1,6 +1,7 @@
 package slimeknights.mantle.data.loadable.common;
 
 import slimeknights.mantle.recipe.helper.IngredientHelper;
+import slimeknights.mantle.recipe.ingredient.EmptyIngredient;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,9 +21,6 @@ public enum IngredientLoadable implements Loadable<Ingredient> {
   ALLOW_EMPTY,
   DISALLOW_EMPTY;
 
-  private static final RegistryOps<JsonElement> JSON_OPS = RegistryOps.create(
-    JsonOps.INSTANCE, RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
-
   @Override
   public Ingredient convert(JsonElement element, String key, TypedMap context) {
     // vanilla ingredients cannot be empty since 1.21.2, keep supporting the legacy empty array
@@ -32,8 +30,9 @@ public enum IngredientLoadable implements Loadable<Ingredient> {
       }
       return IngredientHelper.EMPTY;
     }
-    Ingredient ingredient = Ingredient.CODEC.parse(JSON_OPS, element).getOrThrow(JsonParseException::new);
-    if (this == DISALLOW_EMPTY && IngredientHelper.isEmpty(ingredient)) {
+    Ingredient ingredient = Ingredient.CODEC.parse(RegistryOpsScope.get(), element).getOrThrow(JsonParseException::new);
+    // only the empty marker can be checked here, tags are not bound while datapacks load
+    if (this == DISALLOW_EMPTY && ingredient.getCustomIngredient() == EmptyIngredient.INSTANCE) {
       throw new JsonSyntaxException("Ingredient cannot be empty");
     }
     return ingredient;
@@ -47,7 +46,7 @@ public enum IngredientLoadable implements Loadable<Ingredient> {
       }
       return new JsonArray();
     }
-    return Ingredient.CODEC.encodeStart(JSON_OPS, object).getOrThrow(JsonParseException::new);
+    return Ingredient.CODEC.encodeStart(RegistryOpsScope.get(), object).getOrThrow(JsonParseException::new);
   }
 
   @Override

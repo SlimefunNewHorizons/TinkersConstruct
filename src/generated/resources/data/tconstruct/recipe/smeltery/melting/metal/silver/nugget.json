@@ -6,9 +6,7 @@
       "tag": "c:nuggets/silver"
     }
   ],
-  "ingredient": {
-    "tag": "c:nuggets/silver"
-  },
+  "ingredient": "#c:nuggets/silver",
   "result": {
     "amount": 10,
     "tag": "c:molten_silver"

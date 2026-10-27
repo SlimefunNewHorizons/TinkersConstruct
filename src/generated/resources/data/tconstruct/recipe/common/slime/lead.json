@@ -8,12 +8,8 @@
     }
   ],
   "key": {
-    "O": {
-      "tag": "c:slimeballs"
-    },
-    "~": {
-      "item": "minecraft:string"
-    }
+    "O": "#c:slimeballs",
+    "~": "minecraft:string"
   },
   "pattern": [
     "~~ ",
