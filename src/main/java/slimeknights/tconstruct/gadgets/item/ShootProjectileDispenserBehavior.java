@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.gadgets.item;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ public class ShootProjectileDispenserBehavior extends DefaultDispenseItemBehavio
   @Override
   public ItemStack execute(BlockSource source, ItemStack stack) {
     Level level = source.level();
-    ThrowableItemProjectile projectile = entity.create(level);
+    ThrowableItemProjectile projectile = entity.create(level, EntitySpawnReason.DISPENSER);
     if (projectile != null) {
       Position position = DispenserBlock.getDispensePosition(source);
       Direction direction = source.state().getValue(DispenserBlock.FACING);

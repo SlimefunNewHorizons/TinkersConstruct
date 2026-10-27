@@ -21,7 +21,8 @@ public abstract class AbstractCastingRecipe implements ICastingRecipe {
   protected static final LoadableField<Boolean,AbstractCastingRecipe> SWITCH_SLOTS_FIELD = BooleanLoadable.INSTANCE.defaultField("switch_slots", false, false, AbstractCastingRecipe::switchSlots);
 
   @Getter @Nonnull
-  private final RecipeType<?> type;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getType bounds
+  private final RecipeType type;
   @Getter
   private final Identifier id;
   @Getter

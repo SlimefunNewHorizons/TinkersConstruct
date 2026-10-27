@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -238,7 +241,7 @@ public class CombatFishingHook extends FishingHook implements ProjectileWithKnoc
         AttributeInstance knockback = ToolAttackUtil.disableKnockback(targetLiving);
         // actually hurt the entity
         float oldHealth = targetLiving != null ? targetLiving.getHealth() : 0;
-        if (target.hurt(source, damage)) {
+        if (target.hurtOrSimulate(source, damage)) {
           if (!this.level().isClientSide() && owner instanceof LivingEntity ownerLiving) {
             if (targetLiving != null && this.level() instanceof ServerLevel server) {
               EnchantmentHelper.doPostAttackEffects(server, targetLiving, source);
@@ -398,16 +401,22 @@ public class CombatFishingHook extends FishingHook implements ProjectileWithKnoc
   private static final String TAG_MATERIAL = "material";
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.putString(TAG_MATERIAL, getMaterial().toString());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.putString(TAG_MATERIAL, getMaterial().toString());
+    } finally {
+      ValueIOHelper.write(output, tag);
+    }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     if (tag.contains(TAG_MATERIAL)) {
-      setMaterial(Objects.requireNonNullElse(MaterialVariantId.tryParse(tag.getString(TAG_MATERIAL)), IMaterial.UNKNOWN_ID));
+      setMaterial(Objects.requireNonNullElse(MaterialVariantId.tryParse(tag.getStringOr(TAG_MATERIAL, "")), IMaterial.UNKNOWN_ID));
     }
   }
 }

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.world.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,7 +14,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.core.Holder;
@@ -79,7 +82,7 @@ public abstract class ArmoredSlimeEntity extends Slime {
 
   @Nullable
   @Override
-  public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance difficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData) {
+  public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance difficulty, EntitySpawnReason pReason, @Nullable SpawnGroupData pSpawnData) {
     SpawnGroupData spawnData = super.finalizeSpawn(pLevel, difficulty, pReason, pSpawnData);
     this.setCanPickUpLoot(this.random.nextFloat() < (0.55f * difficulty.getSpecialMultiplier()));
 
@@ -195,14 +198,20 @@ public abstract class ArmoredSlimeEntity extends Slime {
   }
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.putBoolean(TAG_METAL, this.isMetal());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.putBoolean(TAG_METAL, this.isMetal());
+    } finally {
+      ValueIOHelper.write(output, tag);
+    }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     this.setMetal(tag.getBooleanOr(TAG_METAL, false));
   }
 }

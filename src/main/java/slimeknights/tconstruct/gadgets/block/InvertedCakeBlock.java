@@ -5,6 +5,7 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -26,8 +27,8 @@ public class InvertedCakeBlock extends FoodCakeBlock {
     Block.box(13, 8, 1, 15, 16, 15)
   };
 
-  public InvertedCakeBlock(Properties properties, FoodProperties food, EffectCombination combination) {
-    super(properties, food, combination);
+  public InvertedCakeBlock(Properties properties, FoodProperties food, Consumable consumable, EffectCombination combination) {
+    super(properties, food, consumable, combination);
   }
 
   @Override

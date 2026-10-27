@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import slimeknights.mantle.transfer.TransferHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -77,20 +81,26 @@ public class TankItem extends BlockTooltipItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    if (ItemStackUtil.getTag(stack) != null) {
-      FluidTank tank = getTank(stack, 1);
-      if (tank.getFluidAmount() > 0) {
-        FluidStack fluid = tank.getFluid();
-        tooltip.add(fluid.getHoverName().plainCopy().withStyle(ChatFormatting.GRAY));
-        if (flag.isAdvanced()) {
-          tooltip.add(Component.translatable(FLUID_ID, Loadables.FLUID.getKey(fluid.getFluid()).toString()).withStyle(ChatFormatting.DARK_GRAY));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        if (ItemStackUtil.getTag(stack) != null) {
+          FluidTank tank = getTank(stack, 1);
+          if (tank.getFluidAmount() > 0) {
+            FluidStack fluid = tank.getFluid();
+            tooltip.add(fluid.getHoverName().plainCopy().withStyle(ChatFormatting.GRAY));
+            if (flag.isAdvanced()) {
+              tooltip.add(Component.translatable(FLUID_ID, Loadables.FLUID.getKey(fluid.getFluid()).toString()).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            FluidTooltipHandler.appendMaterial(fluid, tooltip);
+          }
         }
-        FluidTooltipHandler.appendMaterial(fluid, tooltip);
-      }
-    }
-    else {
-      super.appendHoverText(stack, context, tooltip, flag);
+        else {
+          super.appendHoverText(stack, context, display, tooltip::add, flag);
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 
@@ -250,7 +260,7 @@ public class TankItem extends BlockTooltipItem {
    * format produced by early 1.21 builds.
    */
   public static FluidStack readFluid(HolderLookup.Provider registries, CompoundTag nbt) {
-    return FluidStack.parseOptional(registries, unwrapFluidTag(nbt));
+    return ValueIOHelper.parseFluid(registries, unwrapFluidTag(nbt));
   }
 
   /** Gets the serialized fluid stack from a tank tag, accepting both supported layouts. */

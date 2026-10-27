@@ -2,10 +2,9 @@ package slimeknights.tconstruct.tools.modifiers.effect;
 
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.neoforged.neoforge.common.EffectCure;
+import net.minecraft.world.effect.MobEffect;
 import slimeknights.tconstruct.common.TinkerEffect;
 
-import java.util.Set;
 
 /**
  * Effect that cannot be cured with milk
@@ -16,8 +15,9 @@ public class NoMilkEffect extends TinkerEffect {
     super(typeIn, color, show);
   }
 
-  @Override
-  public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
-    cures.clear();
+  /** Checks if milk (or anything clearing all effects) should keep the effect, replaces the effect cures NeoForge removed in 1.21.5 */
+  public static boolean isMilkImmune(MobEffectInstance instance) {
+    MobEffect effect = instance.getEffect().value();
+    return effect instanceof NoMilkEffect || effect instanceof HelmetChargingEffect;
   }
 }

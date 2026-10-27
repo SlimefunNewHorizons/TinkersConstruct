@@ -17,6 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -78,6 +80,29 @@ public final class ValueIOHelper {
   /** Parses a stack from NBT, returning empty if invalid. Replacement for the removed {@code ItemStack#parseOptional} */
   public static ItemStack parseStack(HolderLookup.Provider registries, Tag tag) {
     return ItemStack.OPTIONAL_CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE), tag).result().orElse(ItemStack.EMPTY);
+  }
+
+  /** Saves a non-empty fluid to NBT, replacement for the removed {@code FluidStack#save(Provider)} */
+  public static Tag saveFluid(FluidStack fluid, HolderLookup.Provider registries) {
+    return FluidStack.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), fluid).getOrThrow();
+  }
+
+  /** Parses a fluid from NBT, returning empty if invalid. Replacement for the removed {@code FluidStack#parseOptional} */
+  public static FluidStack parseFluid(HolderLookup.Provider registries, Tag tag) {
+    return FluidStack.OPTIONAL_CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE), tag).result().orElse(FluidStack.EMPTY);
+  }
+
+  /** Writes the tank fluid to NBT in the format of the removed {@code FluidTank#writeToNBT} */
+  public static CompoundTag writeTank(FluidTank tank, HolderLookup.Provider registries, CompoundTag nbt) {
+    if (!tank.isEmpty()) {
+      nbt.put("Fluid", saveFluid(tank.getFluid(), registries));
+    }
+    return nbt;
+  }
+
+  /** Reads the tank fluid from NBT in the format of the removed {@code FluidTank#readFromNBT} */
+  public static void readTank(FluidTank tank, HolderLookup.Provider registries, CompoundTag nbt) {
+    tank.setFluid(parseFluid(registries, nbt.getCompoundOrEmpty("Fluid")));
   }
 
   /** Saves a component to NBT, replacement for the removed {@code Component.Serializer#toJson} storage */

@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionResult;
 import lombok.Getter;
@@ -157,7 +159,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
         GeneralInteractionModifierHook.startDrawing(tool, player, 1);
         if (!ammo.isEmpty()) {
           if (storeDrawingItem) {
-            persistentData.put(KEY_DRAWBACK_AMMO, ammo.save(level.registryAccess()));
+            persistentData.put(KEY_DRAWBACK_AMMO, ValueIOHelper.saveStack(ammo, level.registryAccess()));
           } else {
             // boolean is enough to get detected by the property override, but won't bother the model
             persistentData.putBoolean(KEY_DRAWBACK_AMMO, true);
@@ -186,7 +188,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
         return InteractionResult.PASS;
       }
       // can block while filled with ammo
-      if (ModifierUtil.canPerformAction(tool, ItemAbilities.SHIELD_BLOCK)) {
+      if (ModifierUtil.canPerformAction(tool, TinkerItemAbilities.SHIELD_BLOCK)) {
         player.startUsingItem(hand);
         return InteractionResult.CONSUME.heldItemTransformedTo(bow);
       }
@@ -229,7 +231,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
 
       // the ammo has a stack size that may be greater than 1 (meaning multishot)
       // when creating the ammo stacks, we use split, so its getting smaller each time
-      ItemStack ammo = ItemStack.parseOptional(level.registryAccess(), heldAmmo);
+      ItemStack ammo = ValueIOHelper.parseStack(level.registryAccess(), heldAmmo);
       float startAngle = getAngleStart(ammo.getCount());
       int primaryIndex = ammo.getCount() / 2;
       for (int arrowIndex = 0; arrowIndex < ammo.getCount(); arrowIndex++) {
@@ -252,7 +254,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
           damage += 1;
 
           // vanilla arrows have a base damage of 2, cancel that out then add in our base damage to account for custom arrows with higher base damage
-          float baseArrowDamage = (float)(arrow.getBaseDamage() - 2 + tool.getStats().get(ToolStats.PROJECTILE_DAMAGE));
+          float baseArrowDamage = (float)(arrow.baseDamage - 2 + tool.getStats().get(ToolStats.PROJECTILE_DAMAGE));
           arrow.setBaseDamage(ConditionalStatModifierHook.getModifiedStat(tool, living, ToolStats.PROJECTILE_DAMAGE, baseArrowDamage));
 
           // fortunately, don't need to deal with vanilla infinity here, our infinity was dealt with during loading
@@ -322,7 +324,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
     if (!ammo.isEmpty()) {
       level.playSound(null, living.getX(), living.getY(), living.getZ(), SoundEvents.CROSSBOW_LOADING_END, SoundSource.PLAYERS, 1.0F, 1.0F / (level.getRandom().nextFloat() * 0.5F + 1.0F) + 0.2F);
       if (!level.isClientSide()) {
-        Tag saved = ammo.save(level.registryAccess());
+        Tag saved = ValueIOHelper.saveStack(ammo, level.registryAccess());
         if (saved instanceof CompoundTag ammoNBT) {
           persistentData.put(KEY_CROSSBOW_AMMO, ammoNBT);
           // ModDataNBT mutates the unsafe custom-data tag in place. Re-set the
@@ -353,7 +355,7 @@ public class ModifiableCrossbowItem extends ModifiableLauncherItem {
     // if we have ammo, render that in the tooltip
     CompoundTag heldAmmo = tool.getPersistentData().getCompound(KEY_CROSSBOW_AMMO);
     if (!heldAmmo.isEmpty() && player != null) {
-      ItemStack heldStack = ItemStack.parseOptional(player.level().registryAccess(), heldAmmo);
+      ItemStack heldStack = ValueIOHelper.parseStack(player.level().registryAccess(), heldAmmo);
       if (!heldStack.isEmpty()) {
         // basic info: item and count
         MutableComponent component = Component.translatable(PROJECTILE_KEY);

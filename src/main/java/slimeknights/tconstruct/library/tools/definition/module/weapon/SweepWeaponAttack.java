@@ -61,7 +61,7 @@ public record SweepWeaponAttack(LevelingValue range) implements MeleeHitToolHook
     // sweep code from Player#attack(Entity)
     // basically: no crit, no sprinting and has to stand on the ground for sweep. Also has to move regularly slowly
     LivingEntity attacker = context.getAttacker();
-    if (context.isFullyCharged() && !attacker.isSprinting() && !context.isCritical() && !context.isProjectile() && attacker.onGround() && (attacker.walkDist - attacker.walkDistO) < attacker.getSpeed()) {
+    if (context.isFullyCharged() && !attacker.isSprinting() && !context.isCritical() && !context.isProjectile() && attacker.onGround() && attacker.getKnownMovement().horizontalDistanceSqr() < Mth.square(attacker.getSpeed() * 2.5)) {
       // loop through all nearby entities
       double range = this.range.compute(tool.getVolatileData().getInt(IModifiable.EXPANDED));
       double rangeSq = (2 + range); // TODO: why do we add 2 here? should that not be defined in the datagen?
@@ -82,7 +82,7 @@ public record SweepWeaponAttack(LevelingValue range) implements MeleeHitToolHook
 
       level.playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, attacker.getSoundSource(), 1.0F, 1.0F);
       if (attacker instanceof Player player) {
-        player.sweepAttack();
+        slimeknights.mantle.util.CombatHelper.spawnSweepParticles(player);
       }
     }
   }

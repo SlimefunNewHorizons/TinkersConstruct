@@ -83,7 +83,7 @@ public final class ItemStackUtil {
   @Nullable
   public static CompoundTag getTagElement(ItemStack stack, String key) {
     CompoundTag tag = getTag(stack);
-    return tag != null && tag.getCompound(key).isPresent() ? tag.getCompound(key) : null;
+    return tag != null ? tag.getCompound(key).orElse(null) : null;
   }
 
   public static CompoundTag getOrCreateTagElement(ItemStack stack, String key) {
@@ -174,7 +174,7 @@ public final class ItemStackUtil {
       for (String key : new ArrayList<>(compound.keySet())) {
         Tag value = compound.get(key);
         if (value instanceof StringTag string) {
-          String text = string.getAsString();
+          String text = string.asString().orElse("");
           if (text.length() > MAX_NETWORK_STRING) {
             report(item, path + key, text.length());
             compound.putString(key, truncate(text));
@@ -189,7 +189,7 @@ public final class ItemStackUtil {
       for (int i = 0; i < list.size(); i++) {
         Tag element = list.get(i);
         if (element instanceof StringTag string) {
-          String text = string.getAsString();
+          String text = string.asString().orElse("");
           if (text.length() > MAX_NETWORK_STRING) {
             report(item, path + i, text.length());
             list.set(i, StringTag.valueOf(truncate(text)));

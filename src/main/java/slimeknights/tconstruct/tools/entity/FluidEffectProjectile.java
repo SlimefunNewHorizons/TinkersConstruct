@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import lombok.Setter;
@@ -211,7 +214,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     }
     // if the projectile moves above the world, delete it
     // only likely to happen for lighter than air fluids
-    if (getY() > level().getMaxBuildHeight() + 64) {
+    if (getY() > (level().getMaxY() + 1) + 64) {
       this.discard();
     }
   }
@@ -333,31 +336,37 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
   }
 
   @Override
-  protected void addAdditionalSaveData(CompoundTag nbt) {
-    super.addAdditionalSaveData(nbt);
-    nbt.putFloat(KEY_POWER, power);
-    nbt.putFloat(KEY_KNOCKBACK, knockback);
-    nbt.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
-    if (cannon != null) {
-      nbt.put(KEY_CANNON, NbtUtils.writeBlockPos(cannon));
-    }
-    FluidStack fluid = getFluid();
-    if (!fluid.isEmpty()) {
-      nbt.put(KEY_FLUID, fluid.save(this.registryAccess()));
+  protected void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag nbt = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      nbt.putFloat(KEY_POWER, power);
+      nbt.putFloat(KEY_KNOCKBACK, knockback);
+      nbt.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
+      if (cannon != null) {
+        nbt.store(KEY_CANNON, BlockPos.CODEC, cannon);
+      }
+      FluidStack fluid = getFluid();
+      if (!fluid.isEmpty()) {
+        nbt.put(KEY_FLUID, ValueIOHelper.saveFluid(fluid, this.registryAccess()));
+      }
+    } finally {
+      ValueIOHelper.write(output, nbt);
     }
   }
 
   @Override
-  protected void readAdditionalSaveData(CompoundTag nbt) {
-    super.readAdditionalSaveData(nbt);
+  protected void readAdditionalSaveData(ValueInput input) {
+    CompoundTag nbt = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     this.power = nbt.getFloatOr(KEY_POWER, 0f);
     this.knockback = nbt.getFloatOr(KEY_KNOCKBACK, 0f);
     this.entityData.set(WATER_INERTIA, nbt.getFloat(KEY_WATER_INERTIA));
     if (nbt.contains(KEY_CANNON)) {
-      this.cannon = NbtUtils.readBlockPos(nbt, KEY_CANNON).orElse(null);
+      this.cannon = nbt.read(KEY_CANNON, BlockPos.CODEC).orElse(null);
     } else {
       this.cannon = null;
     }
-    setFluid(FluidStack.parseOptional(this.registryAccess(), nbt.getCompound(KEY_FLUID)));
+    setFluid(ValueIOHelper.parseFluid(this.registryAccess(), nbt.getCompound(KEY_FLUID)));
   }
 }

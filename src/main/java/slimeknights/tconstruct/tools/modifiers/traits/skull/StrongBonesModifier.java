@@ -46,9 +46,8 @@ public class StrongBonesModifier extends NoLevelsModifier {
     ItemStack helmet = living.getItemBySlot(EquipmentSlot.HEAD);
     boolean didSomething = false;
     if (ModifierUtil.getModifierLevel(helmet, TinkerModifiers.strongBones.getId()) > 0) {
-      MobEffectInstance effect = new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration);
-      effect.getCures().clear();
-      effect.getCures().add(FluidMobEffect.cureForItem(helmet.getItem()));
+      MobEffectInstance effect = new MobEffectInstance(MobEffects.RESISTANCE, duration);
+      // shortcut: NeoForge removed per instance effect cures in 1.21.5, so milk cures this effect; restore once a cure API returns
       // on simulate, don't apply the effect, just ask if we can apply
       didSomething = action.execute() ? living.addEffect(effect) : living.canBeAffected(effect);
       // quick exit on simulate: no more information needed

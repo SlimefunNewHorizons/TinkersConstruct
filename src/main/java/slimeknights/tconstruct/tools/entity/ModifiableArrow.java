@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -258,21 +261,27 @@ public class ModifiableArrow extends AbstractArrow implements ToolProjectile, Re
   private static final String KEY_TASKS = "tasks";
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.put(KEY_STACK, this.stack.save(this.registryAccess()));
-    tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
-    tag.putBoolean(KEY_DEALT_DAMAGE, dealtDamage);
-    if (!this.tasks.isEmpty()) {
-      tag.put(KEY_TASKS, this.tasks.serialize());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.put(KEY_STACK, ValueIOHelper.saveStack(this.stack, this.registryAccess()));
+      tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
+      tag.putBoolean(KEY_DEALT_DAMAGE, dealtDamage);
+      if (!this.tasks.isEmpty()) {
+        tag.put(KEY_TASKS, this.tasks.serialize());
+      }
+    } finally {
+      ValueIOHelper.write(output, tag);
     }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     if (tag.getCompound(KEY_STACK).isPresent()) {
-      setStack(ItemStack.parseOptional(this.registryAccess(), tag.getCompound(KEY_STACK)));
+      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompound(KEY_STACK)));
     }
     this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
     this.dealtDamage = tag.getBooleanOr(KEY_DEALT_DAMAGE, false);

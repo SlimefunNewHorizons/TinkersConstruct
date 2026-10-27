@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.tools.part.block;
 
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +25,13 @@ public class ToolPartBlockItem extends MaterialBlockItem implements IToolPart {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    ToolPartItem.appendHoverText(this, stack, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        ToolPartItem.appendHoverText(this, stack, tooltip, flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 }

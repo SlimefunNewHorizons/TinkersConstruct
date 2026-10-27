@@ -259,7 +259,7 @@ public enum HarvestModule implements ModifierModule, BlockInteractionModifierHoo
         // animations
         if (player != null) {
           if (didHarvest) {
-            player.sweepAttack();
+            slimeknights.mantle.util.CombatHelper.spawnSweepParticles(player);
           }
           if (broken) {
             player.onEquippedItemBroken(stack.getItem(), source.getSlot(context.getHand()));

@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.smeltery.block.component;
 
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import slimeknights.mantle.block.IBlockTooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,8 +63,14 @@ public class SearedDuctBlock extends InventoryBlock implements IBlockTooltip {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag pFlag) {
-    RetexturedHelper.addTooltip(stack, tooltip);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag pFlag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        RetexturedHelper.addTooltip(stack, tooltip);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   @Override

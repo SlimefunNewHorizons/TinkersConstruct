@@ -162,10 +162,10 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
             String symbol = partPattern.substring(i, i + 1);
             JsonElement ingredient = key == null ? null : key.get(symbol);
             if (ingredient == null) throw new JsonSyntaxException("Parts references undefined symbol '" + symbol + "'");
-            parts.add(Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, ingredient).getOrThrow(JsonParseException::new));
+            parts.add(Ingredient.CODEC.parse(JsonOps.INSTANCE, ingredient).getOrThrow(JsonParseException::new));
           }
         } else {
-          parts.addAll(Ingredient.CODEC_NONEMPTY.listOf().parse(JsonOps.INSTANCE, partsElement).getOrThrow(JsonParseException::new));
+          parts.addAll(Ingredient.CODEC.listOf().parse(JsonOps.INSTANCE, partsElement).getOrThrow(JsonParseException::new));
         }
         return new ShapedMaterialsRecipe(base, List.copyOf(parts), MATERIAL_FIELD.get(json));
       }
@@ -173,7 +173,7 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
       @Override
       public JsonElement serialize(ShapedMaterialsRecipe recipe, DynamicOps<?> ops) {
         JsonObject json = ShapedRecipe.Serializer.CODEC.codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(JsonParseException::new).getAsJsonObject();
-        json.add("parts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(JsonOps.INSTANCE, recipe.parts).getOrThrow(JsonParseException::new));
+        json.add("parts", Ingredient.CODEC.listOf().encodeStart(JsonOps.INSTANCE, recipe.parts).getOrThrow(JsonParseException::new));
         MATERIAL_FIELD.serialize(recipe, json);
         return json;
       }

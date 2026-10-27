@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tables.item;
 
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -56,17 +59,23 @@ public class AnvilBlockItem extends MaterialBlockItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    // ditch the super call advanced tooltip material ID, we will handle it ourselves later
-    this.getBlock().appendHoverText(stack, context, tooltip, flag);
-    MaterialVariantId material = getMaterial(stack);
-    if (!IMaterial.UNKNOWN_ID.equals(material)) {
-      // put tool material in tooltip. Its technically below texture but the two should never coexist.
-      tooltip.add(this.matching.get().asItem().getName(stack).copy().withStyle(ChatFormatting.GRAY));
-      // add ID if advanced
-      if (flag.isAdvanced()) {
-        tooltip.add(Component.translatable(ToolPartItem.MATERIAL_KEY, material.toString()).withStyle(ChatFormatting.DARK_GRAY));
-      }
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        // ditch the super call advanced tooltip material ID, we will handle it ourselves later
+        this.getBlock().appendHoverText(stack, context, tooltip, flag);
+        MaterialVariantId material = getMaterial(stack);
+        if (!IMaterial.UNKNOWN_ID.equals(material)) {
+          // put tool material in tooltip. Its technically below texture but the two should never coexist.
+          tooltip.add(this.matching.get().asItem().getName(stack).copy().withStyle(ChatFormatting.GRAY));
+          // add ID if advanced
+          if (flag.isAdvanced()) {
+            tooltip.add(Component.translatable(ToolPartItem.MATERIAL_KEY, material.toString()).withStyle(ChatFormatting.DARK_GRAY));
+          }
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 

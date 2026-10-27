@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.plugin.jsonthings.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import dev.gigaherz.jsonthings.things.builders.ItemBuilder;
 import dev.gigaherz.jsonthings.things.items.FlexItem;
 import net.minecraft.ChatFormatting;
@@ -22,10 +25,16 @@ public class FlexPartCastItem extends FlexItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    int cost = MaterialCastingLookup.getItemCost(part.get());
-    if (cost > 0) {
-      tooltip.add(Component.translatable(PartCastItem.COST_KEY, cost).withStyle(ChatFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        int cost = MaterialCastingLookup.getItemCost(part.get());
+        if (cost > 0) {
+          tooltip.add(Component.translatable(PartCastItem.COST_KEY, cost).withStyle(ChatFormatting.GRAY));
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 }

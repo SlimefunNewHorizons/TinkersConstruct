@@ -21,11 +21,11 @@ public class EFLNEntity extends ThrowableItemProjectile implements IEntityWithCo
   }
 
   public EFLNEntity(Level level, LivingEntity thrower) {
-    super(TinkerGadgets.eflnEntity.get(), thrower, level);
+    super(TinkerGadgets.eflnEntity.get(), thrower, level, new ItemStack(TinkerGadgets.efln.get()));
   }
 
   public EFLNEntity(Level worldIn, double x, double y, double z) {
-    super(TinkerGadgets.eflnEntity.get(), x, y, z, worldIn);
+    super(TinkerGadgets.eflnEntity.get(), x, y, z, worldIn, new ItemStack(TinkerGadgets.efln.get()));
   }
 
   @Override

@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.tools.capability;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.Entity;
@@ -27,15 +31,18 @@ public final class EntityModifierCapability {
   /** Creates the registered attachment type. */
   public static AttachmentType<ModifierNBT> createAttachmentType() {
     return AttachmentType.builder(() -> ModifierNBT.EMPTY)
-      .serialize(new IAttachmentSerializer<ListTag,ModifierNBT>() {
+      .serialize(new IAttachmentSerializer<ModifierNBT>() {
         @Override
-        public ModifierNBT read(IAttachmentHolder holder, ListTag tag, HolderLookup.Provider provider) {
-          return ModifierNBT.readFromNBT(tag);
+        public ModifierNBT read(IAttachmentHolder holder, ValueInput input) {
+          return ModifierNBT.readFromNBT(ValueIOHelper.read(input).get("modifiers"));
         }
 
         @Override
-        public ListTag write(ModifierNBT attachment, HolderLookup.Provider provider) {
-          return attachment.serializeToNBT();
+        public boolean write(ModifierNBT attachment, ValueOutput output) {
+          CompoundTag tag = new CompoundTag();
+          tag.put("modifiers", attachment.serializeToNBT());
+          ValueIOHelper.write(output, tag);
+          return true;
         }
       })
       .build();

@@ -45,10 +45,15 @@ public final class PotionUtils {
     if (tag != null && tag.contains(TAG_POTION)) {
       Identifier id = Identifier.tryParse(tag.getStringOr(TAG_POTION, ""));
       if (id != null) {
-        return BuiltInRegistries.POTION.getHolder(id).orElse(null);
+        return BuiltInRegistries.POTION.get(id).orElse(null);
       }
     }
     return null;
+  }
+
+  /** Gets the translation key for the potion contents, replacement for the removed {@code Potion#getName(Optional, String)} */
+  public static String getName(PotionContents contents, String prefix) {
+    return prefix + contents.potion().map(potion -> potion.value().name()).orElse("empty");
   }
 
   /** Gets potion contents from an item, including legacy custom data during migration. */
@@ -69,11 +74,10 @@ public final class PotionUtils {
 
   private static PotionContents fromLegacyTag(@Nullable CompoundTag tag) {
     Holder<Potion> potion = getPotion(tag);
-    Optional<Integer> color = tag != null && tag.contains("CustomPotionColor")
-      ? Optional.of(tag.getInt("CustomPotionColor")) : Optional.empty();
+    Optional<Integer> color = tag != null ? tag.getInt("CustomPotionColor") : Optional.empty();
     return potion == null && color.isEmpty()
       ? PotionContents.EMPTY
-      : new PotionContents(Optional.ofNullable(potion), color, List.of());
+      : new PotionContents(Optional.ofNullable(potion), color, List.of(), Optional.empty());
   }
 
   /** Sets the vanilla 1.21 potion data component. */
@@ -103,7 +107,7 @@ public final class PotionUtils {
   public static List<MobEffectInstance> getMobEffects(ItemStack stack) {
     PotionContents contents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
     List<MobEffectInstance> effects = new ArrayList<>();
-    contents.forEachEffect(effects::add);
+    contents.forEachEffect(effects::add, 1.0f);
     return effects;
   }
 
@@ -125,19 +129,19 @@ public final class PotionUtils {
   }
 
   public static int getColor(Holder<Potion> potion) {
-    return PotionContents.getColor(potion);
+    return new PotionContents(potion).getColor();
   }
 
   public static int getColor(Potion potion) {
-    return PotionContents.getColor(potion.getEffects());
+    return getColor(potion.getEffects());
   }
 
   public static int getColor(Iterable<MobEffectInstance> effects) {
-    return PotionContents.getColor(effects);
+    return PotionContents.getColorOptional(effects).orElse(PotionContents.BASE_POTION_COLOR);
   }
 
   public static void addPotionTooltip(ItemStack stack, List<Component> tooltip, float durationFactor) {
-    getPotionContents(stack).addPotionTooltip(tooltip::add, durationFactor, 20.0f);
+    PotionContents.addPotionTooltip(getPotionContents(stack).getAllEffects(), tooltip::add, durationFactor, 20.0f);
   }
 
   public static void addPotionTooltip(Iterable<MobEffectInstance> effects, List<Component> tooltip, float durationFactor) {

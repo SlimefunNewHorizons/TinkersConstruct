@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.gadgets.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -57,13 +60,13 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
   @Override
   public InteractionResult interact(Player player, InteractionHand hand) {
     if (!player.isShiftKeyDown() && getFrameId() == FrameType.CLEAR.getId() && !getItem().isEmpty()) {
-      BlockPos behind = blockPosition().relative(direction.getOpposite());
+      BlockPos behind = blockPosition().relative(getDirection().getOpposite());
       Level level = level();
       BlockState state = level.getBlockState(behind);
       if (!state.isAir()) {
-        var hit = Util.createTraceResult(behind, direction, false);
+        var hit = Util.createTraceResult(behind, getDirection(), false);
         InteractionResult itemResult = state.useItemOn(player.getItemInHand(hand), level, player, hand, hit);
-        InteractionResult result = itemResult.result();
+        InteractionResult result = itemResult;
         if (!result.consumesAction() && itemResult == InteractionResult.TRY_WITH_EMPTY_HAND) {
           result = state.useWithoutItem(level, player, hit);
         }
@@ -234,18 +237,24 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
 
 
   @Override
-  public void addAdditionalSaveData(CompoundTag compound) {
-    super.addAdditionalSaveData(compound);
-    int frameId = this.getFrameId();
-    compound.putInt(TAG_VARIANT, frameId);
-    if (doesRotate(frameId)) {
-      compound.putInt(TAG_ROTATION_TIMER, rotationTimer);
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag compound = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      int frameId = this.getFrameId();
+      compound.putInt(TAG_VARIANT, frameId);
+      if (doesRotate(frameId)) {
+        compound.putInt(TAG_ROTATION_TIMER, rotationTimer);
+      }
+    } finally {
+      ValueIOHelper.write(output, compound);
     }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag compound) {
-    super.readAdditionalSaveData(compound);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag compound = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     setRotation(compound.getByteOr("ItemRotation", (byte) 0), false);
     int frameId = compound.getIntOr(TAG_VARIANT, 0);
     this.entityData.set(VARIANT, frameId);
@@ -258,7 +267,7 @@ public class FancyItemFrameEntity extends ItemFrame implements IEntityWithComple
   public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
     buffer.writeVarInt(this.getFrameId());
     buffer.writeBlockPos(this.pos);
-    buffer.writeVarInt(this.direction.get3DDataValue());
+    buffer.writeVarInt(this.getDirection().get3DDataValue());
   }
 
   @Override

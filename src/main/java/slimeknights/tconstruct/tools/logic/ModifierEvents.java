@@ -279,7 +279,7 @@ public class ModifierEvents {
   @SubscribeEvent
   static void onPotionStart(MobEffectEvent.Added event) {
     MobEffectInstance newEffect = event.getEffectInstance();
-    if (!newEffect.isInfiniteDuration() && !newEffect.getCures().isEmpty()) {
+    if (!newEffect.isInfiniteDuration() && !slimeknights.tconstruct.tools.modifiers.effect.NoMilkEffect.isMilkImmune(newEffect)) {
       // use two different stats based on whether the effect is beneficial
       boolean beneficial = newEffect.getEffect().value().isBeneficial();
       LivingEntity entity = event.getEntity();
@@ -425,7 +425,7 @@ public class ModifierEvents {
                 // damage the shield, and stop using it if needed
                 if (ToolDamageUtil.damageAnimated(tool, 3, target, target.getUsedItemHand())) {
                   target.stopUsingItem();
-                  entity.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + entity.level().random.nextFloat() * 0.4F);
+                  entity.playSound(SoundEvents.SHIELD_BREAK.value(), 0.8F, 0.8F + entity.level().random.nextFloat() * 0.4F);
                 }
               }
             }
@@ -456,7 +456,7 @@ public class ModifierEvents {
         }
 
         // calculate damage, bonus on crit
-        int damage = Mth.ceil(Mth.clamp(arrow.getDeltaMovement().length() * arrow.getBaseDamage(), 0.0D, Integer.MAX_VALUE));
+        int damage = Mth.ceil(Mth.clamp(arrow.getDeltaMovement().length() * arrow.baseDamage, 0.0D, Integer.MAX_VALUE));
         if (arrow.isCritArrow()) {
           damage = (int) Math.min(target.getRandom().nextInt(damage / 2 + 2) + (long) damage, Integer.MAX_VALUE);
         }
@@ -476,7 +476,7 @@ public class ModifierEvents {
         }
 
         // hurt the enderman
-        if (target.hurt(damageSource, (float) damage)) {
+        if (target.hurtOrSimulate(damageSource, (float) damage)) {
           if (!level.isClientSide() && arrow.getPierceLevel() <= 0) {
             target.setArrowCount(target.getArrowCount() + 1);
           }

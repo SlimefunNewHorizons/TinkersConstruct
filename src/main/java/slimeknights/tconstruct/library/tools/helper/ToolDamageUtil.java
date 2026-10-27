@@ -44,7 +44,7 @@ public class ToolDamageUtil {
    */
   public static boolean isBroken(ItemStack stack) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
-    return nbt != null && nbt.getBoolean(ToolStack.TAG_BROKEN);
+    return nbt != null && nbt.getBooleanOr(ToolStack.TAG_BROKEN, false);
   }
 
   /**
@@ -216,7 +216,7 @@ public class ToolDamageUtil {
    */
   public static boolean damageAnimated(IToolStackView tool, int amount, LivingEntity entity, InteractionHand hand, ModifierId cause) {
     if (damage(tool, amount, entity, entity.getItemInHand(hand), cause)) {
-      entity.onEquippedItemBroken(entity.getItemInHand(hand).getItem(), LivingEntity.getSlotForHand(hand));
+      entity.onEquippedItemBroken(entity.getItemInHand(hand).getItem(), hand.asEquipmentSlot());
       // TODO: why don't we fire EventHooks.onPlayerDestroyItem here?
       return true;
     }

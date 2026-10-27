@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.hook.interaction;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
@@ -120,7 +121,7 @@ public interface GeneralInteractionModifierHook {
 
   /** Causes cooldown on the given tool based on its draw speed stat. */
   static void addCooldown(IToolStackView tool, Player player, float speedFactor) {
-    player.getCooldowns().addCooldown(tool.getItem(), getDrawtime(tool, player, speedFactor));
+    player.getCooldowns().addCooldown(new ItemStack(tool.getItem()), getDrawtime(tool, player, speedFactor));
   }
 
   /**

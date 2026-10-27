@@ -276,7 +276,7 @@ public abstract class HeatingStructureMultiblock<T extends MantleBlockEntity & I
     public CompoundTag writeToTag(BlockPos controllerPos) {
       CompoundTag nbt = super.writeToTag(controllerPos);
       if (insideCheck != null) {
-        nbt.put(TAG_INSIDE_CHECK, NbtUtils.writeBlockPos(insideCheck.subtract(controllerPos)));
+        nbt.store(TAG_INSIDE_CHECK, BlockPos.CODEC, insideCheck.subtract(controllerPos));
       }
       return nbt;
     }

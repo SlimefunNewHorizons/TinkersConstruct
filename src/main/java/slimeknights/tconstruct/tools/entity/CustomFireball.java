@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.registries.Registries;
@@ -132,7 +135,7 @@ public class CustomFireball extends Fireball implements ProjectileWithPower {
     // despawn if going too high or low, otherwise projectile may live forever going into the sky
     double y = getY();
     Level level = level();
-    if (y < (level.getMinBuildHeight() - 64) || y > level.getMaxBuildHeight() + 64) {
+    if (y < (level.getMinY() - 64) || y > (level.getMaxY() + 1) + 64) {
       onBelowWorld();
     }
   }
@@ -145,12 +148,17 @@ public class CustomFireball extends Fireball implements ProjectileWithPower {
   private static final String TAG_ENDERFERENCE_TYPE = "enderference_type";
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.putFloat(TAG_POWER, power);
-    tag.putFloat(TAG_MULTIPLIER, damageMultiplier);
-    tag.putString(TAG_DAMAGE_TYPE, damageType.identifier().toString());
-    tag.putString(TAG_ENDERFERENCE_TYPE, enderferenceType.identifier().toString());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.putFloat(TAG_POWER, power);
+      tag.putFloat(TAG_MULTIPLIER, damageMultiplier);
+      tag.putString(TAG_DAMAGE_TYPE, damageType.identifier().toString());
+      tag.putString(TAG_ENDERFERENCE_TYPE, enderferenceType.identifier().toString());
+    } finally {
+      ValueIOHelper.write(output, tag);
+    }
   }
 
   /** Parses the given damage type */
@@ -165,8 +173,9 @@ public class CustomFireball extends Fireball implements ProjectileWithPower {
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     power = tag.getFloatOr(TAG_POWER, 0f);
     damageMultiplier = tag.getFloatOr(TAG_MULTIPLIER, 0f);
     damageType = parseDamageType(tag.getStringOr(TAG_DAMAGE_TYPE, ""), DamageTypes.FIREBALL);

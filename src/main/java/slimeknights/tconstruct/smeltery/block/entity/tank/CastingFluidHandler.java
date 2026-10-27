@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.tank;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -176,7 +177,7 @@ public class CastingFluidHandler implements IFluidHandler {
   public void readFromTag(CompoundTag nbt, HolderLookup.Provider registries) {
     capacity = nbt.getIntOr(TAG_CAPACITY, 0);
     if (nbt.getCompound(TAG_FLUID).isPresent()) {
-      setFluid(FluidStack.parseOptional(registries, nbt.getCompound(TAG_FLUID)));
+      setFluid(ValueIOHelper.parseFluid(registries, nbt.getCompound(TAG_FLUID)));
     }
     if (nbt.getString(TAG_FILTER).isPresent()) {
       Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(nbt.getStringOr(TAG_FILTER, "")));
@@ -191,7 +192,7 @@ public class CastingFluidHandler implements IFluidHandler {
   public CompoundTag writeToTag(CompoundTag nbt, HolderLookup.Provider registries) {
     nbt.putInt(TAG_CAPACITY, capacity);
     if (!fluid.isEmpty()) {
-      nbt.put(TAG_FLUID, fluid.save(registries));
+      nbt.put(TAG_FLUID, ValueIOHelper.saveFluid(fluid, registries));
     }
     if (filter != Fluids.EMPTY) {
       nbt.putString(TAG_FILTER, BuiltInRegistries.FLUID.getKey(filter).toString());

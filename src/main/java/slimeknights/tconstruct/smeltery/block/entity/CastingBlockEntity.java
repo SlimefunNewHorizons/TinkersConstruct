@@ -148,7 +148,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
       if (recipe != null) {
         // if hand is empty, pick up the result (hand empty will only match recipes with no mold item)
         ItemStack result = recipe.assemble(moldingInventory, level.registryAccess());
-        result.onCraftedBy(level, player, 1);
+        result.onCraftedBy(player, 1);
         if (held.isEmpty()) {
           setItem(INPUT, ItemStack.EMPTY);
           player.setItemInHand(hand, result);
@@ -173,7 +173,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
         if (recipe != null) {
           ItemStack result = recipe.assemble(moldingInventory, level.registryAccess());
           setItem(INPUT, ItemStack.EMPTY);
-          ItemHandlerHelper.giveItemToPlayer(player, result, player.getInventory().selected);
+          ItemHandlerHelper.giveItemToPlayer(player, result, player.getInventory().getSelectedSlot());
           return;
         }
       }
@@ -198,7 +198,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
       // can have ItemStacks with stacksize > 1 as output
       // we therefore spill the whole contents on extraction.
       ItemStack stack = removeItemNoUpdate(slot);
-      ItemHandlerHelper.giveItemToPlayer(player, stack, player.getInventory().selected);
+      ItemHandlerHelper.giveItemToPlayer(player, stack, player.getInventory().getSelectedSlot());
 
       // send a block update for the comparator, needs to be done after the stack is removed
       if (slot == OUTPUT) {

@@ -87,7 +87,7 @@ public record IdParser<T extends Identifier>(Function<String, T> constructor, St
    */
   public static Identifier read(String defaultDomain, StringReader reader) throws CommandSyntaxException {
     int start = reader.getCursor();
-    while(reader.canRead() && Identifier.isAllowedInResourceLocation(reader.peek())) {
+    while(reader.canRead() && Identifier.isAllowedInIdentifier(reader.peek())) {
       reader.skip();
     }
     String string = reader.getString().substring(start, reader.getCursor());

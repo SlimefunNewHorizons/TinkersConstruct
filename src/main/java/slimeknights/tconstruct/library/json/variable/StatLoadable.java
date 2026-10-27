@@ -157,7 +157,7 @@ public enum StatLoadable implements Loadable<Stat<?>> {
     if (registry == BuiltInRegistries.BLOCK) {
       name = ((Block) value).getName();
     } else if (registry == BuiltInRegistries.ITEM) {
-      name = ((Item) value).getDescription();
+      name = ((Item) value).getName();
     } else if (registry == BuiltInRegistries.ENTITY_TYPE) {
       name = ((EntityType<?>) value).getDescription();
     // other useful registries - some mod might be using them

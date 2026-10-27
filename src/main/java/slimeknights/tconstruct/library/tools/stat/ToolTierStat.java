@@ -62,7 +62,7 @@ public class ToolTierStat implements IToolStat<ToolMaterial> {
   @Override
   public ToolMaterial read(Tag tag) {
     if (tag.getId() == Tag.TAG_STRING) {
-      Identifier tierId = Identifier.tryParse(tag.getAsString());
+      Identifier tierId = Identifier.tryParse(tag.asString().orElse(""));
       if (tierId != null) {
         return HarvestTiers.byId(tierId);
       }

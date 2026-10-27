@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
-import net.neoforged.neoforge.common.EffectCure;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.modifiers.hook.interaction.GeneralInteractionModifierHook;
 import slimeknights.tconstruct.library.tools.helper.ModifierUtil;
@@ -27,10 +26,6 @@ import java.util.function.Consumer;
 public class HelmetChargingEffect extends MobEffect {
   public HelmetChargingEffect() {
     super(MobEffectCategory.NEUTRAL, -1);
-  }
-
-  @Override
-  public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
   }
 
   public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {

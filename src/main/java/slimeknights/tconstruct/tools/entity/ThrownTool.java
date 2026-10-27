@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -415,23 +418,29 @@ public class ThrownTool extends ThrownTrident implements ToolProjectile {
   private static final String KEY_TASKS = "tasks";
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.putFloat(KEY_CHARGE, this.charge);
-    tag.putFloat(KEY_MULTIPLIER, this.multiplier);
-    tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
-    tag.putBoolean(KEY_HIT_BLOCK, hitBlock);
-    if (this.originalSlot != -1) {
-      tag.putInt(KEY_ORIGINAL_SLOT, this.originalSlot);
-    }
-    if (!this.tasks.isEmpty()) {
-      tag.put(KEY_TASKS, this.tasks.serialize());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.putFloat(KEY_CHARGE, this.charge);
+      tag.putFloat(KEY_MULTIPLIER, this.multiplier);
+      tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
+      tag.putBoolean(KEY_HIT_BLOCK, hitBlock);
+      if (this.originalSlot != -1) {
+        tag.putInt(KEY_ORIGINAL_SLOT, this.originalSlot);
+      }
+      if (!this.tasks.isEmpty()) {
+        tag.put(KEY_TASKS, this.tasks.serialize());
+      }
+    } finally {
+      ValueIOHelper.write(output, tag);
     }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     // update the tool to sync to client, if its set
     if (tag.getCompound("item").isPresent()) {
       updateFromStack();

@@ -14,6 +14,7 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
@@ -108,11 +109,17 @@ public final class TransferHelper {
 
   /** Registers a legacy fluid handler for items, the factory receives a single item copy and must expose the result through {@link IFluidHandlerItem#getContainer()} */
   public static void registerItemFluid(RegisterCapabilitiesEvent event, Function<ItemStack, ? extends IFluidHandlerItem> factory, ItemLike... items) {
-    event.registerItem(Capabilities.Fluid.ITEM, (stack, access) -> new LegacyFluidItemResourceHandler(access, factory), items);
+    // legacy factories return null for items lacking the capability
+    event.registerItem(Capabilities.Fluid.ITEM, (stack, access) -> factory.apply(stack.copy()) == null ? null : new LegacyFluidItemResourceHandler(access, factory), items);
   }
 
   /** Registers a legacy item handler for items, the factory receives a single item copy and must store changes in that stack */
   public static void registerItemItems(RegisterCapabilitiesEvent event, Function<ItemStack, ? extends IItemHandler> factory, ItemLike... items) {
-    event.registerItem(Capabilities.Item.ITEM, (stack, access) -> new LegacyItemItemResourceHandler(access, factory), items);
+    event.registerItem(Capabilities.Item.ITEM, (stack, access) -> factory.apply(stack.copy()) == null ? null : new LegacyItemItemResourceHandler(access, factory), items);
+  }
+
+  /** Registers a legacy energy storage for items, the factory receives a single item copy and must store changes in that stack */
+  public static void registerItemEnergy(RegisterCapabilitiesEvent event, Function<ItemStack, ? extends IEnergyStorage> factory, ItemLike... items) {
+    event.registerItem(Capabilities.Energy.ITEM, (stack, access) -> factory.apply(stack.copy()) == null ? null : new LegacyEnergyItemHandler(access, factory), items);
   }
 }

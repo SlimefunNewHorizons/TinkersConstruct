@@ -125,7 +125,7 @@ public record ShearsModule(float flatBonus, float perLevelBonus, float expandedB
     if (shearEntity(stack, tool, world, player, target, looting)) {
       boolean broken = ToolDamageUtil.damageAnimated(tool, 1, player, slotType, modifier.getId());
       player.swing(hand);
-      player.sweepAttack();
+      slimeknights.mantle.util.CombatHelper.spawnSweepParticles(player);
       runShearHook(tool, player, target, true);
 
       // AOE shearing

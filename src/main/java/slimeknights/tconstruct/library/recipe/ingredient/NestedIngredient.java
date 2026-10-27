@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.Holder;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +29,13 @@ public abstract class NestedIngredient implements ICustomIngredient {
   }
 
   @Override
-  public Stream<ItemStack> getItems() {
-    return Arrays.stream(IngredientHelper.getItems(nested));
+  public Stream<Holder<Item>> items() {
+    return nested.items();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return nested.display();
   }
 
   @Override

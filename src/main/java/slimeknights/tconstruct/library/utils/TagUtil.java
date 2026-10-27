@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
@@ -12,6 +13,15 @@ import javax.annotation.Nullable;
 /** Helpers related to Tag */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TagUtil {
+  /** Type for {@link #contains(CompoundTag, String, int)} matching any number, vanilla removed its constant in 1.21.5 */
+  public static final int TAG_ANY_NUMERIC = 99;
+
+  /** Checks if the tag has the key with the given type, replacement for the removed {@code CompoundTag#contains(String, int)} */
+  public static boolean contains(CompoundTag tag, String key, int type) {
+    Tag value = tag.get(key);
+    return value != null && (value.getId() == type || type == TAG_ANY_NUMERIC && value instanceof NumericTag);
+  }
+
   /* Helper functions */
 
   /**
@@ -27,7 +37,7 @@ public final class TagUtil {
       CompoundTag legacy = parent.getCompoundOrEmpty(key);
       return new BlockPos(legacy.getIntOr("X", 0), legacy.getIntOr("Y", 0), legacy.getIntOr("Z", 0)).offset(offset);
     }
-    return NbtUtils.readBlockPos(parent, key).map(pos -> pos.offset(offset)).orElse(null);
+    return parent.read(key, BlockPos.CODEC).map(pos -> pos.offset(offset)).orElse(null);
   }
 
   /**

@@ -25,6 +25,8 @@ public class IndestructibleItemEntity extends ItemEntity {
     // using setUnlimitedLifetime() makes the item no longer spin, dumb design
     // since age is a short, this value should never be reachable so the item will never despawn
     this.lifespan = Integer.MAX_VALUE;
+    // prevent any damage besides out of world, damage methods are final since 1.21.2
+    this.setInvulnerable(true);
   }
 
   public IndestructibleItemEntity(Level worldIn, double x, double y, double z, ItemStack stack) {
@@ -38,9 +40,7 @@ public class IndestructibleItemEntity extends ItemEntity {
   /** Copies the pickup delay from another entity */
   public void setPickupDelayFrom(Entity reference) {
     if (reference instanceof ItemEntity itemEntity) {
-      CompoundTag data = new CompoundTag();
-      itemEntity.saveWithoutId(data);
-      this.setPickUpDelay(data.getShortOr("PickupDelay", (short) 0));
+      this.setPickUpDelay(itemEntity.pickupDelay);
     }
     setDeltaMovement(reference.getDeltaMovement());
   }
@@ -48,12 +48,6 @@ public class IndestructibleItemEntity extends ItemEntity {
   @Override
   public boolean fireImmune() {
     return true;
-  }
-
-  @Override
-  public boolean isInvulnerableTo(DamageSource pSource) {
-    // prevent any damage besides out of world
-    return !pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
   }
 
   /** Checks if the given stack has a custom entity */

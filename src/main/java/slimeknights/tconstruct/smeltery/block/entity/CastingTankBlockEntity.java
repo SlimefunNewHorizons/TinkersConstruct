@@ -122,11 +122,11 @@ public class CastingTankBlockEntity extends TableBlockEntity implements ITankBlo
       // if there is an item in the output slot, take it
       if (!output.isEmpty()) {
         setItem(OUTPUT, ItemStack.EMPTY);
-        ItemHandlerHelper.giveItemToPlayer(player, output, player.getInventory().selected);
+        ItemHandlerHelper.giveItemToPlayer(player, output, player.getInventory().getSelectedSlot());
         // next try to take the item from the input slot
       } else if (!input.isEmpty()) {
         setItem(INPUT, ItemStack.EMPTY);
-        ItemHandlerHelper.giveItemToPlayer(player, input, player.getInventory().selected);
+        ItemHandlerHelper.giveItemToPlayer(player, input, player.getInventory().getSelectedSlot());
         // if no item in the tank, try to place a held item in the input
       } else if (!held.isEmpty() && canPlaceItem(INPUT, held)) {
         setItem(INPUT, held.split(1));

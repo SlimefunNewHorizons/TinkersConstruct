@@ -26,7 +26,8 @@ public abstract class AbstractMaterialCastingRecipe extends AbstractCastingRecip
   protected static final LoadableField<IJsonPredicate<MaterialVariantId>,AbstractMaterialCastingRecipe> MATERIALS_FIELD = MaterialPredicate.LOADER.defaultField("allowed_materials", r -> r.materials);
 
   @Getter
-  private final RecipeSerializer<?> serializer;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getSerializer bounds
+  private final RecipeSerializer serializer;
   protected final int itemCost;
   protected final IJsonPredicate<MaterialVariantId> materials;
 

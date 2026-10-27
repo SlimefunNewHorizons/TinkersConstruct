@@ -137,6 +137,15 @@ public class CombatHelper {
     return target.isAttackable() && !target.skipAttackInteraction(attacker);
   }
 
+  /** Spawns the sweep attack particle in front of the player, replacement for the removed {@code Player#sweepAttack()} */
+  public static void spawnSweepParticles(Player player) {
+    if (player.level() instanceof ServerLevel serverLevel) {
+      double x = -Mth.sin(player.getYRot() * TO_RADIAN);
+      double z = Mth.cos(player.getYRot() * TO_RADIAN);
+      serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + x, player.getY(0.5), player.getZ() + z, 0, x, 0.0, z, 0.0);
+    }
+  }
+
   /**
    * Performs an attack, mimicking  {@link Player#attack(Entity)}.
    * For use in {@link net.minecraft.world.item.Item#interactLivingEntity(ItemStack, Player, LivingEntity, InteractionHand)} primarily,
@@ -268,11 +277,7 @@ public class CombatHelper {
             }
 
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
-            if (player.level() instanceof ServerLevel serverLevel) {
-              double x = -Mth.sin(player.getYRot() * TO_RADIAN);
-              double z = Mth.cos(player.getYRot() * TO_RADIAN);
-              serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + x, player.getY(0.5), player.getZ() + z, 0, x, 0.0, z, 0.0);
-            }
+            spawnSweepParticles(player);
           }
 
           // sync player motion

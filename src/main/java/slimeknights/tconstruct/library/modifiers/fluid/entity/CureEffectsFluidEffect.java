@@ -27,19 +27,15 @@ public record CureEffectsFluidEffect(ItemStack stack) implements FluidEffect<Flu
   public float apply(FluidStack fluid, EffectLevel level, Entity context, FluidAction action) {
     LivingEntity target = context.getLivingTarget();
     if (target != null && level.isFull()) {
+      // NeoForge removed effect cures in 1.21.5, so only the vanilla milk and honey cures remain
+      boolean milk = stack.is(net.minecraft.world.item.Items.MILK_BUCKET);
+      boolean honey = stack.is(net.minecraft.world.item.Items.HONEY_BOTTLE);
       // when simulating, search the effects list directly for curative effects
       // may still be wrong if the event cancels things though, no way to safely simulate it
       if (action.simulate()) {
-        var cure = slimeknights.tconstruct.library.modifiers.fluid.FluidMobEffect.cureForItem(stack.getItem());
-        return target.getActiveEffects().stream().anyMatch(effect -> effect.getCures().contains(cure)) ? 1 : 0;
+        return target.getActiveEffects().stream().anyMatch(effect -> milk ? !slimeknights.tconstruct.tools.modifiers.effect.NoMilkEffect.isMilkImmune(effect) : honey && effect.is(net.minecraft.world.effect.MobEffects.POISON)) ? 1 : 0;
       }
-      var cure = slimeknights.tconstruct.library.modifiers.fluid.FluidMobEffect.cureForItem(stack.getItem());
-      boolean removed = target.removeEffectsCuredBy(cure);
-      if (stack.is(net.minecraft.world.item.Items.MILK_BUCKET)) {
-        removed |= target.removeEffectsCuredBy(net.neoforged.neoforge.common.EffectCures.MILK);
-      } else if (stack.is(net.minecraft.world.item.Items.HONEY_BOTTLE)) {
-        removed |= target.removeEffectsCuredBy(net.neoforged.neoforge.common.EffectCures.HONEY);
-      }
+      boolean removed = milk ? target.removeAllEffects() : honey && target.removeEffect(net.minecraft.world.effect.MobEffects.POISON);
       return removed ? 1 : 0;
     }
     return 0;

@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.tools.item;
 
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.server.level.ServerLevel;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -62,7 +64,7 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
   public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
     level.playSound(null, player.getX(), player.getY(), player.getZ(), Sounds.SHURIKEN_THROW.getSound(), SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-    player.getCooldowns().addCooldown(stack.getItem(), 10);
+    player.getCooldowns().addCooldown(stack, 10);
     if (!level.isClientSide()) {
       ThrownShuriken shuriken = new ThrownShuriken(level, player);
       IToolStackView tool = shuriken.onCreate(stack, player);
@@ -83,15 +85,7 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
   /* Loading */
 
   @Override
-  public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
-    if (nbt != null) {
-      ToolStack.verifyTag(this, nbt, getToolDefinition());
-    }
-  }
-
-  @Override
-  public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
+  public void onCraftedBy(ItemStack stack, Player playerIn) {
     ToolStack.ensureInitialized(stack, getToolDefinition());
   }
 
@@ -127,8 +121,8 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
   /* Modifier interactions */
 
   @Override
-  public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    InventoryTickModifierHook.heldInventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    InventoryTickModifierHook.heldInventoryTick(stack, level, entity, slot);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.helper;
 
+import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import net.minecraft.world.item.ItemUseAnimation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -134,7 +135,7 @@ public final class ModifierUtil {
   public static boolean checkVolatileFlag(ItemStack stack, Identifier flag) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     if (nbt != null && nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).isPresent()) {
-      return nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).getBoolean(flag.toString());
+      return nbt.getCompoundOrEmpty(ToolStack.TAG_VOLATILE_MOD_DATA).getBooleanOr(flag.toString(), false);
     }
     return false;
   }
@@ -143,7 +144,7 @@ public final class ModifierUtil {
   public static boolean checkPersistentPresent(ItemStack stack, Identifier key) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     if (nbt != null && nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).isPresent()) {
-      return nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).contains(key.toString());
+      return nbt.getCompoundOrEmpty(ToolStack.TAG_VOLATILE_MOD_DATA).contains(key.toString());
     }
     return false;
   }
@@ -152,7 +153,7 @@ public final class ModifierUtil {
   public static int getVolatileInt(ItemStack stack, Identifier flag) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     if (nbt != null && nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).isPresent()) {
-      return nbt.getCompound(ToolStack.TAG_VOLATILE_MOD_DATA).getInt(flag.toString());
+      return nbt.getCompoundOrEmpty(ToolStack.TAG_VOLATILE_MOD_DATA).getIntOr(flag.toString(), 0);
     }
     return 0;
   }
@@ -174,7 +175,7 @@ public final class ModifierUtil {
   public static String getPersistentString(ItemStack stack, Identifier flag) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     if (nbt != null && nbt.getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA).isPresent()) {
-      return nbt.getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA).getString(flag.toString());
+      return nbt.getCompoundOrEmpty(ToolStack.TAG_PERSISTENT_MOD_DATA).getStringOr(flag.toString(), "");
     }
     return "";
   }
@@ -200,7 +201,7 @@ public final class ModifierUtil {
    * Allows your tool to block while charging up.
    */
   public static ItemUseAnimation blockWhileCharging(IToolStackView tool, ItemUseAnimation fallback) {
-    return canPerformAction(tool, ItemAbilities.SHIELD_BLOCK) ? ItemUseAnimation.BLOCK : fallback;
+    return canPerformAction(tool, TinkerItemAbilities.SHIELD_BLOCK) ? ItemUseAnimation.BLOCK : fallback;
   }
 
   /** Calculates inaccuracy from the conditional tool stat. */

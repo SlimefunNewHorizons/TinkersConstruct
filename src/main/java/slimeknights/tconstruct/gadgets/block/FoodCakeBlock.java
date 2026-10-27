@@ -11,6 +11,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
@@ -28,24 +30,27 @@ import java.util.List;
  */
 public class FoodCakeBlock extends CakeBlock implements IBlockTooltip {
   private final FoodProperties food;
+  /** Effects from the consumable, food effects moved to consumables in 1.21.2 */
+  private final List<ApplyStatusEffectsConsumeEffect> effects;
   private final EffectCombination combination;
 
-  public FoodCakeBlock(Properties properties, FoodProperties food, EffectCombination combination) {
+  public FoodCakeBlock(Properties properties, FoodProperties food, Consumable consumable, EffectCombination combination) {
     super(properties);
     this.food = food;
+    this.effects = consumable.onConsumeEffects().stream().filter(effect -> effect instanceof ApplyStatusEffectsConsumeEffect).map(effect -> (ApplyStatusEffectsConsumeEffect) effect).toList();
     this.combination = combination;
   }
 
-  @Deprecated(forRemoval = true)
-  public FoodCakeBlock(Properties properties, FoodProperties food) {
-    this(properties, food, EffectCombination.BLOCK);
+  /** Gets all effects the cake may apply */
+  private List<MobEffectInstance> allEffects() {
+    return effects.stream().flatMap(effect -> effect.effects().stream()).toList();
   }
 
   @Override
   public void appendHoverText(ItemStack pStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag pFlag) {
     List<Component> tooltip = new ArrayList<>();
     try {
-        ContainerFoodItem.addEffectTooltip(food, tooltip);
+        ContainerFoodItem.addEffectTooltip(allEffects(), tooltip);
   
     } finally {
       tooltip.forEach(tooltipAdder);
@@ -66,13 +71,10 @@ public class FoodCakeBlock extends CakeBlock implements IBlockTooltip {
 
   /** Checks if the given player has all potion effects from the food */
   private boolean hasAllEffects(Player player) {
-    for (FoodProperties.PossibleEffect possible : food.effects()) {
-      MobEffectInstance effect = possible.effect();
-      if (effect != null) {
-        MobEffectInstance current = player.getEffect(effect.getEffect());
-        if (current == null || current.getDuration() < 100) {
-          return false;
-        }
+    for (MobEffectInstance effect : allEffects()) {
+      MobEffectInstance current = player.getEffect(effect.getEffect());
+      if (current == null || current.getDuration() < 100) {
+        return false;
       }
     }
     return true;
@@ -90,17 +92,20 @@ public class FoodCakeBlock extends CakeBlock implements IBlockTooltip {
     player.awardStat(Stats.EAT_CAKE_SLICE);
     // apply food stats
     player.getFoodData().eat(food);
-    for (FoodProperties.PossibleEffect possible : food.effects()) {
+    for (ApplyStatusEffectsConsumeEffect possible : effects) {
       if (!world.isClientSide() && world.getRandom().nextFloat() < possible.probability()) {
-        MobEffectInstance effect = possible.effect();
-        // if adding, increase duration by current duration, provided its an exact level match
-        if (combination == EffectCombination.ADD) {
-          MobEffectInstance current = player.getEffect(effect.getEffect());
-          if (current != null && current.getAmplifier() == effect.getAmplifier()) {
-            effect.mapDuration(duration -> duration + current.getDuration());
+        for (MobEffectInstance shared : possible.effects()) {
+          // effects in the component are shared, copy before applying
+          MobEffectInstance effect = new MobEffectInstance(shared);
+          // if adding, increase duration by current duration, provided its an exact level match
+          if (combination == EffectCombination.ADD) {
+            MobEffectInstance current = player.getEffect(effect.getEffect());
+            if (current != null && current.getAmplifier() == effect.getAmplifier()) {
+              effect = new MobEffectInstance(effect.getEffect(), effect.getDuration() + current.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.isVisible(), effect.showIcon());
+            }
           }
+          player.addEffect(effect);
         }
-        player.addEffect(effect);
       }
     }
     // remove one bite from the cake

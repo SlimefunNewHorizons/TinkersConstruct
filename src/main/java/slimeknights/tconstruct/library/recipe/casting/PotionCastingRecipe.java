@@ -43,7 +43,8 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<Display
     PotionCastingRecipe::new);
 
   @Getter
-  protected final TypeAwareRecipeSerializer<?> serializer;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getSerializer bounds
+  protected final TypeAwareRecipeSerializer serializer;
   @Getter
   protected final Identifier id;
   @Getter

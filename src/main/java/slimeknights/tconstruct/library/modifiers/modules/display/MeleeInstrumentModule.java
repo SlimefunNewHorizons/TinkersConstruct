@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.display;
 
+import net.minecraft.core.registries.Registries;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -83,7 +84,7 @@ public record MeleeInstrumentModule(@Nullable MaterialId material, TagKey<Instru
             }
             Identifier key = Identifier.tryParse(variant);
             if (key != null) {
-              instrument = BuiltInRegistries.INSTRUMENT.get(key);
+              instrument = attacker.level().registryAccess().lookupOrThrow(Registries.INSTRUMENT).getValue(key);
             }
             break;
           }
@@ -91,7 +92,7 @@ public record MeleeInstrumentModule(@Nullable MaterialId material, TagKey<Instru
       }
       // if we lacked a matching material, fetch a random instrument from the tag
       if (instrument == null) {
-        instrument = BuiltInRegistries.INSTRUMENT.getTag(tag).flatMap(holders -> holders.getRandomElement(attacker.getRandom())).map(Holder::value).orElse(null);
+        instrument = attacker.level().registryAccess().lookupOrThrow(Registries.INSTRUMENT).get(tag).flatMap(holders -> holders.getRandomElement(attacker.getRandom())).map(Holder::value).orElse(null);
       }
       // may still have no instrument if the tag was empty
       if (instrument != null) {

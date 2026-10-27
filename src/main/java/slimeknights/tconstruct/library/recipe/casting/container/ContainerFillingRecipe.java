@@ -43,7 +43,8 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<Disp
     ContainerFillingRecipe::new);
 
   @Getter
-  private final TypeAwareRecipeSerializer<?> serializer;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getSerializer bounds
+  private final TypeAwareRecipeSerializer serializer;
   @Getter
   private final Identifier id;
   @Getter

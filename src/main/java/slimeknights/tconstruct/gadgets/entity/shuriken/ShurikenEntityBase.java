@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.gadgets.entity.shuriken;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -62,7 +63,9 @@ public abstract class ShurikenEntityBase extends ThrowableItemProjectile impleme
   protected void onHitBlock(BlockHitResult result) {
     super.onHitBlock(result);
 
-    this.spawnAtLocation(getDefaultItem());
+    if (level() instanceof ServerLevel server) {
+      this.spawnAtLocation(server, getDefaultItem());
+    }
   }
 
   @Override

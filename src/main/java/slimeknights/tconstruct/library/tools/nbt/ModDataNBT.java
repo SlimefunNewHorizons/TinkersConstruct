@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.nbt;
 
+import slimeknights.tconstruct.library.utils.TagUtil;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -48,7 +49,7 @@ public class ModDataNBT implements IModDataView {
 
   @Override
   public boolean contains(Identifier name, int type) {
-    return data.contains(name.toString(), type);
+    return TagUtil.contains(data, name.toString(), type);
   }
 
   /**

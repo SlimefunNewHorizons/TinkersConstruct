@@ -171,7 +171,7 @@ public final class TinkerTools extends TinkerModule {
 
   /** Loot function type for tool add data */
   public static final RegistryObject<LootItemFunctionType<AddToolDataFunction>> lootAddToolData = LOOT_FUNCTIONS.register("add_tool_data", () -> new LootItemFunctionType<>(AddToolDataFunction.CODEC));
-  public static final RegistryObject<net.minecraft.advancements.critereon.ItemSubPredicate.Type<?>> toolStackPredicate = ITEM_SUB_PREDICATES.register("tool_stack", () -> ToolStackItemPredicate.TYPE);
+  public static final RegistryObject<net.minecraft.core.component.predicates.DataComponentPredicate.Type<?>> toolStackPredicate = ITEM_SUB_PREDICATES.register("tool_stack", () -> ToolStackItemPredicate.TYPE);
 
   /*
    * Items

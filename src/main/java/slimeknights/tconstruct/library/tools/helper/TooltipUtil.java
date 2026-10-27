@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.helper;
 
+import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -99,7 +100,7 @@ public class TooltipUtil {
    */
   public static boolean isDisplay(ItemStack stack) {
     CompoundTag nbt = ItemStackUtil.getTag(stack);
-    return nbt != null && nbt.getBoolean(KEY_DISPLAY);
+    return nbt != null && nbt.getBooleanOr(KEY_DISPLAY, false);
   }
 
   /** Sets the tool name in a way that will not be italic */
@@ -287,7 +288,7 @@ public class TooltipUtil {
       builder.addOptional(ToolStats.ARMOR_TOUGHNESS);
       builder.addOptional(ToolStats.KNOCKBACK_RESISTANCE, 10f);
     }
-    if (ModifierUtil.canPerformAction(tool, ItemAbilities.SHIELD_BLOCK)) {
+    if (ModifierUtil.canPerformAction(tool, TinkerItemAbilities.SHIELD_BLOCK)) {
       builder.add(ToolStats.BLOCK_AMOUNT);
       builder.add(ToolStats.BLOCK_ANGLE);
     }

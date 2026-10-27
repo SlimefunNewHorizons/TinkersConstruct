@@ -224,6 +224,20 @@ def sub(pattern, repl):
     return whole_line(lambda line: re.sub(pattern, repl, line))
 
 
+def sound_value(line, err):
+    """Appends .value() to the SoundEvents holder nearest the caret"""
+    caret = err[6]
+    best = None
+    for m in re.finditer(r'SoundEvents\.\w+\b(?!\.value\(\))', line):
+        dist = abs(m.start() - caret)
+        if best is None or dist < best[0]:
+            best = (dist, m)
+    if best is None:
+        return line
+    m = best[1]
+    return line[:m.end()] + '.value()' + line[m.end():]
+
+
 # (message regex, symbol regex or None, location regex or None, fixer(line, err))
 RULES = [
     (r'isClientSide has private access', None, None, sub(r'\.isClientSide\b(?!\s*\()', '.isClientSide()')),
@@ -260,6 +274,18 @@ RULES = [
     # 1.21.2 ingredients
     (r'cannot find symbol', r'^method getItems\(\)', r'Ingredient', wrap_receiver('.getItems()', 'IngredientHelper.getItems')),
     (r'no suitable method found for of\(TagKey<Item>\)', None, None, at_caret('Ingredient.of(', 'IngredientHelper.of(')),
+    # 1.21.2: sound events are holders, hurt is server only and returns void
+    (r'Reference<SoundEvent> cannot be converted to SoundEvent', None, None, sound_value),
+    (r'void cannot be converted to boolean', None, None, at_caret('.hurt(', '.hurtOrSimulate(')),
+    # 1.21.5: CompoundTag#getString returns an optional
+    (r'no suitable method found for \w+\(Optional<String>', None, None,
+     whole_line(lambda line: rewrite_calls(line, 'getString', lambda a: f'.getStringOr({a[0]}, "")' if len(a) == 1 else None))),
+    # removed stack and fluid NBT methods
+    (r'cannot find symbol', r'^method parseOptional\(', r'class ItemStack', at_caret('ItemStack.parseOptional(', 'ValueIOHelper.parseStack(')),
+    (r'cannot find symbol', r'^method parseOptional\(', r'class FluidStack', at_caret('FluidStack.parseOptional(', 'ValueIOHelper.parseFluid(')),
+    (r'cannot find symbol', r'^method save\((Provider|RegistryAccess|Frozen)\)', r'of type (ItemStack|FluidStack)', call_with_receiver('save', lambda r, a: f'ValueIOHelper.save{"Fluid" if "luid" in r else "Stack"}({r}, {a[0]})')),
+    (r'cannot find symbol', r'^method getMaxBuildHeight\(\)', None, call_with_receiver('getMaxBuildHeight', lambda r, a: f'({r}.getMaxY() + 1)')),
+    (r'cannot find symbol', r'^method getAsString\(\)', r'Tag', call_with_receiver('getAsString', lambda r, a: f'{r}.asString().orElse("")')),
 ] + [
     (rf'Optional<{k}> cannot be converted to', None, None, fix_optional(k)) for k in OPT_DEFAULTS
 ]

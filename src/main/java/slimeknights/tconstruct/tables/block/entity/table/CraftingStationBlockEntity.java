@@ -170,7 +170,7 @@ public class CraftingStationBlockEntity extends RetexturedTableBlockEntity imple
       // unlock the recipe if it was not unlocked, so it shows in the recipe book
       player.awardRecipes(Collections.singleton(holder));
     }
-    result.onCraftedBy(this.level, player, amount);
+    result.onCraftedBy(player, amount);
     EventHooks.firePlayerCraftingEvent(player, result, this.craftingInventory);
 
     // update all slots in the inventory

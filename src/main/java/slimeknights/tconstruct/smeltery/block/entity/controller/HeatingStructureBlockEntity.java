@@ -596,7 +596,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
     }
     // only exists to be sent server to client in update packets
     if (nbt.getIntArray(TAG_ERROR_POS).isPresent()) {
-      this.errorPos = NbtUtils.readBlockPos(nbt, TAG_ERROR_POS).map(pos -> pos.offset(this.worldPosition)).orElse(null);
+      this.errorPos = nbt.read(TAG_ERROR_POS, BlockPos.CODEC).map(pos -> pos.offset(this.worldPosition)).orElse(null);
     }
     fuelModule.readFromTag(nbt);
     if (nbt.getString(TAG_TEXTURE).isPresent()) {
@@ -635,7 +635,7 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
     }
     // sync error position, not actually saved in Tag
     if (errorPos != null) {
-      nbt.put(TAG_ERROR_POS, NbtUtils.writeBlockPos(errorPos.subtract(this.worldPosition)));
+      nbt.store(TAG_ERROR_POS, BlockPos.CODEC, errorPos.subtract(this.worldPosition));
     }
     return nbt;
   }

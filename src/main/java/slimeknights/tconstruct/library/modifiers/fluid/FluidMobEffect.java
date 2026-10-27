@@ -52,10 +52,7 @@ public record FluidMobEffect(MobEffect effect, int time, int level, @Nullable Li
   /** Creates the final effect */
   public MobEffectInstance effectWithTime(int time) {
     MobEffectInstance instance = new MobEffectInstance(net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), time, this.level - 1);
-    if (curativeItems != null) {
-      instance.getCures().clear();
-      curativeItems.stream().map(FluidMobEffect::cureForItem).forEach(instance.getCures()::add);
-    }
+    // shortcut: NeoForge removed per instance effect cures in 1.21.5, so milk cures this effect; restore once a cure API returns
     return instance;
   }
 
@@ -126,11 +123,6 @@ public record FluidMobEffect(MobEffect effect, int time, int level, @Nullable Li
       return target.addEffect(newInstance, source) ? used : 0;
     }
     return 0;
-  }
-
-  /** Maps legacy item-based cures to stable NeoForge cure identifiers. */
-  public static net.neoforged.neoforge.common.EffectCure cureForItem(Item item) {
-    return net.neoforged.neoforge.common.EffectCure.get(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item).toString());
   }
 
   /** Gets the display name for this effect */

@@ -25,11 +25,11 @@ public class GlowballEntity extends ThrowableItemProjectile implements IEntityWi
   }
 
   public GlowballEntity(Level worldIn, LivingEntity throwerIn) {
-    super(TinkerGadgets.glowBallEntity.get(), throwerIn, worldIn);
+    super(TinkerGadgets.glowBallEntity.get(), throwerIn, worldIn, new ItemStack(TinkerGadgets.glowBall.get()));
   }
 
   public GlowballEntity(Level worldIn, double x, double y, double z) {
-    super(TinkerGadgets.glowBallEntity.get(), x, y, z, worldIn);
+    super(TinkerGadgets.glowBallEntity.get(), x, y, z, worldIn, new ItemStack(TinkerGadgets.glowBall.get()));
   }
 
   @Override

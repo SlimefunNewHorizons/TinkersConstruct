@@ -139,7 +139,7 @@ public class ServantTileEntity extends MantleBlockEntity implements IServantLogi
    */
   protected CompoundTag writeMaster(CompoundTag tags) {
     if (masterPos != null && masterBlock != null) {
-      tags.put(TAG_MASTER_POS, NbtUtils.writeBlockPos(masterPos.subtract(this.worldPosition)));
+      tags.store(TAG_MASTER_POS, BlockPos.CODEC, masterPos.subtract(this.worldPosition));
       tags.putString(TAG_MASTER_BLOCK, BuiltInRegistries.BLOCK.getKey(masterBlock).toString());
     }
     return tags;

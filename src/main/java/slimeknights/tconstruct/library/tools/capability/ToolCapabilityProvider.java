@@ -34,7 +34,7 @@ public final class ToolCapabilityProvider {
       return tool.get().getVolatileData().getInt(ToolInventoryCapability.TOTAL_SLOTS) > 0
         ? new ToolInventoryCapability(stack, tool) : null;
     }, tools);
-    event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, ignored) -> {
+    TransferHelper.registerItemEnergy(event, stack -> {
       Supplier<ToolStack> tool = refreshingTool(stack);
       return ToolEnergyCapability.getMaxEnergy(tool.get()) > 0 ? new ToolEnergyCapability(tool) : null;
     }, tools);

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.tank;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -294,7 +295,7 @@ public class SmelteryTank<T extends MantleBlockEntity & ISmelteryTankHandler> im
   public CompoundTag write(CompoundTag nbt, HolderLookup.Provider registries) {
     ListTag list = new ListTag();
     for (FluidStack liquid : fluids) {
-      list.add(liquid.save(registries));
+      list.add(ValueIOHelper.saveStack(liquid, registries));
     }
     nbt.put(TAG_FLUIDS, list);
     nbt.putInt(TAG_CAPACITY, capacity);
@@ -308,7 +309,7 @@ public class SmelteryTank<T extends MantleBlockEntity & ISmelteryTankHandler> im
     contained = 0;
     for (int i = 0; i < list.size(); i++) {
       CompoundTag fluidTag = list.getCompoundOrEmpty(i);
-      FluidStack fluid = FluidStack.parseOptional(registries, fluidTag);
+      FluidStack fluid = ValueIOHelper.parseFluid(registries, fluidTag);
       if (!fluid.isEmpty()) {
         fluids.add(fluid);
         contained += fluid.getAmount();

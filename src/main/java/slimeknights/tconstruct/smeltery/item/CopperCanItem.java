@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -48,24 +50,30 @@ public class CopperCanItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    Fluid fluid = getFluid(stack);
-    if (fluid != Fluids.EMPTY) {
-      CompoundTag fluidTag = getFluidTag(stack);
-      MutableComponent text;
-      if (fluidTag != null) {
-        FluidStack displayFluid = new FluidStack(fluid, FluidValues.INGOT);
-        FluidStackUtil.setTag(displayFluid, fluidTag);
-        text = displayFluid.getHoverName().plainCopy();
-      } else {
-        text = Component.translatable(fluid.getFluidType().getDescriptionId());
-      }
-      tooltip.add(Component.translatable(this.getDescriptionId() + ".contents", text).withStyle(ChatFormatting.GRAY));
-      if (flag.isAdvanced()) {
-        tooltip.add(Component.translatable(TankItem.FLUID_ID, Loadables.FLUID.getKey(fluid).toString()).withStyle(ChatFormatting.DARK_GRAY));
-      }
-    } else {
-      tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        Fluid fluid = getFluid(stack);
+        if (fluid != Fluids.EMPTY) {
+          CompoundTag fluidTag = getFluidTag(stack);
+          MutableComponent text;
+          if (fluidTag != null) {
+            FluidStack displayFluid = new FluidStack(fluid, FluidValues.INGOT);
+            FluidStackUtil.setTag(displayFluid, fluidTag);
+            text = displayFluid.getHoverName().plainCopy();
+          } else {
+            text = Component.translatable(fluid.getFluidType().getDescriptionId());
+          }
+          tooltip.add(Component.translatable(this.getDescriptionId() + ".contents", text).withStyle(ChatFormatting.GRAY));
+          if (flag.isAdvanced()) {
+            tooltip.add(Component.translatable(TankItem.FLUID_ID, Loadables.FLUID.getKey(fluid).toString()).withStyle(ChatFormatting.DARK_GRAY));
+          }
+        } else {
+          tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 

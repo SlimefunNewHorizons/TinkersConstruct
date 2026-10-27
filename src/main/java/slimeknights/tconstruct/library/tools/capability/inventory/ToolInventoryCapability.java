@@ -550,7 +550,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
   public static InteractionResult tryOpenContainer(ItemStack stack, @Nullable IToolStackView tool, ToolDefinition definition, Player player, EquipmentSlot slotType) {
     return tryOpenContainer(stack, tool, definition, player, switch (slotType) {
       // mainhand is the hotbar selected slot
-      case MAINHAND -> player.getInventory().selected;
+      case MAINHAND -> player.getInventory().getSelectedSlot();
       // offhand is its own slot
       case OFFHAND -> Inventory.SLOT_OFFHAND;
       // armor starts from the end of inventory
@@ -581,7 +581,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
           }
         });
       }
-      return InteractionResult.sidedSuccess(player.level().isClientSide());
+      return InteractionResult.SUCCESS;
     }
     return InteractionResult.PASS;
   }

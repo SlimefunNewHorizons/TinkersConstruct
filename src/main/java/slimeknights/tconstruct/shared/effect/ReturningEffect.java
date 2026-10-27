@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.effect;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -32,7 +33,7 @@ public class ReturningEffect extends TinkerEffect {
     if (!entity.level().isClientSide() && event.getOldEffectInstance() == null && event.getEffectInstance().getEffect().value() == this) {
       ModDataNBT data = PersistentDataCapability.getOrWarn(entity);
       CompoundTag pos = new CompoundTag();
-      pos.put("pos", NbtUtils.writeBlockPos(entity.blockPosition()));
+      pos.store("pos", BlockPos.CODEC, entity.blockPosition());
       pos.putString("dimension", entity.level().dimension().identifier().toString());
       data.put(KEY, pos);
     }
@@ -44,7 +45,7 @@ public class ReturningEffect extends TinkerEffect {
   }
 
   @Override
-  public boolean applyEffectTick(LivingEntity living, int amplifier) {
+  public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity living, int amplifier) {
     ModDataNBT data = PersistentDataCapability.getOrWarn(living);
     if (data.contains(KEY, Tag.TAG_COMPOUND)) {
       CompoundTag tag = data.getCompound(KEY);
@@ -52,7 +53,7 @@ public class ReturningEffect extends TinkerEffect {
       // no teleporting if you switched dimensions
       // TODO: look into cross dimensional teleport, its doable with entity#teleportTo
       if (dimension != null && dimension.equals(living.level().dimension().identifier())) {
-        Optional<BlockPos> storedPos = NbtUtils.readBlockPos(tag, "pos");
+        Optional<BlockPos> storedPos = tag.read("pos", BlockPos.CODEC);
         if (storedPos.isEmpty() && tag.getInt("X").isPresent()) {
           storedPos = Optional.of(new BlockPos(tag.getIntOr("X", 0), tag.getIntOr("Y", 0), tag.getIntOr("Z", 0)));
         }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -171,7 +172,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
         // 0 means no recipe, time for a lookup
         if (time == 0) {
           time = NO_RECIPE;
-          stack = ItemStack.parseOptional(level.registryAccess(), entry);
+          stack = ValueIOHelper.parseStack(level.registryAccess(), entry);
           recipe = findRecipe(recipeType, stack, level, modifier.getId());
           if (recipe != null) {
             time = recipe.value().getCookingTime();
@@ -200,7 +201,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
 
             // use the recipe we fetched earlier if present
             if (recipe == null) {
-              stack = ItemStack.parseOptional(level.registryAccess(), entry);
+              stack = ValueIOHelper.parseStack(level.registryAccess(), entry);
               if (!stack.isEmpty()) {
                 recipe = findRecipe(recipeType, stack, level, modifier.getId());
               }
@@ -297,7 +298,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
     // arrow launch cook by arrow power
     float amount;
     if (arrow != null) {
-      amount = (float) arrow.getBaseDamage();
+      amount = (float) arrow.baseDamage;
     } else if (projectile instanceof ProjectileWithPower withPower) {
       amount = withPower.getPower();
     } else {

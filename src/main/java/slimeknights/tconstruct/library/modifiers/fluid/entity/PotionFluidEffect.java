@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.fluid.entity;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -35,7 +36,7 @@ public record PotionFluidEffect(float scale, TagPredicate predicate) implements 
     // must match the tag predicate
     if (target != null && predicate.test(FluidStackUtil.getTag(fluid))) {
       List<MobEffectInstance> effects = new java.util.ArrayList<>();
-      PotionUtils.getPotionContents(fluid).forEachEffect(effects::add);
+      PotionUtils.getPotionContents(fluid).forEachEffect(effects::add, 1.0f);
       if (!effects.isEmpty()) {
         LivingEntity attacker = context.getEntity();
         Entity directSource = context.getDirectSource();
@@ -49,9 +50,9 @@ public record PotionFluidEffect(float scale, TagPredicate predicate) implements 
           if (effect.value().isInstantenous()) {
             // instant effects just apply full value always
             used = level.value();
-            if (action.execute()) {
+            if (action.execute() && target.level() instanceof ServerLevel server) {
               target.invulnerableTime = 0;
-              effect.value().applyInstantenousEffect(directSource, attacker, target, instance.getAmplifier(), used * scale);
+              effect.value().applyInstantenousEffect(server, directSource, attacker, target, instance.getAmplifier(), used * scale);
             }
           } else {
             // if the potion already exists, we scale up the existing time

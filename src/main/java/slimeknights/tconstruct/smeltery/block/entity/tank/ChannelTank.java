@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.tconstruct.smeltery.block.entity.ChannelBlockEntity;
 
 import javax.annotation.Nonnull;
@@ -68,16 +69,16 @@ public class ChannelTank extends FluidTank {
 		return stack;
 	}
 
-	@Override
+  /** Reads the tank from NBT, NeoForge tanks moved to value IO in 1.21.6 */
   public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
 		this.locked = nbt.getIntOr(TAG_LOCKED, 0);
-    super.readFromNBT(registries, nbt);
+    ValueIOHelper.readTank(this, registries, nbt);
 		return this;
 	}
 
-	@Override
+  /** Writes the tank to NBT, NeoForge tanks moved to value IO in 1.21.6 */
   public CompoundTag writeToNBT(HolderLookup.Provider registries, CompoundTag nbt) {
-    nbt = super.writeToNBT(registries, nbt);
+    nbt = ValueIOHelper.writeTank(this, registries, nbt);
 		nbt.putInt(TAG_LOCKED, locked);
 		return nbt;
 	}

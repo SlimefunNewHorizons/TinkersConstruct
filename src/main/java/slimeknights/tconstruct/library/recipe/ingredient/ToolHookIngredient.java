@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.DynamicOps;
@@ -77,6 +78,16 @@ public class ToolHookIngredient implements ICustomIngredient {
   }
 
   @Override
+  public Stream<Holder<Item>> items() {
+    return getItems().map(ItemStack::getItemHolder).distinct();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return new SlotDisplay.Composite(getItems().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
+  }
+
+  /** Gets the stacks to display for this ingredient */
   public Stream<ItemStack> getItems() {
     Stream<ItemStack> matches = StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(tag).spliterator(), false)
       .map(Holder::value)

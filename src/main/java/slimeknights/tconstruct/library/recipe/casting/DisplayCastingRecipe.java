@@ -18,7 +18,8 @@ import java.util.List;
 public final class DisplayCastingRecipe implements IDisplayableCastingRecipe {
   @Nullable
   private final Identifier recipeId;
-  private final RecipeType<?> type;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getType bounds
+  private final RecipeType type;
   private final List<ItemStack> castItems;
   private final List<FluidStack> fluids;
   private final List<ItemStack> outputs;

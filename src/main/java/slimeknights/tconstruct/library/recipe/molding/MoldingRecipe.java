@@ -31,9 +31,11 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
     MoldingRecipe::new);
 
   @Getter
-  private final RecipeType<?> type;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getType bounds
+  private final RecipeType type;
   @Getter
-  private final RecipeSerializer<?> serializer;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getSerializer bounds
+  private final RecipeSerializer serializer;
   @Getter
   private final Identifier id;
   @Getter

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modifiers.traits.skull;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -63,7 +64,7 @@ public class SelfDestructiveModifier extends NoLevelsModifier implements Keybind
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity living, int amplifier) {
+    public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity living, int amplifier) {
       // effect level is the explosion radius
       Level level = living.level();
       if (!level.isClientSide()) {

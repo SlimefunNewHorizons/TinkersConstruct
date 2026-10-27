@@ -81,11 +81,11 @@ public final class TinkerGadgets extends TinkerModule {
     BlockBehaviour.Properties CAKE = builder(SoundType.WOOL).forceSolidOn().strength(0.5F).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY);
     cake = BLOCKS.registerEnum(FoliageType.values(), "cake", type -> {
       if (type == FoliageType.ICHOR) {
-        return new InvertedCakeBlock(CAKE, TinkerFood.ICHOR_CAKE, EffectCombination.BLOCK);
+        return new InvertedCakeBlock(CAKE, TinkerFood.ICHOR_CAKE, TinkerFood.ICHOR_CAKE_CONSUMABLE, EffectCombination.BLOCK);
       }
-      return new FoodCakeBlock(CAKE, TinkerFood.getCake(type), type == FoliageType.ENDER ? EffectCombination.ADD : EffectCombination.BLOCK);
+      return new FoodCakeBlock(CAKE, TinkerFood.getCake(type), TinkerFood.getCakeConsumable(type), type == FoliageType.ENDER ? EffectCombination.ADD : EffectCombination.BLOCK);
     }, UNSTACKABLE_BLOCK_ITEM);
-    magmaCake = BLOCKS.register("magma_cake", () -> new FoodCakeBlock(CAKE, TinkerFood.MAGMA_CAKE, EffectCombination.BLOCK), UNSTACKABLE_BLOCK_ITEM);
+    magmaCake = BLOCKS.register("magma_cake", () -> new FoodCakeBlock(CAKE, TinkerFood.MAGMA_CAKE, TinkerFood.MAGMA_CAKE_CONSUMABLE, EffectCombination.BLOCK), UNSTACKABLE_BLOCK_ITEM);
   }
 
   // Shurikens

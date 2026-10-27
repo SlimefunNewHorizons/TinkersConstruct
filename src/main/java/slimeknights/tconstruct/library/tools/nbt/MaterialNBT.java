@@ -135,13 +135,13 @@ public class MaterialNBT implements Iterable<MaterialVariant> {
       return EMPTY;
     }
     ListTag listNBT = (ListTag) nbt;
-    if (listNBT.getElementType() != Tag.TAG_STRING || listNBT.isEmpty()) {
+    if (listNBT.isEmpty() || listNBT.get(0).getId() != Tag.TAG_STRING) {
       return EMPTY;
     }
 
     List<MaterialVariant> materials = listNBT.stream()
       // if any material ID fails to parse (invalid string), replace with unknown
-      .map(tag -> requireNonNullElse(MaterialVariantId.tryParse(tag.getAsString()), IMaterial.UNKNOWN_ID))
+      .map(tag -> requireNonNullElse(MaterialVariantId.tryParse(tag.asString().orElse("")), IMaterial.UNKNOWN_ID))
       .map(MaterialVariant::of)
       .toList();
     return new MaterialNBT(materials);

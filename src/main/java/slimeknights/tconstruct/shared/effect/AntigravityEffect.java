@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.effect;
 
+import net.minecraft.server.level.ServerLevel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.ToString;
@@ -59,14 +60,14 @@ public class AntigravityEffect extends TinkerEffect {
 
   /** Handles movement while under anti-gravity */
   @Override
-  public boolean applyEffectTick(LivingEntity living, int amplifier) {
+  public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity living, int amplifier) {
     // ensure we are actually under the effects of antigrav, might have a double negative
     if (living.getAttributeValue(Attributes.GRAVITY) < 0) {
       Level level = living.level();
       if (!living.level().isClientSide()) {
         // 6100 meters is when it starts becoming hard to breathe, assuming world height is 320
         // really just need some arbitrarily big number to start damaging entities so you don't get entities falling up forever
-        if (living.getY() > level.getMaxBuildHeight() + 5780) {
+        if (living.getY() > (level.getMaxY() + 1) + 5780) {
           living.hurt(level.damageSources().fellOutOfWorld(), 4.0F);
         }
       }
@@ -78,7 +79,7 @@ public class AntigravityEffect extends TinkerEffect {
           living.setDeltaMovement(velocity.x, lastVelocity.twoTicks, velocity.z);
           BlockPos above = BlockPos.containing(living.getX(), living.getBoundingBox().maxY + 0.1, living.getZ());
           BlockState hit = level.getBlockState(above);
-          float height = (float)(lastVelocity.twoTicks * 10 - 3 - living.getAttributeValue(TinkerAttributes.SAFE_FALL_DISTANCE.getHolder()) - TinkerEffect.getLevel(living, MobEffects.JUMP));
+          float height = (float)(lastVelocity.twoTicks * 10 - 3 - living.getAttributeValue(TinkerAttributes.SAFE_FALL_DISTANCE.getHolder()) - TinkerEffect.getLevel(living, MobEffects.JUMP_BOOST));
           if (height > 0.0F) {
             hit.getBlock().fallOn(level, hit, above, living, height);
           }

@@ -6,6 +6,8 @@ import net.neoforged.neoforge.common.ItemAbility;
 public class TinkerItemAbilities {
   /** Tinker tools that can disable shields on attack */
   public static final ItemAbility SHIELD_DISABLE = ItemAbility.get("shield_disable");
+  /** Tool can block like a shield, NeoForge removed its own ability in 1.21.5 */
+  public static final ItemAbility SHIELD_BLOCK = ItemAbility.get("shield_block");
   /** Fishing rods that can act as a grappling hook */
   public static final ItemAbility GRAPPLE_HOOK = ItemAbility.get("grapple_hook");
   /** Makes the tool use the drill attack during its dash action */

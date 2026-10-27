@@ -13,7 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.EffectCures;
 import slimeknights.tconstruct.TConstruct;
 
 import java.util.Collection;
@@ -31,7 +30,7 @@ public class CheeseItem extends Item {
       Collection<MobEffectInstance> effects = living.getActiveEffects();
       if (!effects.isEmpty()) {
         // don't remove effects that are not milk removable
-        List<Holder<MobEffect>> removable = effects.stream().filter(effect -> effect.getCures().contains(EffectCures.MILK)).map(MobEffectInstance::getEffect).toList();
+        List<Holder<MobEffect>> removable = effects.stream().filter(effect -> !slimeknights.tconstruct.tools.modifiers.effect.NoMilkEffect.isMilkImmune(effect)).map(MobEffectInstance::getEffect).toList();
         if (!removable.isEmpty()) {
           living.removeEffect(removable.get(living.getRandom().nextInt(removable.size())));
         }

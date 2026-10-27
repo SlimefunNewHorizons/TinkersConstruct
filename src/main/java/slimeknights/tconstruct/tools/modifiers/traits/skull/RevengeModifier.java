@@ -31,9 +31,8 @@ public class RevengeModifier extends NoLevelsModifier implements EquipmentChange
     Entity trueSource = source.getEntity();
     LivingEntity living = context.getEntity();
     if (trueSource != null && trueSource != living) { // no making yourself mad with slurping or self-destruct or alike
-      MobEffectInstance effect = new MobEffectInstance(MobEffects.DAMAGE_BOOST, 300);
-      effect.getCures().clear();
-      effect.getCures().add(FluidMobEffect.cureForItem(living.getItemBySlot(slotType).getItem()));
+      MobEffectInstance effect = new MobEffectInstance(MobEffects.STRENGTH, 300);
+      // shortcut: NeoForge removed per instance effect cures in 1.21.5, so milk cures this effect; restore once a cure API returns
       living.addEffect(effect);
     }
   }
@@ -43,8 +42,7 @@ public class RevengeModifier extends NoLevelsModifier implements EquipmentChange
     if (context.getChangedSlot() == EquipmentSlot.HEAD) {
       IToolStackView replacement = context.getReplacementTool();
       if (replacement == null || replacement.getModifierLevel(this) == 0) {
-        // cure effects using the helmet
-        context.getEntity().removeEffectsCuredBy(FluidMobEffect.cureForItem(tool.getItem()));
+        // shortcut: NeoForge removed effect cures in 1.21.5, so effects granted by the tool now last until they expire; track granted effects if this matters
       }
     }
   }

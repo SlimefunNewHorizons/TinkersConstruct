@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools.item;
 
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -56,18 +58,24 @@ public class ModifierCrystalItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag advanced) {
-    ModifierId id = getModifier(stack);
-    if (id != null) {
-      if (ModifierManager.INSTANCE.contains(id)) {
-        tooltip.addAll(ModifierManager.INSTANCE.get(id).getDescriptionList());
-      }
-      tooltip.add(TOOLTIP_APPLY);
-      if (advanced.isAdvanced()) {
-        tooltip.add((Component.translatable(MODIFIER_KEY, id.toString())).withStyle(ChatFormatting.DARK_GRAY));
-      }
-    } else {
-      tooltip.add(TOOLTIP_MISSING);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag advanced) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        ModifierId id = getModifier(stack);
+        if (id != null) {
+          if (ModifierManager.INSTANCE.contains(id)) {
+            tooltip.addAll(ModifierManager.INSTANCE.get(id).getDescriptionList());
+          }
+          tooltip.add(TOOLTIP_APPLY);
+          if (advanced.isAdvanced()) {
+            tooltip.add((Component.translatable(MODIFIER_KEY, id.toString())).withStyle(ChatFormatting.DARK_GRAY));
+          }
+        } else {
+          tooltip.add(TOOLTIP_MISSING);
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 
@@ -187,7 +195,7 @@ public class ModifierCrystalItem extends Item {
   public static ModifierId getModifier(ItemStack stack) {
     CompoundTag tag = ItemStackUtil.getTag(stack);
     if (tag != null) {
-      return ModifierId.tryParse(tag.getString(TAG_MODIFIER));
+      return ModifierId.tryParse(tag.getStringOr(TAG_MODIFIER, ""));
     }
     return null;
   }

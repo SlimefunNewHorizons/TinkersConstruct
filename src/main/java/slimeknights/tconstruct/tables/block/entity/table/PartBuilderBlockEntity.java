@@ -289,7 +289,7 @@ public class PartBuilderBlockEntity extends RetexturedTableBlockEntity implement
     }
 
     // we are definitely crafting at this point
-    result.onCraftedBy(this.level, player, amount);
+    result.onCraftedBy(player, amount);
     EventHooks.firePlayerCraftingEvent(player, result, this.inventoryWrapper);
     this.playCraftSound(player);
 

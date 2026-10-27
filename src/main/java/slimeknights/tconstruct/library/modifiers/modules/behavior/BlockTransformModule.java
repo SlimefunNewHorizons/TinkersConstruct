@@ -124,7 +124,7 @@ public interface BlockTransformModule extends ModifierModule, BlockInteractionMo
 
         // sweep attack if we transformed any
         if (totalTransformed > 0 && player != null) {
-          player.sweepAttack();
+          slimeknights.mantle.util.CombatHelper.spawnSweepParticles(player);
         }
       }
     }

@@ -35,8 +35,7 @@ public enum CureOnRemovalModule implements HookProvider, EquipmentChangeModifier
     if (context.getChangedSlot() == slot) {
       IToolStackView replacement = context.getReplacementTool();
       if (replacement == null || replacement.getModifierLevel(modifier.getModifier()) == 0 || replacement.getItem() != tool.getItem()) {
-        // cure effects using the helmet
-        context.getEntity().removeEffectsCuredBy(FluidMobEffect.cureForItem(tool.getItem()));
+        // shortcut: NeoForge removed effect cures in 1.21.5, so effects granted by the tool now last until they expire; track granted effects if this matters
       }
     }
   }

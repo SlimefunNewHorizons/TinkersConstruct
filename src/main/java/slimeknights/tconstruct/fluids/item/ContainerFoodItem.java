@@ -10,7 +10,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -38,11 +37,10 @@ public class ContainerFoodItem extends Item {
   }
 
   /** Adds effects to the tooltip */
-  public static void addEffectTooltip(FoodProperties food, List<Component> tooltip) {
+  public static void addEffectTooltip(Iterable<MobEffectInstance> effects, List<Component> tooltip) {
     // add effects to the tooltip, code based on potion items
-    for (FoodProperties.PossibleEffect possible : food.effects()) {
-      MobEffectInstance effect = possible.effect();
-      if (effect != null) {
+    for (MobEffectInstance effect : effects) {
+      {
         MutableComponent mutable = Component.translatable(effect.getDescriptionId());
         if (effect.getAmplifier() > 0) {
           mutable = Component.translatable("potion.withAmplifier", mutable, Component.translatable("potion.potency." + effect.getAmplifier()));
@@ -59,10 +57,7 @@ public class ContainerFoodItem extends Item {
   public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
     List<Component> tooltip = new ArrayList<>();
     try {
-        FoodProperties food = stack.getFoodProperties(null);
-        if (food != null) {
-          addEffectTooltip(food, tooltip);
-        }
+        addEffectTooltip(slimeknights.mantle.item.ContainerFoodItem.getConsumeEffects(stack), tooltip);
   
     } finally {
       tooltip.forEach(tooltipAdder);

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -226,7 +229,7 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
     } else {
       source = damageSources().thrown(this, this.getOwner());
     }
-    boolean hit = target.hurt(source, power);
+    boolean hit = target.hurtOrSimulate(source, power);
 
     if (hit && knockback > 0 && target instanceof LivingEntity living) {
       // knockback logic based on arrows
@@ -309,20 +312,26 @@ public class ThrownShuriken extends Projectile implements ToolProjectile, Projec
   private static final String KEY_TASKS = "tasks";
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
-    super.addAdditionalSaveData(tag);
-    tag.put(KEY_STACK, this.stack.save(this.registryAccess()));
-    tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
-    if (!this.tasks.isEmpty()) {
-      tag.put(KEY_TASKS, this.tasks.serialize());
+  public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+      super.addAdditionalSaveData(output);
+      tag.put(KEY_STACK, ValueIOHelper.saveStack(this.stack, this.registryAccess()));
+      tag.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
+      if (!this.tasks.isEmpty()) {
+        tag.put(KEY_TASKS, this.tasks.serialize());
+      }
+    } finally {
+      ValueIOHelper.write(output, tag);
     }
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
-    super.readAdditionalSaveData(tag);
+  public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+    super.readAdditionalSaveData(input);
     if (tag.getCompound(KEY_STACK).isPresent()) {
-      setStack(ItemStack.parseOptional(this.registryAccess(), tag.getCompound(KEY_STACK)));
+      setStack(ValueIOHelper.parseStack(this.registryAccess(), tag.getCompound(KEY_STACK)));
     }
     this.entityData.set(WATER_INERTIA, tag.getFloat(KEY_WATER_INERTIA));
     if (tag.getList(KEY_TASKS).isPresent()) {

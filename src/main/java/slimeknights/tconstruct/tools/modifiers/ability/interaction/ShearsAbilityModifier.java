@@ -60,7 +60,7 @@ public class ShearsAbilityModifier extends NoLevelsModifier implements EntityInt
   @Deprecated(forRemoval = true)
   protected void swingTool(Player player, InteractionHand hand) {
     player.swing(hand);
-    player.sweepAttack();
+    slimeknights.mantle.util.CombatHelper.spawnSweepParticles(player);
   }
 
   @Override

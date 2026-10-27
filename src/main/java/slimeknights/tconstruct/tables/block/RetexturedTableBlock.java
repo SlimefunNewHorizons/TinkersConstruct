@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.tables.block;
 
+import net.minecraft.world.item.Item;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import slimeknights.mantle.block.IBlockTooltip;
 import slimeknights.mantle.block.IBlockEntityRemovalHandler;
 import net.minecraft.core.BlockPos;
@@ -24,8 +28,14 @@ public abstract class RetexturedTableBlock extends TabbedTableBlock implements I
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    RetexturedHelper.addTooltip(stack, tooltip, flag);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        RetexturedHelper.addTooltip(stack, tooltip, flag);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 
   @Override

@@ -233,10 +233,7 @@ public interface MobEffectModule extends ModifierModule, ConditionalModule<ITool
       float duration = this.time.computeValue(scaledLevel);
       if (duration > 0) {
         MobEffectInstance instance = new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), (int)duration, level);
-        if (curativeItems != null) {
-          instance.getCures().clear();
-          curativeItems.stream().map(FluidMobEffect::cureForItem).forEach(instance.getCures()::add);
-        }
+        // shortcut: NeoForge removed per instance effect cures in 1.21.5, so milk cures this effect; restore once a cure API returns
         target.addEffect(instance, cause);
       }
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers;
 
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.util.ExtraCodecs;
 import com.google.common.annotations.VisibleForTesting;
@@ -182,7 +183,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener<JsonElemen
     }
     for (ModifierId id : staticModifiers.keySet()) {
       if (dynamicModifiers.containsKey(id)) {
-        if (FMLLoader.isProduction()) {
+        if (FMLEnvironment.isProduction()) {
           log.warn("Dynamic modifier {} is replacing static modifier with the same ID. The ability to do this may be removed in a future version, so if this is intentional please open an issue report with reasoning..", id);
         } else {
           log.error("Dynamic modifier {} is replacing static modifier with the same ID. This is likely a bug with your mod, but on the chance its intentional this error does become just a warning at runtime.", id);
@@ -197,7 +198,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener<JsonElemen
     time = timeStep;
 
     // load modifier tags
-    TagLoader<Modifier> tagLoader = new TagLoader<>(id -> {
+    TagLoader<Modifier> tagLoader = new TagLoader<>((id, required) -> {
       Modifier modifier = ModifierManager.getValue(new ModifierId(id));
       // only allow the default modifier if it's explicitly set to empty
       if (modifier == defaultValue && !id.equals(EMPTY)) {
@@ -205,7 +206,7 @@ public class ModifierManager extends SimpleJsonResourceReloadListener<JsonElemen
       }
       return Optional.of(modifier);
     }, TAG_FOLDER);
-    this.tags = GenericTagUtil.mapLoaderResults(REGISTRY_KEY, tagLoader.loadAndBuild(pResourceManager));
+    this.tags = GenericTagUtil.mapLoaderResults(REGISTRY_KEY, tagLoader.build(tagLoader.load(pResourceManager)));
     this.reverseTags = GenericTagUtil.reverseTags(Modifier::getId, tags);
     timeStep = System.nanoTime();
     log.info("Loaded {} modifier tags for {} modifiers in {} ms", tags.size(), this.reverseTags.size(), (timeStep - time) / 1000000f);

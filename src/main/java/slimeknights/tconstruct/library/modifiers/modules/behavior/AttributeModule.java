@@ -79,7 +79,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   public static Identifier[] slotsToIds(String name, Collection<EquipmentSlot> slots) {
     Identifier[] slotIds = new Identifier[EquipmentSlot.values().length];
     for (EquipmentSlot slot : slots) {
-      slotIds[slot.getFilterFlag()] = getId(name, slot);
+      slotIds[slot.getId()] = getId(name, slot);
     }
     return slotIds;
   }
@@ -88,7 +88,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   public static Set<EquipmentSlot> idsToSlots(Identifier[] ids) {
     Set<EquipmentSlot> set = EnumSet.noneOf(EquipmentSlot.class);
     for (EquipmentSlot slot : EquipmentSlot.values()) {
-      if (ids[slot.getFilterFlag()] != null) {
+      if (ids[slot.getId()] != null) {
         set.add(slot);
       }
     }
@@ -102,7 +102,7 @@ public record AttributeModule(String unique, Attribute attribute, Operation oper
   /** Gets the UUID for this slot */
   @Nullable
   private Identifier getId(EquipmentSlot slot) {
-    return slotIds[slot.getFilterFlag()];
+    return slotIds[slot.getId()];
   }
 
   /** Creates an attribute for the given slot */

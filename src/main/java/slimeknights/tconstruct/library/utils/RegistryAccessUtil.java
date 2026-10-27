@@ -14,7 +14,7 @@ public final class RegistryAccessUtil {
 
   /** Fallback provider with built-in registries only, used while no level is loaded */
   public static final HolderLookup.Provider BUILTIN = HolderLookup.Provider.create(
-    BuiltInRegistries.REGISTRY.stream().map(Registry::asLookup));
+    BuiltInRegistries.REGISTRY.stream().map(registry -> (HolderLookup.RegistryLookup<?>) registry));
 
   /**
    * Resolves the current logical side's registries without caching world load/unload events.

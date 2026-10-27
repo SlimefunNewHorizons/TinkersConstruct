@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.gadgets.item;
 
+import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -41,7 +42,7 @@ public class FancyItemFrameItem extends Item {
 
     Level world = context.getLevel();
     HangingEntity frame = this.entityProvider.apply(world, placeLocation, facing);
-    CustomData tag = stack.get(DataComponents.ENTITY_DATA);
+    TypedEntityData<EntityType<?>> tag = stack.get(DataComponents.ENTITY_DATA);
     if (tag != null) {
       EntityType.updateCustomEntityTag(world, player, frame, tag);
     }

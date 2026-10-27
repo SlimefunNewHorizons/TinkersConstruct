@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.Holder;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -85,6 +88,16 @@ public class MaterialValueIngredient implements ICustomIngredient {
   }
 
   @Override
+  public Stream<Holder<Item>> items() {
+    return getItems().map(ItemStack::getItemHolder).distinct();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return new SlotDisplay.Composite(getItems().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
+  }
+
+  /** Gets the stacks to display for this ingredient */
   public Stream<ItemStack> getItems() {
     if (items == null) {
       items = MaterialRecipeCache.getAllRecipes().stream()

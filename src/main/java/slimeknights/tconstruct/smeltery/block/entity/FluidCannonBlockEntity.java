@@ -162,7 +162,7 @@ public class FluidCannonBlockEntity extends TankBlockEntity implements ITankInve
   @Override
   public void load(CompoundTag tag, HolderLookup.Provider registries) {
     super.load(tag, registries);
-    tank.readFromNBT(registries, tag.getCompound(NBTTags.TANK));
+    tank.readFromNBT(registries, tag.getCompoundOrEmpty(NBTTags.TANK));
     if (tag.getCompound(TAG_ITEM).isPresent()) {
       itemHandler.readFromNBT(tag.getCompoundOrEmpty(TAG_ITEM), registries);
     }

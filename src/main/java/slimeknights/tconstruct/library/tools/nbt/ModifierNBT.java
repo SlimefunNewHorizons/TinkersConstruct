@@ -229,7 +229,7 @@ public class ModifierNBT implements Iterable<ModifierEntry> {
     }
 
     ListTag listNBT = (ListTag)inbt;
-    if (listNBT.getElementType() != Tag.TAG_COMPOUND) {
+    if (listNBT.isEmpty() || listNBT.get(0).getId() != Tag.TAG_COMPOUND) {
       return EMPTY;
     }
 

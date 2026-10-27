@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.core.Holder;
 import com.mojang.serialization.MapCodec;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,6 +64,16 @@ public class BlockTagIngredient implements ICustomIngredient {
   }
 
   @Override
+  public Stream<Holder<Item>> items() {
+    return getItems().map(ItemStack::getItemHolder).distinct();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return new SlotDisplay.Composite(getItems().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
+  }
+
+  /** Gets the stacks to display for this ingredient */
   public Stream<ItemStack> getItems() {
     return getMatchingItems().stream().map(ItemStack::new);
   }

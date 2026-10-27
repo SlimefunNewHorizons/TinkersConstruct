@@ -153,7 +153,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
   public void readFromTag(CompoundTag nbt) {
     super.readFromTag(nbt);
     if (nbt.getIntArray(TAG_LAST_FUEL).isPresent()) {
-      lastPos = NbtUtils.readBlockPos(nbt, TAG_LAST_FUEL).map(pos -> pos.offset(parent.getBlockPos())).orElse(NULL_POS);
+      lastPos = nbt.read(TAG_LAST_FUEL, BlockPos.CODEC).map(pos -> pos.offset(parent.getBlockPos())).orElse(NULL_POS);
     }
   }
 
@@ -161,7 +161,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
   public CompoundTag writeToTag(CompoundTag nbt) {
     nbt = super.writeToTag(nbt);
     if (lastPos != NULL_POS) {
-      nbt.put(TAG_LAST_FUEL, NbtUtils.writeBlockPos(lastPos.subtract(parent.getBlockPos())));
+      nbt.store(TAG_LAST_FUEL, BlockPos.CODEC, lastPos.subtract(parent.getBlockPos()));
     }
     return nbt;
   }

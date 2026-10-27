@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.mantle.transfer.TransferHelper;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -331,7 +332,7 @@ public class FaucetBlockEntity extends MantleBlockEntity {
     super.saveSynced(compound, registries);
     compound.putByte(TAG_STATE, (byte)faucetState.ordinal());
     if (!renderFluid.isEmpty()) {
-      compound.put(TAG_RENDER_FLUID, renderFluid.save(registries));
+      compound.put(TAG_RENDER_FLUID, ValueIOHelper.saveFluid(renderFluid, registries));
     }
   }
 
@@ -341,7 +342,7 @@ public class FaucetBlockEntity extends MantleBlockEntity {
     compound.putBoolean(TAG_STOP, stopPouring);
     compound.putBoolean(TAG_LAST_REDSTONE, lastRedstoneState);
     if (!drained.isEmpty()) {
-      compound.put(TAG_DRAINED, drained.save(registries));
+      compound.put(TAG_DRAINED, ValueIOHelper.saveStack(drained, registries));
     }
   }
 
@@ -354,12 +355,12 @@ public class FaucetBlockEntity extends MantleBlockEntity {
     lastRedstoneState = compound.getBooleanOr(TAG_LAST_REDSTONE, false);
     // fluids
     if (compound.getCompound(TAG_DRAINED).isPresent()) {
-      drained = FluidStack.parseOptional(registries, compound.getCompound(TAG_DRAINED));
+      drained = ValueIOHelper.parseFluid(registries, compound.getCompound(TAG_DRAINED));
     } else {
       drained = FluidStack.EMPTY;
     }
     if (compound.getCompound(TAG_RENDER_FLUID).isPresent()) {
-      renderFluid = FluidStack.parseOptional(registries, compound.getCompound(TAG_RENDER_FLUID));
+      renderFluid = ValueIOHelper.parseFluid(registries, compound.getCompound(TAG_RENDER_FLUID));
     } else {
       renderFluid = FluidStack.EMPTY;
     }

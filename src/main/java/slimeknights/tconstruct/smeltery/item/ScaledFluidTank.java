@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -90,7 +91,7 @@ public class ScaledFluidTank extends FluidTank {
   @Override
   public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
     // scale the fluid on reading from NBT; as each instance should store the fluid relative to stack size 1
-    FluidStack fluid = FluidStack.parseOptional(registries, nbt);
+    FluidStack fluid = ValueIOHelper.parseFluid(registries, nbt);
     // Preserve tanks written before 1.20.5, which used FluidName/Amount/Tag.
     if (fluid.isEmpty() && nbt.getString("FluidName").isPresent()) {
       Identifier id = Identifier.tryParse(nbt.getStringOr("FluidName", ""));

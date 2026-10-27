@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.part.block;
 
+import net.minecraft.core.HolderLookup;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -48,7 +49,7 @@ public class MaterialBlockItem extends BlockItem implements IMaterialItem {
 
   @Nullable
   @Override
-  public String getCreatorModId(ItemStack stack) {
+  public String getCreatorModId(HolderLookup.Provider registries, ItemStack stack) {
     return MaterialItem.getCreatorModId(this, stack);
   }
 

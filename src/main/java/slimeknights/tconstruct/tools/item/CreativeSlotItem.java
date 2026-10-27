@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools.item;
 
+import java.util.ArrayList;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -71,12 +73,18 @@ public class CreativeSlotItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    SlotType slot = getSlot(stack);
-    if (slot != null) {
-      tooltip.add(Component.translatable(TOOLTIP, slot.getDisplayName()).withStyle(ChatFormatting.GRAY));
-    } else {
-      tooltip.add(TOOLTIP_MISSING);
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        SlotType slot = getSlot(stack);
+        if (slot != null) {
+          tooltip.add(Component.translatable(TOOLTIP, slot.getDisplayName()).withStyle(ChatFormatting.GRAY));
+        } else {
+          tooltip.add(TOOLTIP_MISSING);
+        }
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
     }
   }
 

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -17,7 +20,13 @@ public class DummyMaterialItem extends Item {
   }
 
   @Override
-  public void appendHoverText(ItemStack pStack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag pIsAdvanced) {
-    tooltip.add(DUMMY_TOOL_PART);
+  public void appendHoverText(ItemStack pStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag pIsAdvanced) {
+    List<Component> tooltip = new ArrayList<>();
+    try {
+        tooltip.add(DUMMY_TOOL_PART);
+  
+    } finally {
+      tooltip.forEach(tooltipAdder);
+    }
   }
 }

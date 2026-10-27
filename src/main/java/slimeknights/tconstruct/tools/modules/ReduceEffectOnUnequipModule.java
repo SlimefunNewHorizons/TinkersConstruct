@@ -47,7 +47,7 @@ public record ReduceEffectOnUnequipModule(MobEffectCategory category, LevelingVa
       if (percent != 0) {
         // iterate all matching effects, updating the duration
         for (MobEffectInstance instance : entity.getActiveEffects()) {
-          if (!instance.isInfiniteDuration() && instance.getEffect().value().getCategory() == this.category && !instance.getCures().isEmpty()) {
+          if (!instance.isInfiniteDuration() && instance.getEffect().value().getCategory() == this.category && !slimeknights.tconstruct.tools.modifiers.effect.NoMilkEffect.isMilkImmune(instance)) {
             instance.duration = Math.max(1, instance.mapDuration(duration -> (int)(duration * (1 - percent))));
           }
         }

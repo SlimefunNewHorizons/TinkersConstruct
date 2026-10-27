@@ -44,7 +44,7 @@ public record EdibleCureEffectsModule(ItemStack curativeItem, ModifierCondition<
   public void onToolEaten(IToolStackView tool, ModifierEntry modifier, Player player, EquipmentSlot eatenSlot, int hunger, float saturation, List<ItemStack> representativeItems) {
     if (condition.matches(tool, modifier)) {
       for (MobEffectInstance instance : List.copyOf(player.getActiveEffects())) {
-        if (instance.getCures().contains(net.neoforged.neoforge.common.EffectCures.MILK)) {
+        if (!slimeknights.tconstruct.tools.modifiers.effect.NoMilkEffect.isMilkImmune(instance)) {
           player.removeEffect(instance.getEffect());
         }
       }

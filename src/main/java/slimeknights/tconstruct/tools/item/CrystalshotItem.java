@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools.item;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -118,15 +121,23 @@ public class CrystalshotItem extends ArrowItem {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-      super.addAdditionalSaveData(tag);
-      tag.putString(TAG_VARIANT, getVariant());
+    public void addAdditionalSaveData(ValueOutput output) {
+    CompoundTag tag = new CompoundTag();
+    try {
+        super.addAdditionalSaveData(output);
+        tag.putString(TAG_VARIANT, getVariant());
+    
+    } finally {
+      ValueIOHelper.write(output, tag);
     }
+  }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-      super.readAdditionalSaveData(tag);
+    public void readAdditionalSaveData(ValueInput input) {
+    CompoundTag tag = ValueIOHelper.read(input);
+      super.readAdditionalSaveData(input);
       setVariant(tag.getStringOr(TAG_VARIANT, ""));
-    }
+    
+  }
   }
 }

@@ -82,7 +82,7 @@ public interface IModDataView {
    * @return  Integer value
    */
   default int getInt(Identifier name) {
-    return get(name, CompoundTag::getInt);
+    return get(name, (tag, key) -> tag.getIntOr(key, 0));
   }
 
   /**
@@ -91,7 +91,7 @@ public interface IModDataView {
    * @return  Boolean value
    */
   default boolean getBoolean(Identifier name) {
-    return get(name, CompoundTag::getBoolean);
+    return get(name, (tag, key) -> tag.getBooleanOr(key, false));
   }
 
   /**
@@ -100,7 +100,7 @@ public interface IModDataView {
    * @return  Float value
    */
   default float getFloat(Identifier name) {
-    return get(name, CompoundTag::getFloat);
+    return get(name, (tag, key) -> tag.getFloatOr(key, 0f));
   }
 
   /**
@@ -109,7 +109,7 @@ public interface IModDataView {
    * @return  String value
    */
   default String getString(Identifier name) {
-    return get(name, CompoundTag::getString);
+    return get(name, (tag, key) -> tag.getStringOr(key, ""));
   }
 
   /**
@@ -118,7 +118,7 @@ public interface IModDataView {
    * @return  Compound value
    */
   default CompoundTag getCompound(Identifier name) {
-    return get(name, CompoundTag::getCompound);
+    return get(name, CompoundTag::getCompoundOrEmpty);
   }
 
   /**

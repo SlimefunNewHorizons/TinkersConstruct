@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.fluids.item;
 
+import net.minecraft.server.level.ServerLevel;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -48,7 +49,7 @@ public class PotionBucketItem extends PotionItem {
 
   @Override
   public String getDescriptionId(ItemStack stack) {
-    String bucketKey = Potion.getName(PotionUtils.getPotionContents(stack).potion(), getDescriptionId() + ".effect.");
+    String bucketKey = PotionUtils.getName(PotionUtils.getPotionContents(stack), getDescriptionId() + ".effect.");
     if (Util.canTranslate(bucketKey)) {
       return bucketKey;
     }
@@ -57,13 +58,13 @@ public class PotionBucketItem extends PotionItem {
 
   @Override
   public Component getName(ItemStack stack) {
-    String bucketKey = Potion.getName(PotionUtils.getPotionContents(stack).potion(), getDescriptionId() + ".effect.");
+    String bucketKey = PotionUtils.getName(PotionUtils.getPotionContents(stack), getDescriptionId() + ".effect.");
     if (Util.canTranslate(bucketKey)) {
       return Component.translatable(bucketKey);
     }
     // default to filling with the contents
     return Component.translatable(getDescriptionId() + ".contents",
-                                  Component.translatable(Potion.getName(PotionUtils.getPotionContents(stack).potion(), "item.minecraft.potion.effect.")));
+                                  Component.translatable(PotionUtils.getName(PotionUtils.getPotionContents(stack), "item.minecraft.potion.effect.")));
   }
 
   @Override
@@ -82,13 +83,11 @@ public class PotionBucketItem extends PotionItem {
     if (!level.isClientSide()) {
       for (MobEffectInstance effect : PotionUtils.getMobEffects(stack)) {
         if (effect.getEffect().value().isInstantenous()) {
-          effect.getEffect().value().applyInstantenousEffect(player, player, living, effect.getAmplifier(), POTION_SCALE);
+          effect.getEffect().value().applyInstantenousEffect((ServerLevel) level, player, player, living, effect.getAmplifier(), POTION_SCALE);
         } else {
           MobEffectInstance newEffect = new MobEffectInstance(
             effect.getEffect(), effect.mapDuration(duration -> duration * POTION_SCALE), effect.getAmplifier(),
             effect.isAmbient(), effect.isVisible(), effect.showIcon());
-          newEffect.getCures().clear();
-          newEffect.getCures().addAll(effect.getCures());
           living.addEffect(newEffect);
         }
       }

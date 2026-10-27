@@ -2,7 +2,8 @@ package slimeknights.tconstruct.library.json.predicate.tool;
 
 import com.mojang.serialization.Codec;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.predicates.DataComponentPredicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.data.loadable.LoadableCodec;
@@ -15,11 +16,11 @@ import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 
 /** Variant of ItemPredicate for matching Tinker tools using {@link ToolStackItemPredicate} */
 @RequiredArgsConstructor(staticName = "ofTool")
-public class ToolStackItemPredicate implements ItemSubPredicate {
+public class ToolStackItemPredicate implements DataComponentPredicate {
   public static final Identifier ID = TConstruct.getResource("tool_stack");
   public static final Codec<ToolStackItemPredicate> CODEC = new LoadableCodec<>(ToolStackPredicate.LOADER)
     .xmap(ToolStackItemPredicate::new, value -> value.predicate);
-  public static final ItemSubPredicate.Type<ToolStackItemPredicate> TYPE = new ItemSubPredicate.Type<>(CODEC);
+  public static final DataComponentPredicate.Type<ToolStackItemPredicate> TYPE = new DataComponentPredicate.ConcreteType<>(CODEC);
 
   private final IJsonPredicate<IToolStackView> predicate;
 
@@ -28,8 +29,8 @@ public class ToolStackItemPredicate implements ItemSubPredicate {
   }
 
   @Override
-  public boolean matches(ItemStack stack) {
-    // tag check is important to prevent accidently modifying the NBT of non-tools
-    return stack.is(Items.MODIFIABLE) && predicate.matches(ToolStack.from(stack));
+  public boolean matches(DataComponentGetter components) {
+    // item predicates pass the stack, tag check is important to prevent accidently modifying the NBT of non-tools
+    return components instanceof ItemStack stack && stack.is(Items.MODIFIABLE) && predicate.matches(ToolStack.from(stack));
   }
 }

@@ -38,7 +38,8 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
     LoadableRecipeSerializer.RECIPE_GROUP, CAST_FIELD, FLUID_FIELD, RESULT_FIELD, COOLING_TIME_FIELD, CAST_CONSUMED_FIELD, SWITCH_SLOTS_FIELD,
     ItemCastingRecipe::new);
 
-  private final TypeAwareRecipeSerializer<?> serializer;
+  @SuppressWarnings("rawtypes")  // raw so the lombok getter satisfies Recipe#getSerializer bounds
+  private final TypeAwareRecipeSerializer serializer;
   protected final FluidIngredient fluid;
   protected final ItemOutput result;
   protected final int coolingTime;

@@ -243,8 +243,8 @@ public class MultiblockStructureData {
    */
   public CompoundTag writeClientTag(BlockPos controllerPos) {
     CompoundTag nbt = new CompoundTag();
-    nbt.put(TAG_MIN, NbtUtils.writeBlockPos(minPos.subtract(controllerPos)));
-    nbt.put(TAG_MAX, NbtUtils.writeBlockPos(maxPos.subtract(controllerPos)));
+    nbt.store(TAG_MIN, BlockPos.CODEC, minPos.subtract(controllerPos));
+    nbt.store(TAG_MAX, BlockPos.CODEC, maxPos.subtract(controllerPos));
     return nbt;
   }
 

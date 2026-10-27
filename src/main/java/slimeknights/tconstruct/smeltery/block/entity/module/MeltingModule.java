@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.module;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -225,7 +226,7 @@ public class MeltingModule implements IMeltingContainer, ContainerData {
    * @param nbt  NBT
    */
   public void readFromTag(CompoundTag nbt, HolderLookup.Provider registries) {
-    stack = ItemStack.parseOptional(registries, nbt);
+    stack = ValueIOHelper.parseStack(registries, nbt);
     if (!stack.isEmpty()) {
       currentTime = nbt.getIntOr(TAG_CURRENT_TIME, 0);
       requiredTime = nbt.getIntOr(TAG_REQUIRED_TIME, 0);

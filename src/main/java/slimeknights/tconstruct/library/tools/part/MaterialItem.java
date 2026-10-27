@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.part;
 
+import net.minecraft.core.HolderLookup;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -80,7 +81,7 @@ public class MaterialItem extends Item implements IMaterialItem {
   public static Component getName(IMaterialItem self, ItemStack stack) {
     // if no material, return part name directly
     MaterialVariantId material = self.getMaterial(stack);
-    String key = self.asItem().getDescriptionId(stack);
+    String key = self.asItem().getDescriptionId();
     if (material.equals(IMaterial.UNKNOWN_ID)) {
       return Component.translatable(key);
     }
@@ -141,7 +142,7 @@ public class MaterialItem extends Item implements IMaterialItem {
 
   @Nullable
   @Override
-  public String getCreatorModId(ItemStack stack) {
+  public String getCreatorModId(HolderLookup.Provider registries, ItemStack stack) {
     return getCreatorModId(this, stack);
   }
 

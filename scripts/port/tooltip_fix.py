@@ -10,7 +10,7 @@ import sys
 
 from portio import read, write
 
-SIG = re.compile(r'public void appendHoverText\(ItemStack (\w+), (?:Item\.)?TooltipContext (\w+), List<Component> (\w+), TooltipFlag (\w+)\) \{')
+SIG = re.compile(r'public void appendHoverText\(ItemStack (\w+), (?:net\.minecraft\.world\.item\.)?(?:Item\.)?TooltipContext (\w+), List<Component> (\w+), TooltipFlag (\w+)\)\s*\{')
 
 
 def body_end(text, open_idx):

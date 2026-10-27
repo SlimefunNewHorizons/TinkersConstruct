@@ -220,7 +220,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
     }
 
     // fire crafting events
-    resultItem.onCraftedBy(this.level, player, amount);
+    resultItem.onCraftedBy(player, amount);
     EventHooks.firePlayerCraftingEvent(player, resultItem, this.inventoryWrapper);
     this.playCraftSound(player);
 
@@ -354,7 +354,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
   public void load(CompoundTag tags) {
     super.load(tags);
     if (tags.getString(MATERIAL_TAG).isPresent()) {
-      material = Objects.requireNonNullElse(MaterialVariantId.tryParse(tags.getString(MATERIAL_TAG)), IMaterial.UNKNOWN_ID);
+      material = Objects.requireNonNullElse(MaterialVariantId.tryParse(tags.getStringOr(MATERIAL_TAG, "")), IMaterial.UNKNOWN_ID);
       RetexturedHelper.onTextureUpdated(this);
     }
   }

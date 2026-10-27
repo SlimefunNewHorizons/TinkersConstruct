@@ -146,7 +146,7 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
 
   /** Gets the set of modifiers in persistent data at the given key */
   public static Set<ModifierId> getModifierSet(IModDataView modData, Identifier key) {
-    return modData.get(key, LIST_GETTER).stream().map(tag -> ModifierId.tryParse(tag.getAsString())).filter(Objects::nonNull).collect(Collectors.toSet());
+    return modData.get(key, LIST_GETTER).stream().map(tag -> ModifierId.tryParse(tag.asString().orElse(""))).filter(Objects::nonNull).collect(Collectors.toSet());
   }
 
   /** Checks if the given modifier is in the set. Faster to use {@link #getModifierSet(IModDataView, Identifier)} for multiple consecutive queries */
@@ -162,7 +162,7 @@ public class ModifierSetWorktableRecipe extends AbstractWorktableRecipe {
     String modifierStr = modifier.toString();
     Iterator<Tag> iterator = list.iterator();
     while (iterator.hasNext()) {
-      if (modifierStr.equals(iterator.next().getAsString())) {
+      if (modifierStr.equals(iterator.next().asString().orElse(""))) {
         if (remove) {
           iterator.remove();
         }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import slimeknights.mantle.util.ValueIOHelper;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.resources.Identifier;
@@ -130,7 +131,7 @@ public class ModifiableBowItem extends ModifiableLauncherItem {
     // store either ammo or boolean as requested
     if (!ammo.isEmpty()) {
       if (storeDrawingItem) {
-        tool.getPersistentData().put(KEY_DRAWBACK_AMMO, ammo.save(level.registryAccess()));
+        tool.getPersistentData().put(KEY_DRAWBACK_AMMO, ValueIOHelper.saveStack(ammo, level.registryAccess()));
       } else {
         // boolean is enough to get detected by the property override, but won't bother the model
         tool.getPersistentData().putBoolean(KEY_DRAWBACK_AMMO, true);
@@ -267,7 +268,7 @@ public class ModifiableBowItem extends ModifiableLauncherItem {
 
         // vanilla arrows have a base damage of 2, cancel that out then add in our base damage to account for custom arrows with higher base damage
         // calculate it just once as all four arrows are the same item, they should have the same damage
-        float baseArrowDamage = (float)(arrow.getBaseDamage() - 2 + tool.getStats().get(ToolStats.PROJECTILE_DAMAGE));
+        float baseArrowDamage = (float)(arrow.baseDamage - 2 + tool.getStats().get(ToolStats.PROJECTILE_DAMAGE));
         arrow.setBaseDamage(ConditionalStatModifierHook.getModifiedStat(tool, living, ToolStats.PROJECTILE_DAMAGE, baseArrowDamage));
 
         // just store all modifiers on the tool for simplicity

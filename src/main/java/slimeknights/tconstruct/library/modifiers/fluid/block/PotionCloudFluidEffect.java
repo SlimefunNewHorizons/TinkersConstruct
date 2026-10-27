@@ -33,7 +33,7 @@ public record PotionCloudFluidEffect(float scale, TagPredicate predicate) implem
     CompoundTag tag = FluidStackUtil.getTag(fluid);
     if (predicate.test(tag) && context.isOffsetReplaceable()) {
       List<MobEffectInstance> effects = new java.util.ArrayList<>();
-      PotionUtils.getPotionContents(fluid).forEachEffect(effects::add);
+      PotionUtils.getPotionContents(fluid).forEachEffect(effects::add, 1.0f);
       if (!effects.isEmpty()) {
         float scale = level.value();
         if (action.execute()) {

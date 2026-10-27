@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import net.minecraft.server.level.ServerLevel;
 import java.util.ArrayList;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -108,23 +109,8 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   /* Enchanting */
 
   @Override
-  public boolean isEnchantable(ItemStack stack) {
-    return false;
-  }
-
-  @Override
-  public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-    return false;
-  }
-
-  @Override
   public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
     return enchantment.is(EnchantmentTags.CURSE) && super.supportsEnchantment(stack, enchantment);
-  }
-
-  @Override
-  public int getEnchantmentValue() {
-    return 0;
   }
 
   @Override
@@ -141,15 +127,7 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   /* Loading */
 
   @Override
-  public void verifyComponentsAfterLoad(ItemStack stack) {
-    CompoundTag nbt = ItemStackUtil.unshareTag(stack);
-    if (nbt != null) {
-      ToolStack.verifyTag(this, nbt, getToolDefinition());
-    }
-  }
-
-  @Override
-  public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
+  public void onCraftedBy(ItemStack stack, Player playerIn) {
     ToolStack.ensureInitialized(stack, getToolDefinition());
   }
 
@@ -183,12 +161,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
 
 
   /* Damage/Durability */
-
-  @Override
-  public boolean isRepairable(ItemStack stack) {
-    // handle in the tinker station
-    return false;
-  }
 
   public boolean canBeDepleted() {
     return true;
@@ -242,8 +214,8 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   /* Modifier interactions */
 
   @Override
-  public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    InventoryTickModifierHook.heldInventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+  public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    InventoryTickModifierHook.heldInventoryTick(stack, level, entity, slot);
   }
 
   @Override
@@ -284,11 +256,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
     ModifiableItem.addAttributeModifiers(builder, getAttributeModifiers(tool, EquipmentSlot.MAINHAND), EquipmentSlot.MAINHAND);
     ModifiableItem.addAttributeModifiers(builder, getAttributeModifiers(tool, EquipmentSlot.OFFHAND), EquipmentSlot.OFFHAND);
     return builder.build();
-  }
-
-  @Override
-  public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-    return canPerformAction(stack, TinkerItemAbilities.SHIELD_DISABLE);
   }
 
 
@@ -381,10 +348,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
       toolForRendering = ToolBuildHandler.buildToolForRendering(this, this.getToolDefinition());
     }
     return toolForRendering;
-  }
-
-  public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-    consumer.accept(ModifiableItemClientExtension.INSTANCE);
   }
 
 

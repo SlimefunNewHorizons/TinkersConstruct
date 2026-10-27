@@ -207,7 +207,7 @@ public class ModifierWorktableBlockEntity extends RetexturedTableBlockEntity imp
     }
 
     // we are definitely crafting at this point
-    resultItem.onCraftedBy(this.level, player, amount);
+    resultItem.onCraftedBy(player, amount);
     EventHooks.firePlayerCraftingEvent(player, resultItem, this.inventoryWrapper);
     this.playCraftSound(player);
 

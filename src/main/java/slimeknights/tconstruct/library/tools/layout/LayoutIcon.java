@@ -163,12 +163,12 @@ public abstract class LayoutIcon {
         return new PatternIcon(pattern);
       }
       if (object.has("item")) {
-        var item = BuiltInRegistries.ITEM.get(Identifier.parse(GsonHelper.getAsString(object, "item")));
+        var item = BuiltInRegistries.ITEM.getOptional(Identifier.parse(GsonHelper.getAsString(object, "item"))).orElse(null);
         if (item == null) throw new JsonSyntaxException("Unknown layout icon item " + object.get("item"));
         ItemStack stack = new ItemStack(item, GsonHelper.getAsInt(object, "count", 1));
         if (object.has("nbt")) {
           try {
-            ItemStackUtil.setTag(stack, TagParser.parseTag(GsonHelper.getAsString(object, "nbt")));
+            ItemStackUtil.setTag(stack, TagParser.parseCompoundFully(GsonHelper.getAsString(object, "nbt")));
           } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
             throw new JsonSyntaxException("Invalid layout icon NBT", e);
           }

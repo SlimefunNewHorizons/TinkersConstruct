@@ -97,7 +97,7 @@ public record SlingLeapModule(LevelingValue forceMultiplier, boolean leaveGround
         if (entity instanceof Player player) {
           if (!level.isClientSide()) {
             player.causeFoodExhaustion(0.2F);
-            player.getCooldowns().addCooldown(tool.getItem(), 3);
+            player.getCooldowns().addCooldown(tool, 3);
           }
           // if supported, perform drill attack if the modifier is available
           if (ModifierManager.isInTag(modifier.getId(), TinkerTags.Modifiers.DRILL_ATTACKS) && ModifierUtil.canPerformAction(tool, TinkerItemAbilities.DRILL_ATTACK)) {

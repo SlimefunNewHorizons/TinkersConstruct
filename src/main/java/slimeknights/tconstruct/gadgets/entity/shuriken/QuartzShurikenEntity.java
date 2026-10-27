@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.gadgets.entity.shuriken;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -15,7 +16,7 @@ public class QuartzShurikenEntity extends ShurikenEntityBase {
   }
 
   public QuartzShurikenEntity(Level worldIn, LivingEntity throwerIn) {
-    super(TinkerGadgets.quartzShurikenEntity.get(), throwerIn, worldIn);
+    super(TinkerGadgets.quartzShurikenEntity.get(), throwerIn, worldIn, new ItemStack(TinkerGadgets.quartzShuriken.get()));
   }
 
   @Override

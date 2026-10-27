@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.capability;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -21,15 +24,16 @@ public final class PersistentDataCapability {
   /** Creates the registered attachment type. */
   public static AttachmentType<ModDataNBT> createAttachmentType() {
     return AttachmentType.builder(ModDataNBT::new)
-      .serialize(new IAttachmentSerializer<CompoundTag,ModDataNBT>() {
+      .serialize(new IAttachmentSerializer<ModDataNBT>() {
         @Override
-        public ModDataNBT read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-          return ModDataNBT.readFromNBT(tag);
+        public ModDataNBT read(IAttachmentHolder holder, ValueInput input) {
+          return ModDataNBT.readFromNBT(ValueIOHelper.read(input));
         }
 
         @Override
-        public CompoundTag write(ModDataNBT attachment, HolderLookup.Provider provider) {
-          return attachment.getCopy();
+        public boolean write(ModDataNBT attachment, ValueOutput output) {
+          ValueIOHelper.write(output, attachment.getCopy());
+          return true;
         }
       })
       .copyOnDeath()

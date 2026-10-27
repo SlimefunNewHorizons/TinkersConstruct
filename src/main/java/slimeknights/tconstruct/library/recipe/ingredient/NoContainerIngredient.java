@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 /** Ingredient matching an item with no container item, used to ensure NBT fluid items are empty */
 public class NoContainerIngredient extends NestedIngredient {
   public static final Identifier ID = TConstruct.getResource("no_container");
-  public static final MapCodec<NoContainerIngredient> CODEC = Ingredient.CODEC_NONEMPTY.fieldOf("match")
+  public static final MapCodec<NoContainerIngredient> CODEC = Ingredient.CODEC.fieldOf("match")
     .xmap(NoContainerIngredient::new, ingredient -> ingredient.nested);
   public static final StreamCodec<RegistryFriendlyByteBuf,NoContainerIngredient> STREAM_CODEC = StreamCodec.composite(
     Ingredient.CONTENTS_STREAM_CODEC, ingredient -> ingredient.nested, NoContainerIngredient::new);
@@ -30,7 +30,7 @@ public class NoContainerIngredient extends NestedIngredient {
 
   @Override
   public boolean test(@Nullable ItemStack stack) {
-    return stack != null && super.test(stack) && !stack.hasCraftingRemainingItem();
+    return stack != null && super.test(stack) && stack.getCraftingRemainder().isEmpty();
   }
 
   @Override
@@ -58,7 +58,7 @@ public class NoContainerIngredient extends NestedIngredient {
 
   /** Creates an instance from the given stacks */
   public static Ingredient of(ItemStack... stacks) {
-    return of(Ingredient.of(stacks));
+    return of(Ingredient.of(java.util.Arrays.stream(stacks).map(ItemStack::getItem)));
   }
 
   /** Creates an instance from the given tag */

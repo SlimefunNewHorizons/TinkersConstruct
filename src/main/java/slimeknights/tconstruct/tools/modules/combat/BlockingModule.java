@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.combat;
 
+import slimeknights.tconstruct.tools.TinkerItemAbilities;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -45,7 +46,7 @@ public enum BlockingModule implements ModifierModule, GeneralInteractionModifier
 
   @Override
   public boolean canPerformAction(IToolStackView tool, ModifierEntry entry, ItemAbility toolAction) {
-    return toolAction == ItemAbilities.SHIELD_BLOCK;
+    return toolAction == TinkerItemAbilities.SHIELD_BLOCK;
   }
 
   @Override

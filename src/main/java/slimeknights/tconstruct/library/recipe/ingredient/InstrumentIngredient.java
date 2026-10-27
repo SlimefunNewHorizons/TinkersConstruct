@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import slimeknights.mantle.util.ValueIOHelper;
+import net.minecraft.world.item.component.InstrumentComponent;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -65,14 +68,14 @@ public class InstrumentIngredient implements ICustomIngredient {
       return false;
     }
     // 1.21 moved the instrument from NBT to a data component
-    Holder<Instrument> holder = stack.get(DataComponents.INSTRUMENT);
-    if (holder != null) {
+    InstrumentComponent component = stack.get(DataComponents.INSTRUMENT);
+    if (component != null) {
       if (this.instrument != null) {
-        return holder.unwrapKey().map(key -> key.equals(this.instrument)).orElse(false);
+        return component.instrument().key().map(key -> key.equals(this.instrument)).orElse(false);
       }
       assert this.ignore != null;
       // must be a valid instrument outside the ignored tag
-      return !holder.is(this.ignore);
+      return component.unwrap(ValueIOHelper.registries(null)).map(holder -> !holder.is(this.ignore)).orElse(false);
     }
     // if no instrument, its fine as long as we don't have a specific instrument
     return this.instrument == null;
@@ -84,11 +87,21 @@ public class InstrumentIngredient implements ICustomIngredient {
   }
 
   @Override
+  public Stream<Holder<Item>> items() {
+    return getItems().map(ItemStack::getItemHolder).distinct();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return new SlotDisplay.Composite(getItems().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
+  }
+
+  /** Gets the stacks to display for this ingredient */
   public Stream<ItemStack> getItems() {
     ItemStack stack = new ItemStack(item);
     // set the instrument on the stack so the display shows the right item
     if (instrument != null) {
-      BuiltInRegistries.INSTRUMENT.getHolder(instrument).ifPresent(holder -> stack.set(DataComponents.INSTRUMENT, holder));
+      stack.set(DataComponents.INSTRUMENT, new InstrumentComponent(instrument));
     }
     return Stream.of(stack);
   }
