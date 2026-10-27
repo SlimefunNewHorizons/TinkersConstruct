@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.shared.item;
 
+import slimeknights.tconstruct.library.TinkerBookIDs;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import slimeknights.mantle.client.book.BookScreenOpener;
 import slimeknights.mantle.item.AbstractBookItem;
-import slimeknights.tconstruct.library.client.book.TinkerBook;
 
 public class TinkerBookItem extends AbstractBookItem {
   private final BookType bookType;
@@ -13,8 +13,15 @@ public class TinkerBookItem extends AbstractBookItem {
   }
 
   @Override
-  public BookScreenOpener getBook(ItemStack stack) {
-    return TinkerBook.getBook(bookType);
+  public Identifier getBook(ItemStack stack) {
+    return switch (bookType) {
+      case MATERIALS_AND_YOU -> TinkerBookIDs.MATERIALS_BOOK_ID;
+      case PUNY_SMELTING -> TinkerBookIDs.PUNY_SMELTING_ID;
+      case MIGHTY_SMELTING -> TinkerBookIDs.MIGHTY_SMELTING_ID;
+      case TINKERS_GADGETRY -> TinkerBookIDs.TINKERS_GADGETRY_ID;
+      case FANTASTIC_FOUNDRY -> TinkerBookIDs.FANTASTIC_FOUNDRY_ID;
+      case ENCYCLOPEDIA -> TinkerBookIDs.ENCYCLOPEDIA_ID;
+    };
   }
 
   /** Simple enum to allow selecting the book on the client */

@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.tables.network;
 
+import slimeknights.tconstruct.tables.menu.ITabbedScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.FriendlyByteBuf;
 import slimeknights.mantle.network.PacketContext;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
-import slimeknights.tconstruct.tables.client.inventory.BaseTabbedScreen;
 
 public class UpdateStationScreenPacket implements IThreadsafePacket {
   public static final UpdateStationScreenPacket INSTANCE = new UpdateStationScreenPacket();
@@ -25,8 +25,8 @@ public class UpdateStationScreenPacket implements IThreadsafePacket {
     private static void handle() {
       Screen screen = Minecraft.getInstance().screen;
       if (screen != null) {
-        if (screen instanceof BaseTabbedScreen) {
-          ((BaseTabbedScreen<?,?>) screen).updateDisplay();
+        if (screen instanceof ITabbedScreen) {
+          ((ITabbedScreen) screen).updateDisplay();
         }
       }
     }

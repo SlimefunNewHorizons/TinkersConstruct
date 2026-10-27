@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.network;
 
+import slimeknights.tconstruct.tables.menu.ITabbedScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,7 +11,6 @@ import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.recipe.helper.RecipeHelper;
 import slimeknights.mantle.util.BlockEntityHelper;
 import slimeknights.tconstruct.library.recipe.tinkerstation.ITinkerStationRecipe;
-import slimeknights.tconstruct.tables.client.inventory.TinkerStationScreen;
 import slimeknights.tconstruct.tables.block.entity.table.TinkerStationBlockEntity;
 
 import java.util.Optional;
@@ -51,7 +51,7 @@ public class UpdateTinkerStationRecipePacket implements IThreadsafePacket {
 
         // if the screen is open, use that to get the TE and update the screen
         boolean handled = false;
-        if (Minecraft.getInstance().screen instanceof TinkerStationScreen stationScreen) {
+        if (Minecraft.getInstance().screen instanceof ITabbedScreen.Station stationScreen) {
           TinkerStationBlockEntity te = stationScreen.getTileEntity();
           if (te.getBlockPos().equals(packet.pos)) {
             recipe.ifPresent(value -> te.updateRecipe(packet.recipe, value));

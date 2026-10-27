@@ -31,7 +31,6 @@ import slimeknights.tconstruct.library.tools.layout.StationSlotLayoutLoader;
 import slimeknights.tconstruct.library.utils.Util;
 import slimeknights.tconstruct.plugin.jsonthings.JsonThingsPlugin;
 import slimeknights.tconstruct.shared.TinkerAttributes;
-import slimeknights.tconstruct.shared.TinkerClient;
 import slimeknights.tconstruct.shared.TinkerCommons;
 import slimeknights.tconstruct.shared.TinkerEffects;
 import slimeknights.tconstruct.shared.TinkerMaterials;
@@ -97,10 +96,7 @@ public class TConstruct {
     TinkerNetwork.setup();
     bus.addListener(TinkerNetwork::registerPayloadHandlers);
     TinkerTags.init();
-    // init client logic
-    if (FMLEnvironment.getDist() == Dist.CLIENT) {
-      TinkerClient.onConstruct();
-    }
+    // client logic is initialized by TConstructClient, the client only entry point
 
     if (ModList.get().isLoaded("jsonthings")) {
       JsonThingsPlugin.onConstruct();

@@ -1,8 +1,6 @@
 package slimeknights.mantle.fluid;
 
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidType;
-import slimeknights.mantle.fluid.texture.ClientInvertedFluidType;
 
 import java.util.function.Consumer;
 
@@ -12,7 +10,4 @@ public class InvertedFluidType extends FluidType {
     super(properties);
   }
 
-  public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-    consumer.accept(new ClientInvertedFluidType(this));
-  }
 }

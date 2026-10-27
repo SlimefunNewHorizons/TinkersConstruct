@@ -3,8 +3,6 @@ package slimeknights.tconstruct.library.tools.item.armor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import slimeknights.tconstruct.library.client.armor.ArmorModelManager.ArmorModelDispatcher;
 import slimeknights.tconstruct.library.tools.definition.ModifiableArmorMaterial;
 import slimeknights.tconstruct.library.tools.definition.ToolDefinition;
 
@@ -12,6 +10,7 @@ import java.util.function.Consumer;
 
 /** Armor model that applies multiple texture layers in order */
 public class MultilayerArmorItem extends ModifiableArmorItem {
+  /** Name of the armor model, used by the client */
   private final Identifier name;
   public MultilayerArmorItem(ModifiableArmorMaterial material, ArmorType slot, Properties properties) {
     this(material, slot, properties, material.getId());
@@ -32,13 +31,8 @@ public class MultilayerArmorItem extends ModifiableArmorItem {
     this.name = name;
   }
 
-
-  public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-    consumer.accept(new ArmorModelDispatcher() {
-      @Override
-      protected Identifier getName() {
-        return name;
-      }
-    });
+  /** Gets the name of the armor model, used by the client */
+  public Identifier getArmorName() {
+    return name;
   }
 }

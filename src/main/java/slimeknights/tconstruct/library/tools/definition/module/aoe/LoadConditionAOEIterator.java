@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import slimeknights.mantle.data.loadable.mapping.ConditionalLoadable.ConditionalObject;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-import slimeknights.tconstruct.library.client.armor.texture.ArmorTextureSupplier;
 import slimeknights.tconstruct.library.tools.nbt.IToolStackView;
 import slimeknights.tconstruct.library.utils.Util;
 
@@ -14,7 +13,7 @@ import slimeknights.tconstruct.library.utils.Util;
  * Datagen helper for making conditional {@link AreaOfEffectIterator} in {@link ConditionalAOEIterator}.
  * For standard tool module usage, see {@link slimeknights.tconstruct.library.tools.definition.module.ConditionalToolModule}
  * @param ifTrue      Supplier to use if all conditions are true.
- * @param ifFalse     Supplier to use if any condition is false. Defaults to {@link ArmorTextureSupplier#EMPTY}
+ * @param ifFalse     Supplier to use if any condition is false. Defaults to {@code ArmorTextureSupplier#EMPTY}
  * @param conditions  Conditions to evaluate.
  */
 @SuppressWarnings("unused") // API

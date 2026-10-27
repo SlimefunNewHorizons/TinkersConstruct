@@ -38,7 +38,6 @@ import slimeknights.mantle.block.entity.MantleHangingSignBlockEntity;
 import slimeknights.mantle.block.entity.MantleSignBlockEntity;
 import slimeknights.mantle.block.entity.InventoryBlockEntity;
 import slimeknights.mantle.block.InventoryBlock;
-import slimeknights.mantle.client.ClientEvents;
 import slimeknights.mantle.command.MantleCommand;
 import slimeknights.mantle.command.argument.ResourceOrTagKeyArgument;
 import slimeknights.mantle.config.Config;
@@ -122,8 +121,7 @@ public class Mantle {
     NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ItemTooltipEvent.class, IBlockTooltip::onItemTooltip);
 
     if (FMLEnvironment.getDist() == Dist.CLIENT) {
-      ClientEvents.onConstruct();
-    }
+      }
   }
 
   private void registerCapabilities(RegisterCapabilitiesEvent event) {

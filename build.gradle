@@ -71,7 +71,7 @@ sourceSets.main {
         exclude { details ->
             def path = details.relativePath.pathString
             def keep = ['slimeknights/mantle/client/TooltipKey.java', 'slimeknights/mantle/client/SafeClientAccess.java',
-                        'slimeknights/mantle/client/ResourceColorManager.java', 'slimeknights/mantle/client/book/BookHelper.java',
+                        'slimeknights/mantle/client/ResourceColorManager.java', 'slimeknights/mantle/client/model/connected/ConnectedModelRegistry.java', 'slimeknights/mantle/client/book/BookHelper.java',
                         'slimeknights/tconstruct/library/client/materials/MaterialTooltipCache.java',
                         'slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/SafeClient.java']
@@ -82,6 +82,11 @@ sourceSets.main {
         exclude 'slimeknights/tconstruct/shared/TinkerClient.java'
         exclude 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java'
         exclude 'slimeknights/mantle/fluid/texture/Client*.java'
+        exclude 'slimeknights/mantle/fluid/texture/FluidTexture.java'
+        exclude 'slimeknights/mantle/fluid/texture/FluidTextureManager.java'
+        // JEI integration is client code, ported with it
+        exclude 'slimeknights/mantle/plugin/jei/**'
+        exclude 'slimeknights/tconstruct/plugin/jei/**'
         // These integrations have no NeoForge 1.21.1 API artifact yet. They are
         // intentionally isolated while the core port is brought up.
         exclude 'slimeknights/tconstruct/plugin/craftingtweaks/**'

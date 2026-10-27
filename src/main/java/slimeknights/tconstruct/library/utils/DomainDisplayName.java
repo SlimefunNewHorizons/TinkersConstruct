@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.library.utils;
 
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import slimeknights.tconstruct.TConstruct;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.minecraft.locale.Language;
 import net.neoforged.fml.ModList;
 import org.apache.commons.lang3.text.WordUtils;
@@ -57,7 +58,7 @@ public class DomainDisplayName {
   }
 
   /** Registers the reload listener with the resource manager */
-  public static void addResourceListener(RegisterClientReloadListenersEvent manager) {
-    manager.registerReloadListener(RELOAD_LISTENER);
+  public static void addResourceListener(AddClientReloadListenersEvent manager) {
+    manager.addListener(TConstruct.getResource("domain_display_names"), RELOAD_LISTENER);
   }
 }

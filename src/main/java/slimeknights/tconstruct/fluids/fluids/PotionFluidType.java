@@ -7,10 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import slimeknights.tconstruct.library.utils.PotionUtils;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import slimeknights.mantle.fluid.texture.ClientTextureFluidType;
 import slimeknights.mantle.recipe.helper.FluidOutput;
 import slimeknights.tconstruct.fluids.TinkerFluids;
 
@@ -31,24 +29,6 @@ public class PotionFluidType extends FluidType {
     ItemStack itemStack = new ItemStack(fluidStack.getFluid().getBucket());
     PotionUtils.copyPotion(fluidStack, itemStack);
     return itemStack;
-  }
-
-  public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-    consumer.accept(new ClientTextureFluidType(this) {
-      /**
-       * Gets the color, based on {@link PotionUtils#getColor(ItemStack)}
-       * @param stack  Fluid stack instance
-       * @return  Color for the fluid
-       */
-      @Override
-      public int getTintColor(FluidStack stack) {
-        PotionContents contents = PotionUtils.getPotionContents(stack);
-        if (contents.equals(PotionContents.EMPTY)) {
-          return getTintColor();
-        }
-        return contents.getColor() | 0xFF000000;
-      }
-    });
   }
 
   /** Resolves a built-in potion key to its holder. */

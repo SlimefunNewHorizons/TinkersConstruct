@@ -13,7 +13,6 @@ public class JsonThingsPlugin {
     HarvestTiers.registerTierResolver(JsonThingsTierRegistry::byId, JsonThingsTierRegistry::getId);
 
     if (FMLEnvironment.getDist() == Dist.CLIENT) {
-      PluginClient.init();
     }
   }
 }

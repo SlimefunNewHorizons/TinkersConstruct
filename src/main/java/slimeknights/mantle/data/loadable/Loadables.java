@@ -27,7 +27,6 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.data.loadable.common.CodecLoadable;
 import slimeknights.mantle.data.loadable.common.LazyRegistryLoadable;
 import slimeknights.mantle.data.loadable.common.RegistryLoadable;
@@ -90,7 +89,7 @@ public class Loadables {
 
   /** Loadable for a rotation value, from 0 to 270 */
   public static final Loadable<Integer> ROTATION = new IntLoadable(0, 270, IntNetwork.SHORT).validate((value, error) -> {
-    if (!ModelHelper.checkRotation(value)) {
+    if (value < 0 || value % 90 != 0 || value > 270) {
       throw error.create("Rotation must be 0/90/180/270");
     }
     return value;

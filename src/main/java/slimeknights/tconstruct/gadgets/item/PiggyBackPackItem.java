@@ -2,12 +2,6 @@ package slimeknights.tconstruct.gadgets.item;
 
 import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import slimeknights.mantle.item.TooltipItem;
 import slimeknights.tconstruct.TConstruct;
@@ -188,41 +181,5 @@ public class PiggyBackPackItem extends TooltipItem {
       return true;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
-      consumer.accept(new IClientMobEffectExtensions() {
-        private final Minecraft mc = Minecraft.getInstance();
-        private static final Identifier[] ICONS = {
-          TConstruct.getResource("carry"),
-          TConstruct.getResource("carry_2"),
-          TConstruct.getResource("carry_3")
-        };
-
-        /** Common logic to render the icon */
-        private void renderIcon(MobEffectInstance effect, GuiGraphics graphics, int x, int y) {
-          int amplifier = effect.getAmplifier();
-          if (amplifier > 2) {
-            amplifier = 2;
-          }
-          // Effect icons are stored in the mob-effect atlas, not the GUI atlas
-          // used by GuiGraphics.blitSprite(Identifier).
-          MobEffectTextureManager textures = mc.getMobEffectTextures();
-          TextureAtlasSprite sprite = textures.getSprite(ICONS[amplifier]);
-          graphics.blit(x, y, 0, 18, 18, sprite);
-        }
-
-        @Override
-        public boolean renderInventoryIcon(MobEffectInstance effect, EffectRenderingInventoryScreen<?> gui, GuiGraphics graphics, int x, int y, int z) {
-          renderIcon(effect, graphics, x, y + 7);
-          return true;
-        }
-
-        @Override
-        public boolean renderGuiIcon(MobEffectInstance effect, Gui gui, GuiGraphics graphics, int x, int y, float z, float alpha) {
-          renderIcon(effect, graphics, x + 3, y + 3);
-          return true;
-        }
-      });
-    }
   }
 }

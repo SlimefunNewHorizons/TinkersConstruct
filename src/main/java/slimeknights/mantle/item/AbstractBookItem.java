@@ -1,5 +1,7 @@
 package slimeknights.mantle.item;
 
+import javax.annotation.Nullable;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -21,7 +23,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import slimeknights.mantle.Mantle;
 import slimeknights.mantle.client.SafeClientAccess;
-import slimeknights.mantle.client.book.BookScreenOpener;
 import slimeknights.mantle.datagen.MantleTags;
 import slimeknights.mantle.util.RegistryHelper;
 
@@ -30,14 +31,36 @@ import java.util.List;
 /** Item implementing all standard book behaviors, just requires calling methods from {@link slimeknights.mantle.client.book.data.BookData} in a few abstract methods. */
 @SuppressWarnings("unused")  // API
 public abstract class AbstractBookItem extends LecternBookItem {
+  /** Opens a book by ID on the client */
+  @FunctionalInterface
+  public interface BookOpener {
+    /**
+     * Opens the book
+     * @param book   Book ID
+     * @param hand   Hand holding the book, null if not held
+     * @param stack  Book stack, empty if not held
+     * @return  False if the book does not exist
+     */
+    boolean open(Identifier book, @Nullable InteractionHand hand, ItemStack stack);
+
+    /** Opens the book from an inventory slot */
+    default void openFromSlot(Identifier book, int slotIndex, ItemStack stack) {}
+
+    /** Opens the book placed in a lectern */
+    default void openFromLectern(Identifier book, BlockPos pos, ItemStack stack) {}
+  }
+
   private static final Component CLICK_TO_OPEN = Mantle.makeComponent("item", "book.click_to_open").withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC);
 
   public AbstractBookItem(Properties properties) {
     super(properties);
   }
 
-  /** Gets the book for the given item stack */
-  public abstract BookScreenOpener getBook(ItemStack stack);
+  /** Opens books on the client, set by Mantle's client setup as the book screen is client only */
+  public static BookOpener opener = (book, hand, stack) -> false;
+
+  /** Gets the ID of the book for the given item stack, books are loaded on the client */
+  public abstract Identifier getBook(ItemStack stack);
 
   /** Checks if the given menu supports opening the menu */
   public static boolean isValidContainer(AbstractContainerMenu menu) {
@@ -71,7 +94,7 @@ public abstract class AbstractBookItem extends LecternBookItem {
 
   /** Called on the client to open the screen when used on right click in the hand */
   public void openScreen(Player player, InteractionHand hand, ItemStack stack) {
-    getBook(stack).openGui(hand, stack);
+    opener.open(getBook(stack), hand, stack);
   }
 
   @Override
@@ -85,7 +108,7 @@ public abstract class AbstractBookItem extends LecternBookItem {
 
   /** Called on the client to open the screen when right-clicked in the GUI */
   public void openScreen(Player player, int slotIndex, ItemStack stack) {
-    getBook(stack).openGui(slotIndex, stack);
+    opener.openFromSlot(getBook(stack), slotIndex, stack);
   }
 
   @Override
@@ -104,6 +127,6 @@ public abstract class AbstractBookItem extends LecternBookItem {
 
   @Override
   public void openLecternScreenClient(BlockPos pos, ItemStack book) {
-    getBook(book).openGui(pos, book);
+    opener.openFromLectern(getBook(book), pos, book);
   }
 }

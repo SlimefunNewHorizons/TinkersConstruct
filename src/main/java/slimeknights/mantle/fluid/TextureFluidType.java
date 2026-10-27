@@ -1,8 +1,6 @@
 package slimeknights.mantle.fluid;
 
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidType;
-import slimeknights.mantle.fluid.texture.ClientTextureFluidType;
 
 import java.util.function.Consumer;
 
@@ -15,7 +13,4 @@ public class TextureFluidType extends FluidType {
     super(properties);
   }
 
-  public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-    consumer.accept(new ClientTextureFluidType(this));
-  }
 }

@@ -1,13 +1,11 @@
 package slimeknights.mantle.network.packet;
 
+import net.minecraft.world.item.ItemStack;
+import slimeknights.mantle.item.AbstractBookItem;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import slimeknights.mantle.network.PacketContext;
-import slimeknights.mantle.client.book.BookLoader;
-import slimeknights.mantle.client.book.data.BookData;
-import slimeknights.mantle.command.client.BookCommand;
 
 @AllArgsConstructor
 public class OpenNamedBookPacket implements IThreadsafePacket {
@@ -24,17 +22,7 @@ public class OpenNamedBookPacket implements IThreadsafePacket {
 
   @Override
   public void handleThreadsafe(PacketContext context) {
-    BookData bookData = BookLoader.getBook(book);
-    if(bookData != null) {
-      bookData.openGui(Component.literal("Book"), "", null, null);
-    } else {
-      ClientOnly.errorStatus(book);
-    }
-  }
-
-  static class ClientOnly {
-    static void errorStatus(Identifier book) {
-      BookCommand.bookNotFound(book);
-    }
+    // the opener reports missing books to the player
+    AbstractBookItem.opener.open(book, null, ItemStack.EMPTY);
   }
 }

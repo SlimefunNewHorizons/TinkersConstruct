@@ -28,7 +28,6 @@ import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.shared.inventory.TriggeringMultiModuleContainerMenu;
 import slimeknights.tconstruct.tables.TinkerTables;
 import slimeknights.tconstruct.tables.block.ITabbedBlock;
-import slimeknights.tconstruct.tables.client.inventory.BaseTabbedScreen;
 import slimeknights.tconstruct.tables.menu.module.SideInventoryContainer;
 
 import javax.annotation.Nullable;
@@ -246,24 +245,24 @@ public class TabbedContainerMenu<TILE extends BlockEntity> extends TriggeringMul
     /** Updates the client's screen */
     private static void clientScreenUpdate() {
       Screen screen = Minecraft.getInstance().screen;
-      if (screen instanceof BaseTabbedScreen) {
-        ((BaseTabbedScreen<?,?>) screen).updateDisplay();
+      if (screen instanceof ITabbedScreen) {
+        ((ITabbedScreen) screen).updateDisplay();
       }
     }
 
     /** Sends the error message from the container to the client's screen */
     private static void clientError(MutableComponent errorMessage) {
       Screen screen = Minecraft.getInstance().screen;
-      if (screen instanceof BaseTabbedScreen) {
-        ((BaseTabbedScreen<?,?>) screen).error(errorMessage);
+      if (screen instanceof ITabbedScreen) {
+        ((ITabbedScreen) screen).error(errorMessage);
       }
     }
 
     /** Sends the warning message from the container to the client's screen */
     private static void clientWarning(MutableComponent warningMessage) {
       Screen screen = Minecraft.getInstance().screen;
-      if (screen instanceof BaseTabbedScreen) {
-        ((BaseTabbedScreen<?,?>) screen).warning(warningMessage);
+      if (screen instanceof ITabbedScreen) {
+        ((ITabbedScreen) screen).warning(warningMessage);
       }
     }
   }

@@ -1,18 +1,13 @@
 package slimeknights.tconstruct.tools.item;
 
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import slimeknights.tconstruct.TConstruct;
-import slimeknights.tconstruct.library.client.armor.ArmorModelManager.ArmorModelDispatcher;
 import slimeknights.tconstruct.library.tools.definition.ModifiableArmorMaterial;
 import slimeknights.tconstruct.library.tools.item.armor.ModifiableArmorItem;
-import slimeknights.tconstruct.tools.client.SlimeskullArmorModel;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -22,6 +17,7 @@ public class SlimeskullItem extends ModifiableArmorItem {
   /** Model ID for our slimeskull. You may want your own for a custom slimeskull */
   public static final Identifier MODEL_LOCATION = TConstruct.getResource("slimeskull");
 
+  /** Name of the armor model, used by the client */
   private final Identifier name;
 
   public SlimeskullItem(ModifiableArmorMaterial material, Identifier name, Properties properties) {
@@ -33,19 +29,8 @@ public class SlimeskullItem extends ModifiableArmorItem {
     this(material, material.getId(), properties);
   }
 
-
-  public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-    consumer.accept(new ArmorModelDispatcher() {
-      @Override
-      protected Identifier getName() {
-        return name;
-      }
-
-      @Nonnull
-      @Override
-      public Model getGenericArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
-        return SlimeskullArmorModel.INSTANCE.setup(living, stack, original, getModel(stack));
-      }
-    });
+  /** Gets the name of the armor model, used by the client */
+  public Identifier getArmorName() {
+    return name;
   }
 }
