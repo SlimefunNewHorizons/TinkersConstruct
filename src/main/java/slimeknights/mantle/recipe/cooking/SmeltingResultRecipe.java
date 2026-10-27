@@ -22,10 +22,10 @@ import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 /** Extension of {@link SmeltingRecipe} to support {@link ItemOutput} */
 @Getter
 public class SmeltingResultRecipe extends SmeltingRecipe implements CookingResultRecipe {
-  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooking_time", 200, true, AbstractCookingRecipe::getCookingTime);
+  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooking_time", 200, true, AbstractCookingRecipe::cookingTime);
   public static final RecordLoadable<SmeltingResultRecipe> LOADABLE = RecordLoadable.create(
     ContextKey.ID.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP, CookingResultRecipe.CATEGORY_FIELD,
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", r -> r.ingredient),
+    IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", r -> r.input()),
     RESULT_FIELD, EXPERIENCE_FIELD, COOKING_TIME_FIELD,
     SmeltingResultRecipe::new);
 
@@ -40,7 +40,6 @@ public class SmeltingResultRecipe extends SmeltingRecipe implements CookingResul
     return MantleRecipes.SMELTING.get();
   }
 
-  @Override
   public ItemStack getResultItem(HolderLookup.Provider pRegistryAccess) {
     return result.get();
   }

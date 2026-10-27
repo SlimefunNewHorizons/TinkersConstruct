@@ -243,7 +243,7 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
       Function<? super Block, ? extends BlockItem> defaultItemBlock = block -> new BlockItem(block, itemProps);
       burnableItem = burnTime -> defaultItemBlock;
       burnableTallItem = block -> new DoubleHighBlockItem(block, itemProps);
-      burnableSignItem = (standing, wall) -> new SignItem(signProps, standing, wall);
+      burnableSignItem = (standing, wall) -> new SignItem(standing, wall, signProps);
       burnableHangingSignItem = (standing, wall) -> new HangingSignItem(standing, wall, signProps);
     }
 
@@ -269,9 +269,9 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
     ItemObject<ButtonBlock> button = register(name + "_button", () -> new ButtonBlock(setType, 30, redstoneProps), burnableItem.apply(100));
     // signs
     RegistryObject<StandingSignBlock> standingSign = registerNoItem(name + "_sign", () -> new MantleStandingSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F), woodType));
-    RegistryObject<WallSignBlock> wallSign = registerNoItem(name + "_wall_sign", () -> new MantleWallSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F).lootFrom(standingSign), woodType));
+    RegistryObject<WallSignBlock> wallSign = registerNoItem(name + "_wall_sign", () -> new MantleWallSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F).overrideLootTable(standingSign.get().getLootTable()).overrideDescription(standingSign.get().getDescriptionId()), woodType));
     RegistryObject<MantleCeilingHangingSignBlock> hangingSign = registerNoItem(name + "_hanging_sign", () -> new MantleCeilingHangingSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F), woodType));
-    RegistryObject<MantleWallHangingSignBlock> wallHangingSign = registerNoItem(name + "_wall_hanging_sign", () -> new MantleWallHangingSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F).lootFrom(hangingSign), woodType));
+    RegistryObject<MantleWallHangingSignBlock> wallHangingSign = registerNoItem(name + "_wall_hanging_sign", () -> new MantleWallHangingSignBlock(behaviorCreator.apply(WoodBlockObject.WoodVariant.PLANKS).instrument(NoteBlockInstrument.BASS).forceSolidOn().noCollision().strength(1.0F).overrideLootTable(hangingSign.get().getLootTable()).overrideDescription(hangingSign.get().getDescriptionId()), woodType));
     // tell mantle to inject these into the TE
     MantleSignBlockEntity.registerSignBlock(standingSign);
     MantleSignBlockEntity.registerSignBlock(wallSign);

@@ -32,16 +32,6 @@ public class BlockEntityTypeRegistryAdapter extends RegistryAdapter<BlockEntityT
   }
 
   /**
-   * Gets the data fixer type for the tile entity instance
-   * @param name  Tile entity name
-   * @return  Data fixer type
-   */
-  @Nullable
-  private Type<?> getType(String name) {
-    return Util.fetchChoiceType(References.BLOCK_ENTITY, resourceName(name));
-  }
-
-  /**
    * Registers a tile entity type for a single block
    * @param factory  Tile entity factory
    * @param block    Single block to add
@@ -51,7 +41,7 @@ public class BlockEntityTypeRegistryAdapter extends RegistryAdapter<BlockEntityT
    */
   @SuppressWarnings("ConstantConditions")
   public <T extends BlockEntity> BlockEntityType<T> register(BlockEntitySupplier<? extends T> factory, Block block, String name) {
-    return register(BlockEntityType.Builder.<T>of(factory, block).build(getType(name)), name);
+    return register(new BlockEntityType<T>(factory, block), name);
   }
 
   /**
@@ -64,7 +54,7 @@ public class BlockEntityTypeRegistryAdapter extends RegistryAdapter<BlockEntityT
    */
   @SuppressWarnings("ConstantConditions")
   public <T extends BlockEntity> BlockEntityType<T> register(BlockEntitySupplier<? extends T> factory, Collection<? extends Block> blocks, String name) {
-    return register(new BlockEntityType<>(factory, Set.copyOf(blocks), getType(name)), name);
+    return register(new BlockEntityType<>(factory, Set.copyOf(blocks)), name);
   }
 
   /**

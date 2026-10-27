@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -48,6 +49,16 @@ public abstract class ItemIngredient implements ICustomIngredient {
   }
 
   @Override
+  public Stream<Holder<Item>> items() {
+    return getItems().map(ItemStack::getItemHolder).distinct();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return new SlotDisplay.Composite(getItems().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).toList());
+  }
+
+  /** Gets the stacks to display for this ingredient */
   public Stream<ItemStack> getItems() {
     Stream<Item> explicit = items.stream();
     Stream<Item> tagged = tag == null ? Stream.empty() : StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(tag).spliterator(), false).map(Holder::value);

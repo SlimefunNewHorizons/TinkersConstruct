@@ -1,5 +1,6 @@
 package slimeknights.mantle.recipe.crafting;
 
+import java.util.List;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -39,7 +40,7 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
   private final boolean matchAll;
 
   protected ShapedRetexturedRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
-                                   NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification,
+                                   List<Optional<Ingredient>> ingredients, ItemStack result, boolean showNotification,
                                    Ingredient texture, boolean matchAll) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), result, showNotification);
     this.texture = texture;
@@ -47,14 +48,13 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
   }
 
   protected ShapedRetexturedRecipe(ShapedRecipe original, Ingredient texture, boolean matchAll) {
-    super(original.getGroup(), original.category(), original.pattern,
-      original.getResultItem(RegistryAccess.EMPTY).copy(), original.showNotification());
+    super(original.group(), original.category(), original.pattern, original.result.copy(), original.showNotification());
     this.texture = texture;
     this.matchAll = matchAll;
   }
 
   public ItemStack getResultItem(Item texture, RegistryAccess access) {
-    return RetexturedHelper.setTexture(getResultItem(access).copy(), Block.byItem(texture));
+    return RetexturedHelper.setTexture(result.copy(), Block.byItem(texture));
   }
 
   @Override
@@ -101,9 +101,9 @@ public class ShapedRetexturedRecipe extends ShapedRecipe {
           JsonObject key = json.getAsJsonObject("key");
           JsonElement ingredientJson = key == null ? null : key.get(symbol);
           if (ingredientJson == null) throw new JsonSyntaxException("Texture symbol '" + symbol + "' is not defined in key");
-          texture = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, ingredientJson).getOrThrow(JsonParseException::new);
+          texture = Ingredient.CODEC.parse(JsonOps.INSTANCE, ingredientJson).getOrThrow(JsonParseException::new);
         } else {
-          texture = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, textureJson).getOrThrow(JsonParseException::new);
+          texture = Ingredient.CODEC.parse(JsonOps.INSTANCE, textureJson).getOrThrow(JsonParseException::new);
           Mantle.logger.warn("Using deprecated full ingredient format for mantle:crafting_shaped_retextured texture");
         }
         return new ShapedRetexturedRecipe(base, texture, json.has("match_all") && json.get("match_all").getAsBoolean());

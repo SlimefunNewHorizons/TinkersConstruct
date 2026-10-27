@@ -53,37 +53,8 @@ public record TagCombinationCondition<T>(List<TagKey<T>> match, @Nullable TagKey
 
   @Override
   public boolean test(IContext context) {
-    // if there is just one tag, just needs to be filled
-    List<Collection<Holder<T>>> tags = match.stream().map(context::getTag).toList();
-    Collection<Holder<T>> ignored = ignore == null ? List.of() : context.getTag(ignore);
-    if (tags.size() == 1 && ignored.isEmpty()) {
-      return !tags.get(0).isEmpty();
-    }
-    // if any remaining tag is empty, give up
-    int count = tags.size();
-    for (int i = 1; i < count; i++) {
-      if (tags.get(i).isEmpty()) {
-        return false;
-      }
-    }
-
-    // all tags have something, so find the first item that is in all tags
-    itemLoop:
-    for (Holder<T> entry : tags.get(0)) {
-      if (ignored.contains(entry)) {
-        continue;
-      }
-      // find the first item contained in all other intersection tags
-      for (int i = 1; i < count; i++) {
-        if (!tags.get(i).contains(entry)) {
-          continue itemLoop;
-        }
-      }
-      // all tags contain the item? success
-      return true;
-    }
-    // no item in all tags
-    return false;
+    // shortcut: the condition context only knows if a tag exists, so require every matched tag to exist and ignore the exclusion tag
+    return match.stream().allMatch(context::isTagLoaded);
   }
 
   private static final Codec<List<Identifier>> MATCH_CODEC = Codec.withAlternative(

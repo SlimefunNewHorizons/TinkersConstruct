@@ -1,5 +1,6 @@
 package slimeknights.mantle.inventory;
 
+import javax.annotation.Nullable;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -71,7 +72,8 @@ public class WrapperSlot extends Slot {
   }
 
   @Override
-  public Pair<Identifier, Identifier> getNoItemIcon() {
+  @Nullable
+  public Identifier getNoItemIcon() {
     return this.parent.getNoItemIcon();
   }
 
@@ -91,8 +93,8 @@ public class WrapperSlot extends Slot {
   }
 
   @Override
-  public Slot setBackground(Identifier atlas, Identifier sprite) {
-    return this.parent.setBackground(atlas, sprite);
+  public Slot setBackground(Identifier sprite) {
+    return this.parent.setBackground(sprite);
   }
 
   @Override

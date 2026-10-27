@@ -1,11 +1,13 @@
 package slimeknights.mantle.registration.deferred;
 
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import slimeknights.mantle.registration.RegistryObject;
 import slimeknights.mantle.registration.object.EntityObject;
@@ -38,20 +40,20 @@ public class EntityTypeDeferredRegister extends DeferredRegisterWrapper<EntityTy
    * @return  Entity registry object
    */
   public <T extends Entity> RegistryObject<EntityType<T>> register(String name, Supplier<EntityType.Builder<T>> sup) {
-    return register.register(name, () -> sup.get().build(resourceName(name)));
+    return register.register(name, () -> sup.get().build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.parse(resourceName(name)))));
   }
 
   /**
    * Registers a entity type for the given entity type builder, and registers a spawn egg for it
    * @param name       Entity name
    * @param sup        Entity builder instance
-   * @param primary    Primary egg color
-   * @param secondary  Secondary egg color
+   * @param primary    Primary egg color, unused since spawn eggs use textures in 1.21.5
+   * @param secondary  Secondary egg color, unused since spawn eggs use textures in 1.21.5
    * @param <T>   Entity class type
    * @return  Entity registry object
    */
   public <T extends Mob> EntityObject<T> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup, int primary, int secondary) {
     RegistryObject<EntityType<T>> object = register(name, sup);
-    return new EntityObject<>(object, itemRegistry.register(name + "_spawn_egg", () -> new DeferredSpawnEggItem(object, primary, secondary, new Item.Properties())));
+    return new EntityObject<>(object, itemRegistry.register(name + "_spawn_egg", () -> new SpawnEggItem(new Item.Properties().spawnEgg(object.get()))));
   }
 }

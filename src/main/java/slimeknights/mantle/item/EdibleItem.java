@@ -31,11 +31,8 @@ public class EdibleItem extends Item {
     try {
         TranslationHelper.addOptionalTooltip(stack, tooltip);
         // TODO: use ContainerFoodItem helper for more potion like effects?
-        for (FoodProperties.PossibleEffect possibleEffect : Objects.requireNonNull(stack.getFoodProperties(null)).effects()) {
-          MobEffectInstance effect = possibleEffect.effect();
-          if (effect != null) {
-            tooltip.add(Component.literal(I18n.get(effect.getDescriptionId()).trim()).withStyle(ChatFormatting.GRAY));
-          }
+        for (MobEffectInstance effect : ContainerFoodItem.getConsumeEffects(stack)) {
+          tooltip.add(Component.literal(I18n.get(effect.getDescriptionId()).trim()).withStyle(ChatFormatting.GRAY));
         }
   
     } finally {

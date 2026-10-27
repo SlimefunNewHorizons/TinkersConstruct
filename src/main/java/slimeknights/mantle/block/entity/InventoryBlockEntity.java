@@ -1,5 +1,6 @@
 package slimeknights.mantle.block.entity;
 
+import net.minecraft.world.entity.ContainerUser;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -180,10 +181,10 @@ public abstract class InventoryBlockEntity extends NameableBlockEntity implement
   }
 
   @Override
-  public void startOpen(Player player) {}
+  public void startOpen(ContainerUser user) {}
 
   @Override
-  public void stopOpen(Player player) {}
+  public void stopOpen(ContainerUser user) {}
 
   /* NBT */
 

@@ -26,7 +26,7 @@ public class LoadableRecipeSerializer<T extends Recipe<?>> implements LoggingRec
   public static final ContextKey<RecipeSerializer<?>> SERIALIZER = new ContextKey<>("serializer");
   public static final ContextKey<TypeAwareRecipeSerializer<?>> TYPED_SERIALIZER = new ContextKey<>("typed_serializer");
   public static final ContextKey<RecipeType<?>> TYPE = new ContextKey<>("type");
-  public static final LoadableField<String,Recipe<?>> RECIPE_GROUP = StringLoadable.DEFAULT.defaultField("group", "", Recipe::getGroup);
+  public static final LoadableField<String,Recipe<?>> RECIPE_GROUP = StringLoadable.DEFAULT.defaultField("group", "", Recipe::group);
 
   /** Recipe IDs are owned by RecipeHolder in 1.21 and are not supplied to codecs. */
   public static final Identifier UNBOUND_ID = Mantle.getResource("unbound_recipe");

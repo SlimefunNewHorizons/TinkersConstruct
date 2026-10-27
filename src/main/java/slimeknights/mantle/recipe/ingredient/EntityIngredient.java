@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import slimeknights.mantle.data.loadable.IAmLoadable;
 import slimeknights.mantle.data.loadable.Loadable;
 import slimeknights.mantle.data.loadable.Loadables;
@@ -142,16 +141,7 @@ public abstract class EntityIngredient implements Predicate<EntityType<?>>, IAmL
   public List<ItemStack> getEggs() {
     if (eggs == null) {
       // use getDisplay to guarantee order is the same, just in case
-      // vanilla eggs live in SpawnEggItem.byId while DeferredSpawnEggItem.deferredOnlyById
-      // only knows modded eggs registered through its constructor; check both so vanilla
-      // entities get a usable JEI focus link
-      eggs = getDisplay().stream().map(type -> {
-        SpawnEggItem egg = SpawnEggItem.byId(type.type);
-        if (egg == null) {
-          egg = DeferredSpawnEggItem.deferredOnlyById(type.type);
-        }
-        return new ItemStack(Objects.requireNonNullElse(egg, Items.AIR));
-      }).toList();
+      eggs = getDisplay().stream().map(type -> new ItemStack(Objects.requireNonNullElse(SpawnEggItem.byId(type.type), Items.AIR))).toList();
     }
     return eggs;
   }

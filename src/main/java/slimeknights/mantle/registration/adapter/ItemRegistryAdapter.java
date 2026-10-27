@@ -1,7 +1,7 @@
 package slimeknights.mantle.registration.adapter;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch.TriFunction;
+import com.mojang.datafixers.util.Function3;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.BlockItem;
@@ -14,7 +14,6 @@ import net.minecraft.world.item.SignItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.minecraft.core.Registry;
 import slimeknights.mantle.item.BlockTooltipItem;
 import slimeknights.mantle.item.BurnableBlockItem;
@@ -192,8 +191,8 @@ public class ItemRegistryAdapter extends EnumRegistryAdapter<Item> {
     // many of these are already burnable via tags, but simplier to set them all here
     BiFunction<? super Block, Integer, ? extends BlockItem> burnableItem;
     Function<? super Block, ? extends BlockItem> burnableTallItem;
-    TriFunction<Item.Properties, ? super Block, ? super Block, ? extends BlockItem> burnableSignItem;
-    TriFunction<Item.Properties, ? super Block, ? super Block, ? extends BlockItem> burnableHangingSignItem;
+    Function3<Item.Properties, ? super Block, ? super Block, ? extends BlockItem> burnableSignItem;
+    Function3<Item.Properties, ? super Block, ? super Block, ? extends BlockItem> burnableHangingSignItem;
     if (isBurnable) {
       burnableItem     = (block, burnTime) -> new BurnableBlockItem(block, defaultProps, burnTime);
       burnableTallItem = (block) -> new BurnableTallBlockItem(block, defaultProps, 200);
@@ -202,7 +201,7 @@ public class ItemRegistryAdapter extends EnumRegistryAdapter<Item> {
     } else {
       burnableItem = (block, burnTime) -> new BlockItem(block, defaultProps);
       burnableTallItem = (block) -> new DoubleHighBlockItem(block, defaultProps);
-      burnableSignItem = SignItem::new;
+      burnableSignItem = (props, standing, wall) -> new SignItem(standing, wall, props);
       burnableHangingSignItem = (props, ceiling, wall) -> new HangingSignItem(ceiling, wall, props);
     }
 
@@ -276,6 +275,7 @@ public class ItemRegistryAdapter extends EnumRegistryAdapter<Item> {
    * @return  Spawn egg item instance
    */
   public SpawnEggItem registerSpawnEgg(Supplier<? extends EntityType<? extends Mob>> type, int primary, int secondary, String baseName) {
-    return register(new DeferredSpawnEggItem(type, primary, secondary, new Properties()), baseName + "_spawn_egg");
+    // spawn eggs use textures since 1.21.5, so the colors are unused
+    return register(new SpawnEggItem(new Properties().spawnEgg(type.get())), baseName + "_spawn_egg");
   }
 }

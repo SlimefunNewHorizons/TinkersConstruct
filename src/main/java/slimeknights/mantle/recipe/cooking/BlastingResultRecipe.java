@@ -22,10 +22,10 @@ import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 /** Extension of {@link BlastingRecipe} to support {@link ItemOutput} */
 @Getter
 public class BlastingResultRecipe extends BlastingRecipe implements CookingResultRecipe {
-  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooking_time", 100, true, AbstractCookingRecipe::getCookingTime);
+  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooking_time", 100, true, AbstractCookingRecipe::cookingTime);
   public static final RecordLoadable<BlastingResultRecipe> LOADABLE = RecordLoadable.create(
     ContextKey.ID.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP, CookingResultRecipe.CATEGORY_FIELD,
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", r -> r.ingredient),
+    IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", r -> r.input()),
     RESULT_FIELD, EXPERIENCE_FIELD, COOKING_TIME_FIELD,
     BlastingResultRecipe::new);
 
@@ -40,7 +40,6 @@ public class BlastingResultRecipe extends BlastingRecipe implements CookingResul
     return MantleRecipes.BLASTING.get();
   }
 
-  @Override
   public ItemStack getResultItem(HolderLookup.Provider pRegistryAccess) {
     return result.get();
   }

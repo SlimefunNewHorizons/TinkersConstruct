@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import slimeknights.mantle.util.ValueIOHelper;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
 
@@ -143,7 +144,7 @@ public abstract class SingleItemHandler<T extends MantleBlockEntity> implements 
   public CompoundTag writeToNBT(HolderLookup.Provider registries) {
     CompoundTag nbt = new CompoundTag();
     if (!stack.isEmpty()) {
-      nbt = (CompoundTag)stack.save(registries, nbt);
+      nbt = (CompoundTag)ValueIOHelper.saveStack(stack, registries);
     }
     return nbt;
   }
@@ -153,6 +154,6 @@ public abstract class SingleItemHandler<T extends MantleBlockEntity> implements 
    * @param nbt  NBT
    */
   public void readFromNBT(CompoundTag nbt, HolderLookup.Provider registries) {
-    stack = ItemStack.parseOptional(registries, nbt);
+    stack = ValueIOHelper.parseStack(registries, nbt);
   }
 }

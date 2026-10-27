@@ -58,7 +58,7 @@ public abstract class AbstractBookItem extends LecternBookItem {
         Player player = SafeClientAccess.getPlayer();
         if (player != null && isValidContainer(player.containerMenu)) {
           Inventory inventory = player.getInventory();
-          if (inventory.items.contains(stack) || inventory.offhand.contains(stack)) {
+          if (inventory.getNonEquipmentItems().contains(stack) || player.getOffhandItem() == stack) {
             tooltip.add(CLICK_TO_OPEN);
           }
         }

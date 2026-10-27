@@ -1,5 +1,7 @@
 package slimeknights.mantle.command;
 
+import net.minecraft.util.InclusiveRange;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -85,10 +87,9 @@ public class GeneratePackHelper {
   public static void saveMcmeta(Path folder, PackType packType, String description) {
     Path path = folder.resolve("pack.mcmeta");
     JsonObject meta = new JsonObject();
-    JsonObject pack = new JsonObject();
-    pack.addProperty("description", description);
-    pack.addProperty("pack_format", SharedConstants.getCurrentVersion().getPackVersion(packType));
-    meta.add("pack", pack);
+    // pack formats have a major and minor version since 1.21.9, let the vanilla codec write them
+    PackMetadataSection pack = new PackMetadataSection(Component.literal(description), new InclusiveRange<>(SharedConstants.getCurrentVersion().packVersion(packType)));
+    meta.add("pack", PackMetadataSection.forPackType(packType).codec().encodeStart(JsonOps.INSTANCE, pack).getOrThrow());
     saveJson(meta, path);
   }
 

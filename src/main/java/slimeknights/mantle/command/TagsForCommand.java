@@ -314,7 +314,7 @@ public class TagsForCommand {
     double range = player.entityInteractionRange();
     Vec3 direction = start.add(look.x * range, look.y * range, look.z * range);
     AABB bb = player.getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).expandTowards(1, 1, 1);
-    EntityHitResult entityTrace = ProjectileUtil.getEntityHitResult(source.getLevel(), player, start, direction, bb, e -> true);
+    EntityHitResult entityTrace = ProjectileUtil.getEntityHitResult(source.getLevel(), player, start, direction, bb, e -> true, 0.3F);
     if (entityTrace != null) {
       EntityType<?> target = entityTrace.getEntity().getType();
       return printOwningTags(context, BuiltInRegistries.ENTITY_TYPE, target);

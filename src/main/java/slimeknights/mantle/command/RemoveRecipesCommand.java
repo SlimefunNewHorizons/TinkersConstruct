@@ -1,5 +1,7 @@
 package slimeknights.mantle.command;
 
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.util.context.ContextMap;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -177,24 +179,25 @@ public class RemoveRecipesCommand {
   private static int run(CommandContext<CommandSourceStack> context, List<RecipeType<?>> recipeTypes, @Nullable Predicate<Item> removeResult, @Nullable Predicate<Item> removeInput, long startTime) {
     // iterate all recipes for the type storing recipes that craft the tag
     ServerLevel level = context.getSource().getLevel();
-    RegistryAccess access = level.registryAccess();
+    ContextMap displayContext = SlotDisplayContext.fromLevel(level);
     List<Identifier> recipes = new ArrayList<>();
     for (RecipeType<?> recipeType : recipeTypes) {
       for (Object holderObject : context.getSource().getLevel().recipeAccess().recipeMap().byType((RecipeType) recipeType)) {
         RecipeHolder<?> holder = (RecipeHolder<?>) holderObject;
         Recipe<?> recipe = holder.value();
         // result must match or not be requested
-        if (removeResult == null || removeResult.test(recipe.getResultItem(access).getItem())) {
+        if (removeResult == null || recipe.display().stream().flatMap(display -> display.result().resolveForStacks(displayContext).stream()).anyMatch(result -> removeResult.test(result.getItem()))) {
           // no input predicate? we are done
           if (removeInput == null) {
-            recipes.add(holder.id());
+            recipes.add(holder.id().identifier());
           } else {
             // at least one ingredient must match the ingredient predicate
             ingredientLoop:
-            for (Ingredient ingredient : recipe.getIngredients()) {
+            // shortcut: only placeable recipes list their ingredients, custom recipes are skipped by input filters; upgrade once recipes expose inputs again
+            for (Ingredient ingredient : recipe.placementInfo().ingredients()) {
               for (ItemStack stack : IngredientHelper.getItems(ingredient)) {
                 if (removeInput.test(stack.getItem())) {
-                  recipes.add(holder.id());
+                  recipes.add(holder.id().identifier());
                   break ingredientLoop;
                 }
               }

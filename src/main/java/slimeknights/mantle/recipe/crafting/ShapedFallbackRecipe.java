@@ -30,13 +30,13 @@ public class ShapedFallbackRecipe extends ShapedRecipe {
   private List<CraftingRecipe> alternativeCache;
 
   public ShapedFallbackRecipe(Identifier ignoredId, String group, CraftingBookCategory category, int width, int height,
-                              NonNullList<Ingredient> ingredients, ItemStack output, List<Identifier> alternatives) {
+                              List<Optional<Ingredient>> ingredients, ItemStack output, List<Identifier> alternatives) {
     super(group, category, new ShapedRecipePattern(width, height, ingredients, Optional.empty()), output);
     this.alternatives = alternatives;
   }
 
   public ShapedFallbackRecipe(ShapedRecipe base, List<Identifier> alternatives) {
-    super(base.getGroup(), base.category(), base.pattern, base.getResultItem(RegistryAccess.EMPTY).copy(), base.showNotification());
+    super(base.group(), base.category(), base.pattern, base.result.copy(), base.showNotification());
     this.alternatives = alternatives;
   }
 
@@ -66,7 +66,7 @@ public class ShapedFallbackRecipe extends ShapedRecipe {
       (buffer, recipe) -> {
         ShapedRecipe.Serializer.STREAM_CODEC.encode(buffer, recipe);
         buffer.writeVarInt(recipe.alternatives.size());
-        recipe.alternatives.forEach(buffer::writeResourceLocation);
+        recipe.alternatives.forEach(buffer::writeIdentifier);
       },
       buffer -> {
         ShapedRecipe base = ShapedRecipe.Serializer.STREAM_CODEC.decode(buffer);

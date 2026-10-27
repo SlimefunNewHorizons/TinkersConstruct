@@ -1,5 +1,8 @@
 package slimeknights.mantle.data.loadable.common;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
@@ -22,17 +25,29 @@ public enum IngredientLoadable implements Loadable<Ingredient> {
 
   @Override
   public Ingredient convert(JsonElement element, String key, TypedMap context) {
-    return (this == ALLOW_EMPTY ? Ingredient.CODEC : Ingredient.CODEC_NONEMPTY)
-      .parse(JSON_OPS, element).getOrThrow(JsonParseException::new);
+    // vanilla ingredients cannot be empty since 1.21.2, keep supporting the legacy empty array
+    if (element.isJsonArray() && element.getAsJsonArray().isEmpty()) {
+      if (this == DISALLOW_EMPTY) {
+        throw new JsonSyntaxException("Ingredient cannot be empty");
+      }
+      return IngredientHelper.EMPTY;
+    }
+    Ingredient ingredient = Ingredient.CODEC.parse(JSON_OPS, element).getOrThrow(JsonParseException::new);
+    if (this == DISALLOW_EMPTY && IngredientHelper.isEmpty(ingredient)) {
+      throw new JsonSyntaxException("Ingredient cannot be empty");
+    }
+    return ingredient;
   }
 
   @Override
   public JsonElement serialize(Ingredient object) {
-    if (object.isEmpty() && this == DISALLOW_EMPTY) {
-      throw new IllegalArgumentException("Ingredient cannot be empty");
+    if (IngredientHelper.isEmpty(object)) {
+      if (this == DISALLOW_EMPTY) {
+        throw new IllegalArgumentException("Ingredient cannot be empty");
+      }
+      return new JsonArray();
     }
-    return (this == ALLOW_EMPTY ? Ingredient.CODEC : Ingredient.CODEC_NONEMPTY)
-      .encodeStart(JSON_OPS, object).getOrThrow(JsonParseException::new);
+    return Ingredient.CODEC.encodeStart(JSON_OPS, object).getOrThrow(JsonParseException::new);
   }
 
   @Override

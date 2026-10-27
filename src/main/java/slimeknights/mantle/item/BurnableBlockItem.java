@@ -1,5 +1,6 @@
 package slimeknights.mantle.item;
 
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -15,7 +16,7 @@ public class BurnableBlockItem extends BlockItem {
   }
 
   @Override
-  public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+  public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType, FuelValues fuelValues) {
     return burnTime;
   }
 }

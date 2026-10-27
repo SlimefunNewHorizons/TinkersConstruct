@@ -31,7 +31,7 @@ public class BurningLiquidBlock extends LiquidBlock {
   protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
     if (!entity.fireImmune() && entity.getFluidTypeHeight(fluid.getFluidType()) > 0) {
       entity.igniteForSeconds(burnTime);
-      if (entity.hurt(entity.damageSources().lava(), damage)) {
+      if (entity.hurtOrSimulate(entity.damageSources().lava(), damage)) {
         entity.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + level.random.nextFloat() * 0.4F);
       }
     }

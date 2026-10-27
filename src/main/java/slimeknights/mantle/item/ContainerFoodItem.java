@@ -13,6 +13,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
@@ -42,12 +46,26 @@ public class ContainerFoodItem extends Item {
     return useAnim;
   }
 
+  /** Gets the status effects applied when consuming the stack, they live in the consumable component since 1.21.2 */
+  public static List<MobEffectInstance> getConsumeEffects(ItemStack stack) {
+    Consumable consumable = stack.get(DataComponents.CONSUMABLE);
+    if (consumable == null) {
+      return List.of();
+    }
+    List<MobEffectInstance> effects = new ArrayList<>();
+    for (ConsumeEffect effect : consumable.onConsumeEffects()) {
+      if (effect instanceof ApplyStatusEffectsConsumeEffect apply) {
+        effects.addAll(apply.effects());
+      }
+    }
+    return effects;
+  }
+
   /** Adds effects to the tooltip */
-  public static void addEffectTooltip(FoodProperties food, List<Component> tooltip) {
+  public static void addEffectTooltip(ItemStack stack, List<Component> tooltip) {
     // add effects to the tooltip, code based on potion items
-    for (FoodProperties.PossibleEffect possibleEffect : food.effects()) {
-      MobEffectInstance effect = possibleEffect.effect();
-      if (effect != null) {
+    for (MobEffectInstance effect : getConsumeEffects(stack)) {
+      {
         MutableComponent mutable = Component.translatable(effect.getDescriptionId());
         if (effect.getAmplifier() > 0) {
           mutable = Component.translatable("potion.withAmplifier", mutable, Component.translatable("potion.potency." + effect.getAmplifier()));
@@ -64,10 +82,7 @@ public class ContainerFoodItem extends Item {
   public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flagIn) {
     List<Component> tooltip = new ArrayList<>();
     try {
-        FoodProperties food = stack.getFoodProperties(null);
-        if (food != null) {
-          addEffectTooltip(food, tooltip);
-        }
+        addEffectTooltip(stack, tooltip);
   
     } finally {
       tooltip.forEach(tooltipAdder);

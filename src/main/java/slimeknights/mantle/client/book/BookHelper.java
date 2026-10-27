@@ -24,7 +24,7 @@ public class BookHelper {
   public static String getCurrentSavedPage(@Nullable ItemStack item) {
     if (item != null) {
       if (!item.isEmpty()) {
-        CompoundTag bookNBT = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(BOOK_COMPOUND).getCompound(BOOK_DATA_COMPOUND);
+        CompoundTag bookNBT = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompoundOrEmpty(BOOK_COMPOUND).getCompoundOrEmpty(BOOK_DATA_COMPOUND);
 
         if (bookNBT.getString(NBT_CURRENT_PAGE).isPresent()) {
           return bookNBT.getStringOr(NBT_CURRENT_PAGE, "");

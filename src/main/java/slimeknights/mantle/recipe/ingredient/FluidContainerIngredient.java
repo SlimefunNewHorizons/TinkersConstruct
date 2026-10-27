@@ -1,5 +1,8 @@
 package slimeknights.mantle.recipe.ingredient;
 
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.Holder;
 import slimeknights.mantle.recipe.helper.IngredientHelper;
 import slimeknights.mantle.transfer.TransferHelper;
 import com.google.gson.JsonElement;
@@ -97,8 +100,13 @@ public final class FluidContainerIngredient implements ICustomIngredient {
   }
 
   @Override
-  public Stream<ItemStack> getItems() {
-    return display == null ? Stream.empty() : java.util.Arrays.stream(IngredientHelper.getItems(display));
+  public Stream<Holder<Item>> items() {
+    return display == null ? Stream.empty() : display.items();
+  }
+
+  @Override
+  public SlotDisplay display() {
+    return display == null ? SlotDisplay.Empty.INSTANCE : display.display();
   }
 
   @Override

@@ -36,7 +36,8 @@ public class TagEmptyCondition<T> extends TagCondition<T> implements LootItemCon
 
   @Override
   public boolean test(IContext context) {
-    return context.getTag(tag).isEmpty();
+    // shortcut: the condition context only knows if a tag exists, not its size, same as NeoForge's tag empty condition
+    return !context.isTagLoaded(tag);
   }
 
   @Override

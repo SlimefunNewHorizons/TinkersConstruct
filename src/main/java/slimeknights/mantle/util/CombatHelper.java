@@ -215,7 +215,7 @@ public class CombatHelper {
         damage += enchantmentDamage;
 
         // check if we can do a sweep attack
-        boolean canSweep = fullyCharged && !critical && !sprinting && player.onGround() && (player.walkDist - player.walkDistO) < player.getSpeed() && stack.canPerformAction(ItemAbilities.SWORD_SWEEP);
+        boolean canSweep = fullyCharged && !critical && !sprinting && player.onGround() && player.getKnownMovement().horizontalDistanceSqr() < Mth.square(player.getSpeed() * 2.5) && stack.canPerformAction(ItemAbilities.SWORD_SWEEP);
 
         // apply fire aspect and fetch health
         float health = 0.0F;
@@ -233,13 +233,13 @@ public class CombatHelper {
           AttributeInstance knockbackAttribute = targetLiving.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
           if (knockbackAttribute != null && !knockbackAttribute.hasModifier(ANTI_KNOCKBACK_MODIFIER.id())) {
             knockbackAttribute.addTransientModifier(ANTI_KNOCKBACK_MODIFIER);
-            hit = target.hurt(damageSource, damage);
+            hit = target.hurtOrSimulate(damageSource, damage);
             knockbackAttribute.removeModifier(ANTI_KNOCKBACK_MODIFIER);
           } else {
-            hit = target.hurt(damageSource, damage);
+            hit = target.hurtOrSimulate(damageSource, damage);
           }
         } else {
-          hit = target.hurt(damageSource, damage);
+          hit = target.hurtOrSimulate(damageSource, damage);
         }
 
         // apply hit effects
@@ -263,12 +263,16 @@ public class CombatHelper {
               double entityReachSq = Mth.square(player.entityInteractionRange());
               if (living != player && living != targetLiving && !player.isAlliedTo(living) && (!(living instanceof ArmorStand armorStand) || !armorStand.isMarker()) && player.distanceToSqr(living) < entityReachSq) {
                 living.knockback(0.4f, Mth.sin(player.getYRot() * TO_RADIAN), -Mth.cos(player.getYRot() * TO_RADIAN));
-                living.hurt(player.damageSources().playerAttack(player), sweepDamage);
+                living.hurtOrSimulate(player.damageSources().playerAttack(player), sweepDamage);
               }
             }
 
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
-            player.sweepAttack();
+            if (player.level() instanceof ServerLevel serverLevel) {
+              double x = -Mth.sin(player.getYRot() * TO_RADIAN);
+              double z = Mth.cos(player.getYRot() * TO_RADIAN);
+              serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + x, player.getY(0.5), player.getZ() + z, 0, x, 0.0, z, 0.0);
+            }
           }
 
           // sync player motion

@@ -49,7 +49,7 @@ public class TagSourceArgument {
   @Internal
   public static void registerSuggestions() {
     SOURCE = register(getResource("tag_source"), (context, builder) ->
-      SharedSuggestionProvider.suggestResource(allKeys(context).map(ResourceKey::location), builder));
+      SharedSuggestionProvider.suggestResource(allKeys(context).map(ResourceKey::identifier), builder));
     TAG = register(getResource("tag_source_tag"), (context, builder) -> {
       TagSource<?> result = get(context);
       return SharedSuggestionProvider.suggestResource(result.tagKeys().map(TagKey::location), builder);
@@ -135,7 +135,7 @@ public class TagSourceArgument {
       return custom;
     }
     return new RegistryTagSource<>(context.getSource().registryAccess()
-      .registry(key)
+      .lookup(key)
       .orElseThrow(() -> NOT_FOUND.create(id)));
   }
 }
