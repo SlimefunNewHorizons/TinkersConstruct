@@ -9,7 +9,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
 import org.joml.Vector3f;
-import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.data.datamap.BlockStateDataMapLoader;
 import slimeknights.mantle.data.datamap.RegistryDataMapLoader;
 import slimeknights.mantle.data.loadable.Loadable;
@@ -126,7 +125,7 @@ public class RenderItem {
 
     /** Sets the X rotation */
     public Builder x(int x) {
-      if (!ModelHelper.checkRotation(x)) {
+      if (!(x >= 0 && x % 90 == 0 && x <= 270)) {
         throw new IllegalArgumentException("Invalid rotation value " + x + ", must be 0/90/180/270");
       }
       this.x = x;
@@ -135,7 +134,7 @@ public class RenderItem {
 
     /** Sets the Y rotation */
     public Builder y(int y) {
-      if (!ModelHelper.checkRotation(y)) {
+      if (!(y >= 0 && y % 90 == 0 && y <= 270)) {
         throw new IllegalArgumentException("Invalid rotation value " + y + ", must be 0/90/180/270");
       }
       this.y = y;

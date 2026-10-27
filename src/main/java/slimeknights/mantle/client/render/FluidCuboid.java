@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
-import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.data.datamap.BlockStateDataMapLoader;
 import slimeknights.mantle.data.loadable.Loadable;
 import slimeknights.mantle.data.loadable.Loadables;
@@ -100,7 +99,7 @@ public class FluidCuboid {
       FluidFace::new);
 
     public FluidFace {
-      if (!ModelHelper.checkRotation(rotation)) {
+      if (!(rotation >= 0 && rotation % 90 == 0 && rotation <= 270)) {
         throw new IllegalArgumentException("Rotation must be 0/90/180/270");
       }
     }

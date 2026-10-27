@@ -3,17 +3,21 @@ package slimeknights.mantle.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public class RenderingHelper {
@@ -54,14 +58,31 @@ public class RenderingHelper {
   /* Items */
 
   /**
-   * Renders a single item in a TESR
-   * @param matrices    Matrix stack inst ance
-   * @param buffer      Buffer instance
+   * Resolves the model of an item, call while extracting the render state
+   * @param resolver    Item model resolver from the renderer context
    * @param item        Item to render
+   * @param renderItem  Render item for the display context
+   * @param level       Level for the model
+   * @param seed        Model seed
+   * @return  Render state for the item, empty if hidden
+   */
+  public static ItemStackRenderState extractItem(ItemModelResolver resolver, ItemStack item, RenderItem renderItem, @Nullable Level level, int seed) {
+    ItemStackRenderState state = new ItemStackRenderState();
+    if (!renderItem.isHidden()) {
+      resolver.updateForTopItem(state, item, renderItem.getTransform(), level, null, seed);
+    }
+    return state;
+  }
+
+  /**
+   * Renders a single item in a TESR
+   * @param matrices    Matrix stack instance
+   * @param collector   Node collector instance
+   * @param item        Item to render, from {@link #extractItem(ItemModelResolver, ItemStack, RenderItem, Level, int)}
    * @param renderItem  Render item for render information
    * @param light       Model light
    */
-  public static void renderItem(PoseStack matrices, MultiBufferSource buffer, ItemStack item, RenderItem renderItem, int light) {
+  public static void renderItem(PoseStack matrices, SubmitNodeCollector collector, ItemStackRenderState item, RenderItem renderItem, int light) {
     // if the item says skip, skip
     if (renderItem.isHidden()) return;
     // if no stack, skip
@@ -87,7 +108,7 @@ public class RenderingHelper {
     }
 
     // render the actual item
-    Minecraft.getInstance().getItemRenderer().renderStatic(item, renderItem.getTransform(), light, OverlayTexture.NO_OVERLAY, matrices, buffer, Minecraft.getInstance().level, 0);
+    item.submit(matrices, collector, light, OverlayTexture.NO_OVERLAY, 0);
     matrices.popPose();
   }
 
