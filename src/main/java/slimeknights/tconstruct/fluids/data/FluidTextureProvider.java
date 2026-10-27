@@ -1,6 +1,6 @@
 package slimeknights.tconstruct.fluids.data;
 
-import com.mojang.blaze3d.shaders.FogShape;
+import slimeknights.mantle.fluid.texture.FluidTexture.FogShape;
 import net.minecraft.data.PackOutput;
 import slimeknights.mantle.fluid.texture.AbstractFluidTextureProvider;
 import slimeknights.mantle.fluid.texture.FluidTexture;

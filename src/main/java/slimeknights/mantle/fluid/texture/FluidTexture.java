@@ -2,7 +2,6 @@ package slimeknights.mantle.fluid.texture;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.blaze3d.shaders.FogShape;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,9 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 public final class FluidTexture {
+  /** Fog shapes, kept for data compatibility. shortcut: shaders have no fog shape since 1.21.6, so the shape is ignored, only start and end apply */
+  public enum FogShape { SPHERE, CYLINDER }
+
   private static final EnumLoadable<FogShape> FOG_SHAPE_LOADABLE = new EnumLoadable<>(FogShape.class);
 
   private final Identifier still;

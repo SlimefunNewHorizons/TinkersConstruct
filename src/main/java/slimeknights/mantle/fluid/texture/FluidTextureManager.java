@@ -8,7 +8,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.minecraft.core.Registry;
@@ -39,8 +39,8 @@ public class FluidTextureManager implements IEarlySafeManagerReloadListener {
   /**
    * Initializes this manager, registering it with the resource manager
    */
-  public static void init(RegisterClientReloadListenersEvent event) {
-    event.registerReloadListener(INSTANCE);
+  public static void init(AddClientReloadListenersEvent event) {
+    event.addListener(Mantle.getResource("fluid_textures"), INSTANCE);
   }
 
   @Override
