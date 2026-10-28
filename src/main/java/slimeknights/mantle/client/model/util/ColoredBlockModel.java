@@ -132,6 +132,14 @@ public class ColoredBlockModel extends DelegateUnbakedModel {
            | ((color << 16) & 0x00FF0000); // blue moves to red
   }
 
+  /** Copies the quad with a static ARGB color and light emission, replacing its vertex colors */
+  public static BakedQuad withColorAndLight(BakedQuad quad, int color, int lightEmission) {
+    return new BakedQuad(quad.position0(), quad.position1(), quad.position2(), quad.position3(),
+                         quad.packedUV0(), quad.packedUV1(), quad.packedUV2(), quad.packedUV3(),
+                         quad.tintIndex(), quad.direction(), quad.sprite(), quad.shade(), Math.max(quad.lightEmission(), lightEmission),
+                         quad.bakedNormals(), color == -1 ? quad.bakedColors() : BakedColors.of(color), quad.hasAmbientOcclusion());
+  }
+
   /** Copies the quad with a static ARGB color, replacing its vertex colors */
   public static BakedQuad applyColor(BakedQuad quad, int color) {
     return new BakedQuad(quad.position0(), quad.position1(), quad.position2(), quad.position3(),

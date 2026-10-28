@@ -1,6 +1,48 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/fishing_rod"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/fishing_rod"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/fishing_rod/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:cast": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/fishing_rod/cast"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:cast": 1,
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/fishing_rod/blocking_cast"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/fishing_rod/broken"
+        }
+      }
+    ]
   }
 }

@@ -1,6 +1,29 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/pickadze"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/pickadze"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/pickadze/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/pickadze/broken"
+        }
+      }
+    ]
   }
 }

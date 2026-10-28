@@ -9,7 +9,6 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.profiling.ProfilerFiller;
 import slimeknights.mantle.data.listener.MergingJsonDataLoader;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.util.JsonHelper;
@@ -51,8 +50,9 @@ public class ModifierModelMapManager extends MergingJsonDataLoader<Builder> {
   }
 
   @Override
-  public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
+  public CompletableFuture<Void> reload(SharedState sharedState, Executor backgroundExecutor, PreparationBarrier stage, Executor gameExecutor) {
     // run in the first stage instead of the second stage
+    ResourceManager resourceManager = sharedState.resourceManager();
     return CompletableFuture.runAsync(() -> {
       this.onResourceManagerReload(resourceManager);
     }, backgroundExecutor).thenCompose(stage::wait);

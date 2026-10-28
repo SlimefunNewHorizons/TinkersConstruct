@@ -73,7 +73,7 @@ public class PotionModifierModel implements SimpleModifierModel {
       if (toolData.contains(key, Tag.TAG_STRING)) {
         Identifier id = Identifier.tryParse(toolData.getString(key));
         if (id != null) {
-          Potion potion = BuiltInRegistries.POTION.get(id);
+          Potion potion = BuiltInRegistries.POTION.getValue(id);
           if (potion != null) {
             quadConsumer.accept(MantleItemLayerModel.getQuadsForSprite(0xFF000000 | PotionUtils.getColor(potion), -1, spriteGetter.apply(texture), transforms, 0, pixels));
           }

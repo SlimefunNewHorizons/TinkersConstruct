@@ -1,6 +1,126 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/war_pick"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/war_pick"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/pulling_1"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 0.58
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/pulling_2"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/pulling_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.05
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/blocking_1"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.58
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/blocking_2"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/blocking_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:ammo": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/pulling_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:ammo": 1,
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/blocking_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:ammo": 2
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/firework"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:ammo": 2,
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/war_pick/firework_blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/war_pick/broken"
+        }
+      }
+    ]
   }
 }

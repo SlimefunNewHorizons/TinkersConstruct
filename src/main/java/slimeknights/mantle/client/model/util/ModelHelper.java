@@ -1,5 +1,9 @@
 package slimeknights.mantle.client.model.util;
 
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.AtlasManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -47,6 +51,28 @@ public class ModelHelper {
    */
   public static Identifier getParticleTexture(Block block) {
     return TEXTURE_NAME_CACHE.computeIfAbsent(block, ModelHelper::getParticleTextureInternal);
+  }
+
+  /**
+   * Gets a sprite after models are baked, models use a combined block and item atlas since 1.21.11
+   * @param material  Material to fetch, may use {@link ModelManager#BLOCK_OR_ITEM}
+   * @return  Sprite, or the missing sprite if not found
+   */
+  public static TextureAtlasSprite getSprite(Material material) {
+    AtlasManager atlases = Minecraft.getInstance().getAtlasManager();
+    if (ModelManager.BLOCK_OR_ITEM.equals(material.atlasLocation())) {
+      TextureAtlasSprite sprite = atlases.get(new Material(TextureAtlas.LOCATION_ITEMS, material.texture()));
+      if (!isMissing(sprite)) {
+        return sprite;
+      }
+      return atlases.get(new Material(TextureAtlas.LOCATION_BLOCKS, material.texture()));
+    }
+    return atlases.get(material);
+  }
+
+  /** Checks if the given sprite is the missing sprite */
+  public static boolean isMissing(TextureAtlasSprite sprite) {
+    return MissingTextureAtlasSprite.getLocation().equals(sprite.contents().name());
   }
 
   /** Validates the given rotation is in 90 degree increments */

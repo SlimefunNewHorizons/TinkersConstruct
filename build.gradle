@@ -69,7 +69,7 @@ sourceSets.main {
         // PORT-STAGE (1.21.11): Tinkers client packages not ported yet, enabled one at a time
         exclude { details ->
             def path = details.relativePath.pathString
-            def pending = ['slimeknights/tconstruct/library/client/model/', 'slimeknights/tconstruct/library/client/modifiers/',
+            def pending = ['slimeknights/tconstruct/library/client/model/tools/MaterialBlockModel.java', 'slimeknights/tconstruct/library/client/model/block/', 'slimeknights/tconstruct/library/client/model/UniqueGuiModel.java', 'slimeknights/tconstruct/library/client/model/FluidContainerModel.java',
                            
                            
                            'slimeknights/tconstruct/library/client/item/', 
@@ -77,7 +77,7 @@ sourceSets.main {
                            // armor moved to equipment assets in 1.21.4, block highlights to the submit renderer
                            'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/tools/client/SlimeskullArmorModel.java',
                            'slimeknights/tconstruct/world/client/SlimeArmorLayer.java', 'slimeknights/tconstruct/tools/client/ToolRenderEvents.java',
-                           'slimeknights/tconstruct/tools/client/OverslimeModifierModel.java', 'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
+                           'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
             def events = false
             def keep = ['slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/modifiers/ModifierIconManager.java']

@@ -1,6 +1,38 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/javelin"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/javelin"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 1.75
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/javelin/throwing"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/javelin/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/javelin/broken"
+        }
+      }
+    ]
   }
 }

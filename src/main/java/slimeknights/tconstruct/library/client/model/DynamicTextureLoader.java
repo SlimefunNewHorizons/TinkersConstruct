@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.client.model;
 
+import slimeknights.tconstruct.TConstruct;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.minecraft.client.resources.model.ModelManager;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -8,7 +11,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import slimeknights.mantle.data.listener.ResourceValidator;
 import slimeknights.tconstruct.common.config.Config;
 
@@ -37,14 +39,10 @@ public class DynamicTextureLoader extends ResourceValidator {
     }
   }
 
-  @Override
-  public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
-    return super.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor).thenRunAsync(this::clear);
-  }
-
   /** Registers this manager */
-  public static void init(RegisterClientReloadListenersEvent event) {
-    event.registerReloadListener(INSTANCE);
+  public static void init(AddClientReloadListenersEvent event) {
+    // shortcut: the texture list is kept after reload, tool models are built at runtime since 1.21.4 and validate textures then
+    event.addListener(TConstruct.getResource("dynamic_textures"), INSTANCE);
   }
 
   /**
@@ -61,7 +59,7 @@ public class DynamicTextureLoader extends ResourceValidator {
     } else {
       return mat -> {
         // to suppress logging, need to load from our own list. We just load it for `textures/item` on the block atlas
-        if (InventoryMenu.BLOCK_ATLAS.equals(mat.atlasLocation())) {
+        if (ModelManager.BLOCK_OR_ITEM.equals(mat.atlasLocation())) {
           Identifier texture = mat.texture();
           if (texture.getPath().startsWith("item/")) {
             return INSTANCE.test(mat.texture());

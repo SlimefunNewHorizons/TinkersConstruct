@@ -1,6 +1,20 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/slime_boots"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/slime_boots"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/armor/slime/boots_broken"
+        }
+      }
+    ]
   }
 }

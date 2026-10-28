@@ -1,6 +1,48 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/melting_pan"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/melting_pan"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/melting_pan/charged"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/melting_pan/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/melting_pan/blocking_charged"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/melting_pan/broken"
+        }
+      }
+    ]
   }
 }

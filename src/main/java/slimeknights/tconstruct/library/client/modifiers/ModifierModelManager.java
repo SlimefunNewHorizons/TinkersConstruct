@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.client.modifiers;
 
+import slimeknights.tconstruct.TConstruct;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.minecraft.client.resources.model.ModelManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,8 +14,6 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.event.IModBusEvent;
@@ -59,8 +60,8 @@ public class ModifierModelManager implements IEarlySafeManagerReloadListener {
    * Initializes this manager, registering it with the resource manager
    * @param manager  Manager
    */
-  public static void init(RegisterClientReloadListenersEvent manager) {
-    manager.registerReloadListener(INSTANCE);
+  public static void init(AddClientReloadListenersEvent manager) {
+    manager.addListener(TConstruct.getResource("modifier_models"), INSTANCE);
   }
 
   /**
@@ -150,7 +151,7 @@ public class ModifierModelManager implements IEarlySafeManagerReloadListener {
    */
   @SuppressWarnings("removal")
   private static Material getModifierTexture(Identifier modifierRoot, Identifier modifierId, String suffix) {
-    return new Material(InventoryMenu.BLOCK_ATLAS, Identifier.fromNamespaceAndPath(modifierRoot.getNamespace(), modifierRoot.getPath() + modifierId.getNamespace() + "_" + modifierId.getPath() + suffix));
+    return new Material(ModelManager.BLOCK_OR_ITEM, Identifier.fromNamespaceAndPath(modifierRoot.getNamespace(), modifierRoot.getPath() + modifierId.getNamespace() + "_" + modifierId.getPath() + suffix));
   }
 
   /**

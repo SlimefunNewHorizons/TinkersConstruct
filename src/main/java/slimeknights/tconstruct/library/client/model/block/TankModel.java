@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.model.block;
 
+import net.minecraft.client.resources.model.ModelManager;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
@@ -156,8 +157,8 @@ public class TankModel implements IUnbakedGeometry<TankModel> {
       int color = attributes.getTintColor(stack);
       int luminosity = type.getLightLevel(stack);
       Map<String,Material> textures = ImmutableMap.of(
-        "fluid", new Material(InventoryMenu.BLOCK_ATLAS, attributes.getStillTexture(stack)),
-        "flowing_fluid", new Material(InventoryMenu.BLOCK_ATLAS, attributes.getFlowingTexture(stack)));
+        "fluid", new Material(ModelManager.BLOCK_OR_ITEM, attributes.getStillTexture(stack)),
+        "flowing_fluid", new Material(ModelManager.BLOCK_OR_ITEM, attributes.getFlowingTexture(stack)));
       IGeometryBakingContext textured = new ExtraTextureContext(owner, textures);
 
       // add fluid part

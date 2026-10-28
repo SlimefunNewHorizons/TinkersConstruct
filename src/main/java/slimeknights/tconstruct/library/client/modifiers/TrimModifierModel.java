@@ -1,11 +1,13 @@
 package slimeknights.tconstruct.library.client.modifiers;
 
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.core.component.DataComponents;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.ArmorItem;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.loadable.record.SingletonLoader;
 import slimeknights.mantle.util.ItemLayerPixels;
@@ -56,9 +58,11 @@ public enum TrimModifierModel implements IBakedModifierModel {
 
   @Override
   public void addQuads(IToolStackView tool, ModifierEntry modifier, Function<Material,TextureAtlasSprite> spriteGetter, Transformation transforms, boolean isLarge, int startTintIndex, Consumer<Collection<BakedQuad>> quadConsumer, @Nullable ItemLayerPixels pixels) {
-    if (!isLarge && tool.getItem() instanceof ArmorItem armor) {
-      int ordinal = armor.getType().ordinal();
-      if (ordinal < 4) {
+    Equippable equippable = isLarge ? null : tool.getItem().components().get(DataComponents.EQUIPPABLE);
+    if (equippable != null && equippable.slot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+      // armor models are ordered helmet to boots, the inverse of the slot index
+      int ordinal = 3 - equippable.slot().getIndex();
+      if (ordinal >= 0 && ordinal < 4) {
         Armor model = Armor.values()[ordinal];
         model.addQuads(tool, modifier, spriteGetter, transforms, isLarge, startTintIndex, quadConsumer, pixels);
       }

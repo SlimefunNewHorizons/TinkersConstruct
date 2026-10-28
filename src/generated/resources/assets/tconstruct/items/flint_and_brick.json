@@ -1,6 +1,29 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/flint_and_brick"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/flint_and_brick"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/flint_and_brick/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/flint_and_brick/broken"
+        }
+      }
+    ]
   }
 }

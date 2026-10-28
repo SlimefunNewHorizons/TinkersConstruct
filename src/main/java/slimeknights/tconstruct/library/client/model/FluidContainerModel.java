@@ -19,6 +19,7 @@
 
 package slimeknights.tconstruct.library.client.model;
 
+import net.minecraft.client.resources.model.ModelManager;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -121,7 +122,7 @@ public record FluidContainerModel(FluidStack fluid, boolean flipGas) implements 
     // get basic sprites
     IClientFluidTypeExtensions clientFluid = IClientFluidTypeExtensions.of(fluid.getFluid());
     TextureAtlasSprite baseSprite = getSprite(context, spriteGetter, "base");
-    TextureAtlasSprite fluidSprite = !fluid.isEmpty() ? spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, clientFluid.getStillTexture(fluid))) : null;
+    TextureAtlasSprite fluidSprite = !fluid.isEmpty() ? spriteGetter.apply(new Material(ModelManager.BLOCK_OR_ITEM, clientFluid.getStillTexture(fluid))) : null;
 
     // determine particle
     TextureAtlasSprite particleSprite = getSprite(context, spriteGetter, "particle");
@@ -129,7 +130,7 @@ public record FluidContainerModel(FluidStack fluid, boolean flipGas) implements 
     if (particleSprite == null) particleSprite = baseSprite;
     if (particleSprite == null) {
       TConstruct.LOG.error("No valid particle sprite for fluid container model, you should supply either 'base' or 'particle'");
-      particleSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation()));
+      particleSprite = spriteGetter.apply(new Material(ModelManager.BLOCK_OR_ITEM, MissingTextureAtlasSprite.getLocation()));
     }
 
     // if its a gas and we flipping, flip it

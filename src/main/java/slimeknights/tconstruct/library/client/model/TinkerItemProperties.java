@@ -1,16 +1,16 @@
 package slimeknights.tconstruct.library.client.model;
 
 import net.minecraft.world.item.ItemUseAnimation;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
+import javax.annotation.Nullable;
+import java.util.Map;
 import net.neoforged.neoforge.common.ItemAbilities;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.modifiers.hook.interaction.GeneralInteractionModifierHook;
@@ -22,6 +22,12 @@ import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 
 /** Properties for tinker tools */
 public class TinkerItemProperties {
+  /** Numeric item property, used by {@link OverridesItemModel} as item model overrides were removed in 1.21.4 */
+  @FunctionalInterface
+  public interface ItemPropertyFunction {
+    float call(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed);
+  }
+
   /** ID for broken property */
   private static final Identifier BROKEN_ID = TConstruct.getResource("broken");
   /** Property declaring broken */
@@ -40,7 +46,7 @@ public class TinkerItemProperties {
         CompoundTag ammo = persistentData.getCompoundOrEmpty(ModifiableCrossbowItem.KEY_CROSSBOW_AMMO.toString());
         if (!ammo.isEmpty()) {
           // no sense having two keys for ammo, just set 1 for arrow, 2 for fireworks
-          return ammo.getString("id").equals(BuiltInRegistries.ITEM.getKey(Items.FIREWORK_ROCKET).toString()) ? 2 : 1;
+          return ammo.getStringOr("id", "").equals(BuiltInRegistries.ITEM.getKey(Items.FIREWORK_ROCKET).toString()) ? 2 : 1;
         }
       }
     }
@@ -93,23 +99,11 @@ public class TinkerItemProperties {
     return 0;
   };
 
-  /** Registers properties for a tool, including the option to have charge/block animations */
-  public static void registerBrokenProperty(Item item) {
-    ItemProperties.register(item, BROKEN_ID, BROKEN);
-  }
-
-  /** Registers properties for a tool, including the option to have charge/block animations */
-  public static void registerToolProperties(ItemLike itemlike) {
-    Item item = itemlike.asItem();
-    registerBrokenProperty(item);
-    ItemProperties.register(item, CHARGING_ID, CHARGING);
-    ItemProperties.register(item, CHARGE_ID, CHARGE);
-    ItemProperties.register(item, CAST_ID, CAST);
-  }
-
-  /** Registers properties for a bow */
-  public static void registerCrossbowProperties(ItemLike item) {
-    registerToolProperties(item);
-    ItemProperties.register(item.asItem(), AMMO_ID, AMMO);
-  }
+  /** All properties by ID, any item may use any of them */
+  public static final Map<Identifier,ItemPropertyFunction> PROPERTIES = Map.of(
+    BROKEN_ID, BROKEN,
+    AMMO_ID, AMMO,
+    CHARGING_ID, CHARGING,
+    CHARGE_ID, CHARGE,
+    CAST_ID, CAST);
 }

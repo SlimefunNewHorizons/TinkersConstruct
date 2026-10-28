@@ -1,6 +1,20 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/plate_boots"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/plate_boots"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/armor/plate/boots_broken"
+        }
+      }
+    ]
   }
 }

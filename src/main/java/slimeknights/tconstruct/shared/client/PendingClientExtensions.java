@@ -36,4 +36,5 @@ final class PendingClientExtensions {
           return SlimeskullArmorModel.INSTANCE.setup(living, stack, original, getModel(stack));
         }
       });
+    }
 }

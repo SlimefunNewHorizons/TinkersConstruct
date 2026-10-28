@@ -59,8 +59,28 @@ BUCKET_TEXTURES = {
 }
 
 
+def load_model(model_id):
+  """Loads a model JSON by ID from the resource roots"""
+  namespace, path = model_id.split(':', 1) if ':' in model_id else ('minecraft', model_id)
+  for root in ROOTS:
+    file = os.path.join(root, namespace, 'models', path + '.json')
+    if os.path.exists(file):
+      with open(file, encoding='utf-8') as f:
+        return json.load(f)
+  return {}
+
+
+def model_definition(model_id, model):
+  """Item model for a model JSON, without tints"""
+  return {'type': TYPES.get(model.get('loader'), 'minecraft:model'), 'model': model_id}
+
+
 def definition(namespace, name, model):
   model_id = namespace + ':item/' + name
+  # model overrides were removed in 1.21.4, Tinkers' overrides item model keeps their behavior
+  if model.get('overrides'):
+    overrides = [{'predicate': override['predicate'], 'model': model_definition(override['model'], load_model(override['model']))} for override in model['overrides']]
+    return {'model': {'type': 'tconstruct:overrides', 'fallback': model_definition(model_id, model), 'overrides': overrides}}
   loader = model.get('loader')
   if loader == 'tconstruct:fluid_container' and 'fluid' in model and model.get('parent') in BUCKET_TEXTURES:
     return {'model': {'type': 'neoforge:fluid_container', 'textures': BUCKET_TEXTURES[model['parent']], 'fluid': model['fluid'], 'flip_gas': model.get('flip_gas', False)}}
@@ -89,6 +109,7 @@ def main():
 if __name__ == '__main__':
   assert definition('tconstruct', 'pickaxe', {'loader': 'tconstruct:tool'}) == {'model': {'type': 'tconstruct:tool', 'model': 'tconstruct:item/pickaxe'}}
   assert definition('tconstruct', 'x_bucket', {'loader': 'tconstruct:fluid_container', 'fluid': 'a:b', 'parent': 'neoforge:item/bucket_drip'})['model']['type'] == 'neoforge:fluid_container'
+  assert definition('tconstruct', 'bow', {'loader': 'tconstruct:tool', 'overrides': [{'predicate': {'tconstruct:broken': 1}, 'model': 'tconstruct:item/missing'}]})['model']['type'] == 'tconstruct:overrides'
   assert definition('tconstruct', 'tinkers_chest', {})['model']['tints'][0]['type'] == 'minecraft:dye'
   assert definition('tconstruct', 'earth_slime_grass', {})['model']['tints'] == BLOCK_TINT
   assert 'tints' not in definition('tconstruct', 'grout', {})['model']

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.modifiers.model;
 
+import net.minecraft.client.resources.model.ModelManager;
 import com.mojang.math.Transformation;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -78,12 +79,12 @@ public interface TrimModifierModel extends ModifierModel {
           Level level = Minecraft.getInstance().level;
           if (level != null) {
             // find the material, if missing we use the base texture
-            TrimMaterial material = level.registryAccess().registryOrThrow(Registries.TRIM_MATERIAL).get(Identifier.tryParse(materialId));
+            TrimMaterial material = level.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).getValue(Identifier.tryParse(materialId));
             if (material != null) {
               // base location is based on the armor type
               Identifier root = getRoot(isLarge);
               // specific location based on the material
-              Identifier path = root.withSuffix("_" + material.assetName());
+              Identifier path = root.withSuffix("_" + material.assets().base().suffix());
 
               // ensure the material sprite exists, if not we will tint the base sprite
               TextureAtlasSprite sprite = spriteGetter.apply(ModifierModel.blockAtlas(path));
@@ -91,7 +92,7 @@ public interface TrimModifierModel extends ModifierModel {
               if (MissingTextureAtlasSprite.getLocation().equals(sprite.contents().name())) {
                 // if the sprite doesn't exist, will tint the base sprite, assuming we have a component color
                 // helps for mods that don't properly provide all sprites
-                sprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, root));
+                sprite = spriteGetter.apply(new Material(ModelManager.BLOCK_OR_ITEM, root));
                 TextColor textColor = material.description().getStyle().getColor();
                 if (textColor != null) {
                   color = textColor.getValue() | 0xFF000000;

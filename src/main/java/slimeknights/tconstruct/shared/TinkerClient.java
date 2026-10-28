@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.tconstruct.library.client.model.TinkerModelEvents;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.ARGB;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -43,6 +44,7 @@ public class TinkerClient {
     // needs to register listeners early enough for minecraft to load
     ModifierIconManager.init();
     MaterialRenderInfoLoader.init();
+    TinkerModelEvents.init();
 
     // add the recipe cache invalidator to the client
     Consumer<RecipesReceivedEvent> recipesUpdated = event -> RecipeCacheInvalidator.reload(true);

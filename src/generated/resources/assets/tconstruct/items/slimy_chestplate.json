@@ -1,6 +1,20 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/slimy_chestplate"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/slimy_chestplate"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/armor/slime/chestplate_broken"
+        }
+      }
+    ]
   }
 }

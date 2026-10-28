@@ -1,6 +1,128 @@
 {
   "model": {
-    "type": "tconstruct:tool",
-    "model": "tconstruct:item/ichor_staff"
+    "type": "tconstruct:overrides",
+    "fallback": {
+      "type": "tconstruct:tool",
+      "model": "tconstruct:item/ichor_staff"
+    },
+    "overrides": [
+      {
+        "predicate": {
+          "tconstruct:charging": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/charging_1"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 0.4
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/charging_2"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 0.7
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/charging_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 0.9
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/charging_4"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 1,
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/charging_5"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.05
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking_1"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.4
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking_2"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.7
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking_3"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 0.9
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking_4"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:charging": 2,
+          "tconstruct:charge": 1.0
+        },
+        "model": {
+          "type": "minecraft:model",
+          "model": "tconstruct:item/tool/staff/ichor/blocking_5"
+        }
+      },
+      {
+        "predicate": {
+          "tconstruct:broken": 1
+        },
+        "model": {
+          "type": "tconstruct:tool",
+          "model": "tconstruct:item/tool/staff/ichor/broken"
+        }
+      }
+    ]
   }
 }
