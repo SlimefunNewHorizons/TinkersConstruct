@@ -70,10 +70,14 @@ sourceSets.main {
         exclude { details ->
             def path = details.relativePath.pathString
             def pending = ['slimeknights/tconstruct/library/client/model/', 'slimeknights/tconstruct/library/client/modifiers/',
-                           'slimeknights/tconstruct/tools/client/', 'slimeknights/tconstruct/world/client/',
-                           'slimeknights/tconstruct/gadgets/client/', 'slimeknights/tconstruct/shared/client/', 'slimeknights/tconstruct/fluids/client/',
-                           'slimeknights/tconstruct/library/client/item/', 'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/library/client/particle/',
-                           'slimeknights/tconstruct/library/client/data/']
+                           
+                           
+                           'slimeknights/tconstruct/library/client/item/', 
+                           'slimeknights/tconstruct/library/client/data/',
+                           // armor moved to equipment assets in 1.21.4, block highlights to the submit renderer
+                           'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/tools/client/SlimeskullArmorModel.java',
+                           'slimeknights/tconstruct/world/client/SlimeArmorLayer.java', 'slimeknights/tconstruct/tools/client/ToolRenderEvents.java',
+                           'slimeknights/tconstruct/tools/client/OverslimeModifierModel.java', 'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/shared/client/TConstructClient.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
             def events = path.startsWith('slimeknights/tconstruct/') && (path.endsWith('ClientEvents.java') || path.endsWith('ClientEventBase.java'))
             def keep = ['slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/modifiers/ModifierIconManager.java']

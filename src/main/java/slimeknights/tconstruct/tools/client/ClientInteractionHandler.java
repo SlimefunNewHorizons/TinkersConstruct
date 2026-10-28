@@ -42,7 +42,7 @@ public class ClientInteractionHandler {
       TinkerNetwork.getInstance().sendToServer(InteractWithAirPacket.fromChestplate(hand));
       InteractionResult result = InteractionHandler.onChestplateUse(player, chestplate, hand);
       if (result.consumesAction()) {
-        if (result.shouldSwing()) {
+        if (result instanceof InteractionResult.Success success && success.swingSource() == InteractionResult.SwingSource.CLIENT) {
           player.swing(hand);
         }
         Minecraft.getInstance().gameRenderer.itemInHandRenderer.itemUsed(hand);
@@ -77,7 +77,7 @@ public class ClientInteractionHandler {
       TinkerNetwork.getInstance().sendToServer(InteractWithAirPacket.LEFT_CLICK);
       InteractionResult result = InteractionHandler.onLeftClickInteraction(player, tool, hand);
       if (result.consumesAction()) {
-        if (result.shouldSwing()) {
+        if (result instanceof InteractionResult.Success success && success.swingSource() == InteractionResult.SwingSource.CLIENT) {
           player.swing(hand);
         }
         Minecraft.getInstance().gameRenderer.itemInHandRenderer.itemUsed(hand);

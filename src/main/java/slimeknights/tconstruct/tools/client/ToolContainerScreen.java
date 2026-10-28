@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.client;
 
+import slimeknights.mantle.client.render.FluidRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -191,7 +192,7 @@ public class ToolContainerScreen extends AbstractContainerScreen<ToolContainerMe
 
     // prepare pattern drawing
     assert this.minecraft != null;
-    Function<Identifier,TextureAtlasSprite> spriteGetter = this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+    Function<Identifier,TextureAtlasSprite> spriteGetter = FluidRenderer::getBlockSprite;
 
     // draw slot patterns for all empty slots
     int start = menu.getToolInventoryStart();
