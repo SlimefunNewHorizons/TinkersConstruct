@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.tconstruct.library.client.BlockColorTintSource;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.minecraft.client.gui.Font;
 import net.neoforged.api.distmarker.Dist;
@@ -19,6 +21,11 @@ public class CommonsClientEvents extends ClientEventBase {
   @SubscribeEvent
   static void addResourceListeners(AddClientReloadListenersEvent event) {
     DomainDisplayName.addResourceListener(event);
+  }
+
+  @SubscribeEvent
+  static void registerTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+    event.register(TConstruct.getResource("block_color"), BlockColorTintSource.MAP_CODEC);
   }
 
   @SubscribeEvent
