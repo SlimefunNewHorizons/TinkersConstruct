@@ -1,35 +1,28 @@
 package slimeknights.tconstruct.world;
 
-import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.color.item.ItemColors;
+import java.util.Map;
+import java.util.EnumMap;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.minecraft.client.model.object.skull.PiglinHeadModel;
 import net.minecraft.client.model.object.skull.SkullModel;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.ClientEventBase;
 import slimeknights.tconstruct.library.client.particle.SlimeParticle;
-import slimeknights.tconstruct.library.materials.definition.MaterialId;
 import slimeknights.tconstruct.shared.block.SlimeType;
-import slimeknights.tconstruct.tools.client.SlimeskullArmorModel;
-import slimeknights.tconstruct.tools.data.material.MaterialIds;
 import slimeknights.tconstruct.world.block.FoliageType;
-import slimeknights.tconstruct.world.client.DragonSkullModel;
 import slimeknights.tconstruct.world.client.SkullModelHelper;
 import slimeknights.tconstruct.world.client.SlimeColorReloadListener;
 import slimeknights.tconstruct.world.client.SlimeColorizer;
@@ -42,10 +35,25 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 @EventBusSubscriber(modid=TConstruct.MOD_ID, value=Dist.CLIENT)
 public class WorldClientEvents extends ClientEventBase {
+  /** Textures for each Tinkers skull */
+  private static final Map<TinkerHeadType,Identifier> SKULL_TEXTURES = new EnumMap<>(Map.ofEntries(
+    Map.entry(TinkerHeadType.BLAZE, Identifier.parse("textures/entity/blaze.png")),
+    Map.entry(TinkerHeadType.ENDERMAN, TConstruct.getResource("textures/entity/skull/enderman.png")),
+    Map.entry(TinkerHeadType.STRAY, TConstruct.getResource("textures/entity/skull/stray.png")),
+    Map.entry(TinkerHeadType.HUSK, Identifier.parse("textures/entity/zombie/husk.png")),
+    Map.entry(TinkerHeadType.DROWNED, TConstruct.getResource("textures/entity/skull/drowned.png")),
+    Map.entry(TinkerHeadType.SPIDER, Identifier.parse("textures/entity/spider/spider.png")),
+    Map.entry(TinkerHeadType.CAVE_SPIDER, Identifier.parse("textures/entity/spider/cave_spider.png")),
+    Map.entry(TinkerHeadType.PIGLIN_BRUTE, Identifier.parse("textures/entity/piglin/piglin_brute.png")),
+    Map.entry(TinkerHeadType.ZOMBIFIED_PIGLIN, Identifier.parse("textures/entity/piglin/zombified_piglin.png")),
+    Map.entry(TinkerHeadType.VENOMBONE, TConstruct.getResource("textures/entity/skull/venombone.png")),
+    Map.entry(TinkerHeadType.BLAZING_BONE, TConstruct.getResource("textures/entity/skull/blazing_bone.png")),
+    Map.entry(TinkerHeadType.NECRONIUM, TConstruct.getResource("textures/entity/skull/necronium.png"))));
+
   @SubscribeEvent
-  static void addResourceListener(RegisterClientReloadListenersEvent event) {
+  static void addResourceListener(AddClientReloadListenersEvent event) {
     for (FoliageType type : FoliageType.values()) {
-      event.registerReloadListener(new SlimeColorReloadListener(type));
+      event.addListener(TConstruct.getResource("slime_colors/" + type.getSerializedName()), new SlimeColorReloadListener(type));
     }
   }
 
@@ -89,14 +97,8 @@ public class WorldClientEvents extends ClientEventBase {
 
   @SubscribeEvent
   static void registerSkullModels(EntityRenderersEvent.CreateSkullModels event) {
-    EntityModelSet modelSet = event.getEntityModelSet();
-    SkullModelHelper.HEAD_LAYERS.forEach((type, layer) -> {
-      if (type.isPiglin()) {
-        event.registerSkullModel(type, new PiglinHeadModel(modelSet.bakeLayer(layer)));
-      } else {
-        event.registerSkullModel(type, new SkullModel(modelSet.bakeLayer(layer)));
-      }
-    });
+    // shortcut: slimeskull helmet heads are not registered, they move to equipment assets with the armor port
+    SkullModelHelper.HEAD_LAYERS.forEach((type, layer) -> event.registerSkullModel(type, layer, type.isPiglin() ? PiglinHeadModel::new : SkullModel::new, SKULL_TEXTURES.get(type)));
   }
 
   @SubscribeEvent
@@ -104,38 +106,6 @@ public class WorldClientEvents extends ClientEventBase {
     event.registerEntityRenderer(TinkerWorld.skySlimeEntity.get(), TinkerSlimeRenderer.SKY_SLIME_FACTORY);
     event.registerEntityRenderer(TinkerWorld.enderSlimeEntity.get(), TinkerSlimeRenderer.ENDER_SLIME_FACTORY);
     event.registerEntityRenderer(TinkerWorld.terracubeEntity.get(), TerracubeRenderer::new);
-  }
-
-  @SuppressWarnings("removal")
-  @SubscribeEvent
-  static void clientSetup(FMLClientSetupEvent event) {
-    // skull textures
-    event.enqueueWork(() -> {
-      registerHeadModel(TinkerHeadType.BLAZE, MaterialIds.blaze, Identifier.parse("textures/entity/blaze.png"));
-      registerHeadModel(TinkerHeadType.ENDERMAN, MaterialIds.enderPearl, TConstruct.getResource("textures/entity/skull/enderman.png"));
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.dragonScale, modelSet -> new DragonSkullModel(modelSet.bakeLayer(ModelLayers.DRAGON_SKULL)), Identifier.parse("textures/entity/enderdragon/dragon.png"));
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.glass, ModelLayers.CREEPER_HEAD, Identifier.parse("textures/entity/creeper/creeper.png"));
-      // skeleton
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.bone, ModelLayers.SKELETON_SKULL, Identifier.parse("textures/entity/skeleton/skeleton.png"));
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.necroticBone, ModelLayers.WITHER_SKELETON_SKULL, Identifier.parse("textures/entity/skeleton/wither_skeleton.png"));
-      registerHeadModel(TinkerHeadType.STRAY, MaterialIds.ice, TConstruct.getResource("textures/entity/skull/stray.png"));
-      // zombies
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.leather, ModelLayers.ZOMBIE_HEAD, Identifier.parse("textures/entity/zombie/zombie.png"));
-      registerHeadModel(TinkerHeadType.HUSK, MaterialIds.iron, Identifier.parse("textures/entity/zombie/husk.png"));
-      registerHeadModel(TinkerHeadType.DROWNED, MaterialIds.copper, TConstruct.getResource("textures/entity/skull/drowned.png"));
-      // spider
-      registerHeadModel(TinkerHeadType.SPIDER, MaterialIds.string, Identifier.parse("textures/entity/spider/spider.png"));
-      registerHeadModel(TinkerHeadType.CAVE_SPIDER, MaterialIds.darkthread, Identifier.parse("textures/entity/spider/cave_spider.png"));
-      // piglins
-      SlimeskullArmorModel.registerPiglinHeadModel(MaterialIds.gold, ModelLayers.PIGLIN_HEAD, Identifier.parse("textures/entity/piglin/piglin.png"));
-      registerPiglinHeadModel(TinkerHeadType.PIGLIN_BRUTE, MaterialIds.roseGold, Identifier.parse("textures/entity/piglin/piglin_brute.png"));
-      registerPiglinHeadModel(TinkerHeadType.ZOMBIFIED_PIGLIN, MaterialIds.pigIron, Identifier.parse("textures/entity/piglin/zombified_piglin.png"));
-      // crafted
-      registerHeadModel(TinkerHeadType.VENOMBONE,    MaterialIds.venombone,   TConstruct.getResource("textures/entity/skull/venombone.png"));
-      registerHeadModel(TinkerHeadType.BLAZING_BONE, MaterialIds.blazingBone, TConstruct.getResource("textures/entity/skull/blazing_bone.png"));
-      registerHeadModel(TinkerHeadType.NECRONIUM,    MaterialIds.necronium,   TConstruct.getResource("textures/entity/skull/necronium.png"));
-      SlimeskullArmorModel.registerHeadModel(MaterialIds.knightmetal, SkullModelHelper.FLUID_CANNON, TConstruct.getResource("textures/entity/skull/fluid_cannon.png"));
-    });
   }
 
   @SubscribeEvent
@@ -163,24 +133,6 @@ public class WorldClientEvents extends ClientEventBase {
       TinkerWorld.enderSlimeVine.get());
   }
 
-  @SubscribeEvent
-  static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-    BlockColors blockColors = event.getBlockColors();
-    ItemColors itemColors = event.getItemColors();
-    // slime grass items
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.vanillaSlimeGrass);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.earthSlimeGrass);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.skySlimeGrass);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.enderSlimeGrass);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.ichorSlimeGrass);
-    // plant items
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.slimeLeaves);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.slimeFern);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.slimeTallGrass);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.skySlimeVine);
-    registerBlockItemColorAlias(blockColors, itemColors, TinkerWorld.enderSlimeVine);
-  }
-
   /**
    * Block colors for a slime type
    * @param pos   Block position
@@ -197,18 +149,6 @@ public class WorldClientEvents extends ClientEventBase {
     }
 
     return SlimeColorizer.getColorForPos(pos, type);
-  }
-
-  /** Registers a skull with the entity renderer and the slimeskull renderer */
-  private static void registerHeadModel(TinkerHeadType skull, MaterialId materialId, Identifier texture) {
-    SkullBlockRenderer.SKIN_BY_TYPE.put(skull, texture);
-    SlimeskullArmorModel.registerHeadModel(materialId, SkullModelHelper.HEAD_LAYERS.get(skull), texture);
-  }
-
-  /** Registers a skull with the entity renderer and the slimeskull renderer */
-  private static void registerPiglinHeadModel(TinkerHeadType skull, MaterialId materialId, Identifier texture) {
-    SkullBlockRenderer.SKIN_BY_TYPE.put(skull, texture);
-    SlimeskullArmorModel.registerPiglinHeadModel(materialId, SkullModelHelper.HEAD_LAYERS.get(skull), texture);
   }
 
   /** Register a layer without being under the minecraft domain. TODO: is this needed? */

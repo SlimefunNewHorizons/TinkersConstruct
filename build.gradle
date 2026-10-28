@@ -73,15 +73,15 @@ sourceSets.main {
                            
                            
                            'slimeknights/tconstruct/library/client/item/', 
-                           'slimeknights/tconstruct/library/client/data/',
+                           'slimeknights/tconstruct/library/client/data/', 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java',
                            // armor moved to equipment assets in 1.21.4, block highlights to the submit renderer
                            'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/tools/client/SlimeskullArmorModel.java',
                            'slimeknights/tconstruct/world/client/SlimeArmorLayer.java', 'slimeknights/tconstruct/tools/client/ToolRenderEvents.java',
-                           'slimeknights/tconstruct/tools/client/OverslimeModifierModel.java', 'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/shared/client/TConstructClient.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
-            def events = path.startsWith('slimeknights/tconstruct/') && (path.endsWith('ClientEvents.java') || path.endsWith('ClientEventBase.java'))
+                           'slimeknights/tconstruct/tools/client/OverslimeModifierModel.java', 'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
+            def events = false
             def keep = ['slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/modifiers/ModifierIconManager.java']
-            return details.file.isFile() && (events || pending.any { path.startsWith(it) } || path == 'slimeknights/tconstruct/shared/TinkerClient.java' || path == 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java') && !keep.contains(path)
+            return details.file.isFile() && (events || pending.any { path.startsWith(it) } ) && !keep.contains(path)
         }
         exclude 'slimeknights/mantle/plugin/jei/**' // ported with the Tinkers JEI plugin
         exclude 'slimeknights/tconstruct/plugin/jei/**'

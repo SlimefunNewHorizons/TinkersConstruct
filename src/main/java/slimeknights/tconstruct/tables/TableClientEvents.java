@@ -1,7 +1,6 @@
 package slimeknights.tconstruct.tables;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -25,7 +24,7 @@ import slimeknights.tconstruct.tables.client.inventory.TinkerStationScreen;
 public class TableClientEvents extends ClientEventBase {
   @SubscribeEvent
   static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-    BlockEntityRendererProvider<TableBlockEntity> tableRenderer = InventoryBlockEntityRenderer::new;
+    BlockEntityRendererProvider<TableBlockEntity,InventoryBlockEntityRenderer.State> tableRenderer = InventoryBlockEntityRenderer::new;
     event.registerBlockEntityRenderer(TinkerTables.craftingStationTile.get(), tableRenderer);
     event.registerBlockEntityRenderer(TinkerTables.tinkerStationTile.get(), tableRenderer);
     event.registerBlockEntityRenderer(TinkerTables.modifierWorktableTile.get(), tableRenderer);
@@ -54,8 +53,4 @@ public class TableClientEvents extends ClientEventBase {
     }, TinkerTables.tinkersChest.get());
   }
 
-  @SubscribeEvent
-  static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
-    event.register((stack, index) -> DyedItemColor.getOrDefault(stack, TinkersChestBlockEntity.DEFAULT_COLOR), TinkerTables.tinkersChest.asItem());
-  }
 }

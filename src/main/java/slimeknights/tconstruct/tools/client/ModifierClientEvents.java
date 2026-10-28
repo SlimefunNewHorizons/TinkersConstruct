@@ -1,16 +1,14 @@
 package slimeknights.tconstruct.tools.client;
 
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.state.MapRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.joml.Matrix3x2fStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -35,7 +33,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import org.joml.Matrix4f;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.common.config.Config;
@@ -66,6 +63,8 @@ import java.util.List;
 /** Modifier event hooks that run client side */
 @EventBusSubscriber(modid = TConstruct.MOD_ID, value = Dist.CLIENT)
 public class ModifierClientEvents {
+  private static final Identifier MAP_BACKGROUND = Identifier.withDefaultNamespace("textures/map/map_background.png");
+  private static final Identifier MAP_BACKGROUND_CHECKERBOARD = Identifier.withDefaultNamespace("textures/map/map_background_checkerboard.png");
   @SubscribeEvent
   static void onTooltipEvent(ItemTooltipEvent event) {
     // suppress durability from advanced, we display our own
@@ -116,7 +115,7 @@ public class ModifierClientEvents {
       if (hand == InteractionHand.OFF_HAND) {
         side = side.getOpposite();
       }
-      Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderPlayerArm(matrices, event.getMultiBufferSource(), event.getPackedLight(), event.getEquipProgress(), event.getSwingProgress(), side);
+      Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderPlayerArm(matrices, event.getSubmitNodeCollector(), event.getPackedLight(), event.getEquipProgress(), event.getSwingProgress(), side);
       matrices.popPose();
       if (held.isEmpty()) {
         event.setCanceled(true);
@@ -329,18 +328,14 @@ public class ModifierClientEvents {
         poseStack.scale((float) mapScale, (float) mapScale);
 
         // draw background
-        int light = 0xF000F0;
-        MultiBufferSource buffer = graphics.bufferSource();
-        VertexConsumer consumer = buffer.getBuffer(data == null ? ItemInHandRenderer.MAP_BACKGROUND : ItemInHandRenderer.MAP_BACKGROUND_CHECKERBOARD);
-        Matrix4f matrix = poseStack.last().pose();
-        consumer.addVertex(matrix,  -7, 135, 0).setColor(-1).setUv(0, 1).setLight(light);
-        consumer.addVertex(matrix, 135, 135, 0).setColor(-1).setUv(1, 1).setLight(light);
-        consumer.addVertex(matrix, 135,  -7, 0).setColor(-1).setUv(1, 0).setLight(light);
-        consumer.addVertex(matrix,  -7,  -7, 0).setColor(-1).setUv(0, 0).setLight(light);
+        Identifier background = data == null ? MAP_BACKGROUND : MAP_BACKGROUND_CHECKERBOARD;
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, -7, -7, 0, 0, 142, 142, 142, 142);
 
         // draw map if present
         if (data != null && index != null) {
-          Minecraft.getInstance().gameRenderer.getMapRenderer().render(poseStack, buffer, index, data, false, light);
+          MapRenderState mapState = new MapRenderState();
+          Minecraft.getInstance().getMapRenderer().extractRenderState(index, data, mapState);
+          graphics.submitMapRenderState(mapState);
         }
         poseStack.popMatrix();
       }
