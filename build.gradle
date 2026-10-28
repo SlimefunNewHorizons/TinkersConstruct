@@ -77,7 +77,7 @@ sourceSets.main {
                            // armor moved to equipment assets in 1.21.4, block highlights to the submit renderer
                            'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/tools/client/SlimeskullArmorModel.java',
                            'slimeknights/tconstruct/world/client/SlimeArmorLayer.java', 'slimeknights/tconstruct/tools/client/ToolRenderEvents.java',
-                           'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java', 'slimeknights/tconstruct/tools/client/ShieldBannerModifierSpriteSource.java']
+                           'slimeknights/tconstruct/tools/client/material/CombatFishingHookRenderer.java', 'slimeknights/tconstruct/world/client/BlockModelSkullRenderer.java', 'slimeknights/tconstruct/world/client/DragonSkullModel.java']
             def events = false
             def keep = ['slimeknights/tconstruct/library/client/model/ModelProperties.java',
                         'slimeknights/tconstruct/library/client/modifiers/ModifierIconManager.java']
@@ -154,7 +154,11 @@ neoForge {
     accessTransformers.from 'src/main/resources/META-INF/accesstransformer.cfg'
 
     runs {
-        client { client() }
+        client {
+            client()
+            // ./gradlew runClient -PquickPlay="New World" joins that world on start
+            if (project.hasProperty('quickPlay')) programArguments.addAll '--quickPlaySingleplayer', project.property('quickPlay')
+        }
         server {
             server()
             programArgument '--nogui'

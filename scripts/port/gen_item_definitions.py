@@ -84,6 +84,9 @@ def definition(namespace, name, model):
   loader = model.get('loader')
   if loader == 'tconstruct:fluid_container' and 'fluid' in model and model.get('parent') in BUCKET_TEXTURES:
     return {'model': {'type': 'neoforge:fluid_container', 'textures': BUCKET_TEXTURES[model['parent']], 'fluid': model['fluid'], 'flip_gas': model.get('flip_gas', False)}}
+  # containers holding any fluid, NeoForge's model reads the fluid from the stack
+  if loader == 'tconstruct:fluid_container' and 'textures' in model:
+    return {'model': {'type': 'neoforge:fluid_container', 'textures': model['textures'], 'fluid': model.get('fluid', 'minecraft:empty'), 'flip_gas': model.get('flip_gas', False)}}
   item_model = {'type': TYPES.get(loader, 'minecraft:model'), 'model': model_id}
   tint = tints(namespace, name)
   if tint:

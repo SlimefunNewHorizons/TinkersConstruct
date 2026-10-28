@@ -16,4 +16,9 @@ public abstract class MappedRegistryMixin {
   private void mantle$recordPendingTags(TagLoader.LoadResult<?> result, CallbackInfoReturnable<Registry.PendingTags<?>> cir) {
     TagHelper.setPendingTags(result.key(), result.tags());
   }
+
+  @Inject(method = "prepareTagReload", at = @At("RETURN"))
+  private void mantle$recordPendingLookup(TagLoader.LoadResult<?> result, CallbackInfoReturnable<Registry.PendingTags<?>> cir) {
+    TagHelper.setPendingLookup(result.key(), cir.getReturnValue().lookup());
+  }
 }

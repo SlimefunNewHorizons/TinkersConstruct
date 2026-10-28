@@ -90,7 +90,6 @@ public class BookScreen extends Screen {
 
   private double[] lastClick;
   private double[] lastDrag;
-  private boolean bookBackgroundRendered;
 
   // TODO: maybe make this a list with ability to add custom layers
   private static final ILayerRenderFunction[] LAYERS = {
@@ -162,7 +161,6 @@ public class BookScreen extends Screen {
       return;
     }
 
-    super.renderBackground(graphics, mouseX, mouseY, partialTicks);
     Font fontRenderer = getFontRenderer();
 
     if (debug) {
@@ -248,19 +246,7 @@ public class BookScreen extends Screen {
       }
     }
 
-    bookBackgroundRendered = true;
-    try {
-      super.render(graphics, mouseX, mouseY, partialTicks);
-    } finally {
-      bookBackgroundRendered = false;
-    }
-  }
-
-  @Override
-  public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-    if (!bookBackgroundRendered) {
-      super.renderBackground(graphics, mouseX, mouseY, partialTicks);
-    }
+    super.render(graphics, mouseX, mouseY, partialTicks);
   }
 
   private boolean shouldRenderPage(int pageNum, boolean rightSide) {

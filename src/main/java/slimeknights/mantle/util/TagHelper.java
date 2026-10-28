@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
@@ -14,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,10 +33,19 @@ public class TagHelper {
     PENDING_TAGS.put(registry, tags);
   }
 
-  /** Checks if the tag is being loaded, used to resolve tags before they bind */
-  public static boolean isPendingTag(TagKey<?> key) {
-    Map<? extends TagKey<?>, ? extends List<? extends Holder<?>>> pending = PENDING_TAGS.get(key.registry());
-    return pending != null && pending.containsKey(key);
+  /** Lookups of the tag sets a registry binds when its pending tags apply, recorded by {@code MappedRegistryMixin} */
+  private static final Map<ResourceKey<?>, HolderLookup.RegistryLookup<?>> PENDING_LOOKUPS = new ConcurrentHashMap<>();
+
+  /** Records the lookup of the tag sets a registry binds on apply, called by {@code MappedRegistryMixin} */
+  public static void setPendingLookup(ResourceKey<?> registry, HolderLookup.RegistryLookup<?> lookup) {
+    PENDING_LOOKUPS.put(registry, lookup);
+  }
+
+  /** Gets the tag set the registry binds when the tags being loaded apply, used to resolve tags before they bind */
+  @SuppressWarnings("unchecked")
+  public static <T> Optional<HolderSet.Named<T>> getPendingTag(TagKey<T> key) {
+    HolderLookup.RegistryLookup<T> lookup = (HolderLookup.RegistryLookup<T>) PENDING_LOOKUPS.get(key.registry());
+    return lookup == null ? Optional.empty() : lookup.get(key);
   }
 
   /**

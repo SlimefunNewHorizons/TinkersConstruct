@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.client.model;
 
+import slimeknights.mantle.client.model.util.ModelHelper;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.neoforged.neoforge.client.model.UnbakedModelLoader;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -7,6 +10,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent.RegisterLoaders;
 import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
+import net.neoforged.neoforge.client.event.RegisterSpriteSourcesEvent;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.TinkerItemDisplays;
 import slimeknights.tconstruct.library.client.model.tools.MaterialModel;
@@ -29,6 +33,7 @@ import slimeknights.tconstruct.library.client.modifiers.model.ModifierModel;
 import slimeknights.tconstruct.library.client.modifiers.model.TraitModel;
 import slimeknights.tconstruct.tools.modules.ranged.ammo.SmashingModule;
 import slimeknights.tconstruct.tools.client.OverslimeModifierModel;
+import slimeknights.tconstruct.tools.client.ShieldBannerModifierSpriteSource;
 
 import static slimeknights.tconstruct.TConstruct.getResource;
 
@@ -66,6 +71,18 @@ public class TinkerModelEvents {
   static void registerModelLoaders(RegisterLoaders event) {
     event.register(getResource("material"), MaterialModel.LOADER);
     event.register(getResource("tool"), ToolModel.LOADER);
+    // shortcut: these render their base model without fluids or materials, port TankModel, MaterialBlockModel, FluidTextureModel and UniqueGuiModel to show them
+    UnbakedModelLoader<UnbakedModel> base = ModelHelper::parseVanilla;
+    event.register(getResource("tank"), base);
+    event.register(getResource("material_block"), base);
+    event.register(getResource("fluid_texture"), base);
+    event.register(getResource("gui"), base);
+    event.register(getResource("fluid_container"), base);
+  }
+
+  @SubscribeEvent
+  static void registerSpriteSources(RegisterSpriteSourcesEvent event) {
+    event.register(getResource("shield_banner_to_modifier"), ShieldBannerModifierSpriteSource.CODEC);
   }
 
   @SubscribeEvent

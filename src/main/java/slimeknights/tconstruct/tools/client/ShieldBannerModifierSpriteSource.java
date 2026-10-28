@@ -5,28 +5,22 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.SpriteContents;
-import net.minecraft.client.renderer.texture.atlas.SpriteSource;
-import net.minecraft.client.renderer.texture.atlas.SpriteSourceType;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
+import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.sources.LazyLoadedImage;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.ExtraCodecs;
-import net.neoforged.neoforge.client.event.RegisterSpriteSourceTypesEvent;
-import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.client.materials.MaterialRenderInfo;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 /** Sprite source creating modifier textures for banners using shield banner textures */
 public record ShieldBannerModifierSpriteSource(int cropX, int cropY, int cropWidth, int cropHeight, Identifier destinationPrefix, int offsetX, int offsetY, int outSize) implements SpriteSource {
@@ -42,45 +36,37 @@ public record ShieldBannerModifierSpriteSource(int cropX, int cropY, int cropWid
     NON_NEGATIVE.fieldOf("offset_y").forGetter(ShieldBannerModifierSpriteSource::offsetY),
     NON_NEGATIVE.fieldOf("output_size").forGetter(ShieldBannerModifierSpriteSource::outSize)
   ).apply(inst, ShieldBannerModifierSpriteSource::new));
-  private static final Identifier ID = TConstruct.getResource("shield_banner_to_modifier");
-  private static final SpriteSourceType TYPE = new SpriteSourceType(CODEC);
-
-  /** Registers this sprite source */
-  @Internal
-  public static void register(RegisterSpriteSourceTypesEvent event) {
-    event.register(ID, TYPE);
-  }
+  /** Shield pattern textures, named by the banner pattern asset ID */
+  private static final FileToIdConverter SHIELD_TEXTURES = new FileToIdConverter("textures/entity/shield", ".png");
 
   @Override
   public void run(ResourceManager manager, Output output) {
-    // TODO 1.21: will have to copy textures over using a folder search since these are datapack controlled
-    for (Entry<Identifier, Material> entry : Sheets.SHIELD_MATERIALS.entrySet()) {
-      Identifier input = TEXTURE_ID_CONVERTER.idToFile(entry.getValue().texture());
-      Optional<Resource> resource = manager.getResource(input);
-      if (resource.isEmpty()) {
-        TConstruct.LOG.warn("Unable to find shield texture {} to create modifier sprite", input);
-      } else {
-        LazyLoadedImage image = new LazyLoadedImage(input, resource.get(), 1);
-        Identifier destination = destinationPrefix.withSuffix(MaterialRenderInfo.getSuffix(entry.getKey()));
+    // shield materials are created lazily since 1.20.5, so search the shield texture folder for patterns
+    for (Entry<Identifier, Resource> entry : SHIELD_TEXTURES.listMatchingResources(manager).entrySet()) {
+      Identifier input = entry.getKey();
+      Identifier pattern = SHIELD_TEXTURES.fileToId(input);
+      if (!pattern.getPath().startsWith("base")) {
+        LazyLoadedImage image = new LazyLoadedImage(input, entry.getValue(), 1);
+        Identifier destination = destinationPrefix.withSuffix(MaterialRenderInfo.getSuffix(pattern));
         output.add(destination, new BannerModifierSpriteSupplier(image, input, destination));
       }
     }
   }
 
   @Override
-  public SpriteSourceType type() {
-    return TYPE;
+  public MapCodec<ShieldBannerModifierSpriteSource> codec() {
+    return CODEC;
   }
 
   /** Generates a cropped sprite lazily */
   @RequiredArgsConstructor
-  private class BannerModifierSpriteSupplier implements SpriteSupplier {
+  private class BannerModifierSpriteSupplier implements DiscardableLoader {
     private final LazyLoadedImage original;
     private final Identifier input, output;
 
     @Nullable
     @Override
-    public SpriteContents apply(SpriteResourceLoader loader) {
+    public SpriteContents get(SpriteResourceLoader loader) {
       try {
         // its possible the original is bigger than we expect due to HD pack, if so scale it accordingly
         // we only support scaling if it is a multiple of width
@@ -91,7 +77,7 @@ public record ShieldBannerModifierSpriteSource(int cropX, int cropY, int cropWid
         } else {
           NativeImage generated = new NativeImage(outSize * scale, outSize * scale, true);
           original.copyRect(generated, cropX * scale, cropY * scale, offsetX * scale, offsetY * scale, cropWidth * scale, cropHeight * scale, false, false);
-          return new SpriteContents(this.output, new FrameSize(generated.getWidth(), generated.getHeight()), generated, ResourceMetadata.EMPTY);
+          return new SpriteContents(this.output, new FrameSize(generated.getWidth(), generated.getHeight()), generated);
         }
       } catch (IllegalArgumentException | IOException ex) {
         TConstruct.LOG.warn("Unable to crop {} to produce {}", this.input, this.output, ex);
@@ -99,6 +85,11 @@ public record ShieldBannerModifierSpriteSource(int cropX, int cropY, int cropWid
         this.original.release();
       }
       return null;
+    }
+
+    @Override
+    public void discard() {
+      this.original.release();
     }
   }
 }

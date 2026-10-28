@@ -7,7 +7,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
-import slimeknights.mantle.recipe.helper.IngredientHelper;
 import slimeknights.mantle.util.TagHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
@@ -55,12 +54,9 @@ public final class RegistryOpsScope {
 
       @Override
       public Optional<HolderSet.Named<T>> get(TagKey<T> tag) {
-        Optional<HolderSet.Named<T>> existing = registry.get(tag);
-        if (existing.isPresent() || !TagHelper.isPendingTag(tag)) {
-          return existing;
-        }
-        // the named set is bound by the registry once the tags apply
-        return Optional.of(IngredientHelper.tagHolder(registry, tag));
+        // the pending set is the one the registry binds once the tags apply, the current set may be replaced
+        Optional<HolderSet.Named<T>> pending = TagHelper.getPendingTag(tag);
+        return pending.isPresent() ? pending : registry.get(tag);
       }
     };
   }
