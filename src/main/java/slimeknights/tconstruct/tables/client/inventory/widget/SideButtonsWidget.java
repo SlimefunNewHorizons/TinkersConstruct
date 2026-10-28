@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tables.client.inventory.widget;
 
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -69,7 +71,7 @@ public class SideButtonsWidget<T extends Button> implements Renderable, GuiEvent
   public boolean handleMouseClicked(double mouseX, double mouseY, int mouseButton) {
     if (mouseButton == 0) {
       for (T button : this.buttons) {
-        if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (button.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, 0)), false)) {
           this.clickedButton = button;
           return true;
         }
@@ -81,7 +83,7 @@ public class SideButtonsWidget<T extends Button> implements Renderable, GuiEvent
 
   public boolean handleMouseReleased(double mouseX, double mouseY, int state) {
     if (clickedButton != null) {
-      clickedButton.mouseReleased(mouseX, mouseY, state);
+      clickedButton.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, 0)));
       clickedButton = null;
       return true;
     }

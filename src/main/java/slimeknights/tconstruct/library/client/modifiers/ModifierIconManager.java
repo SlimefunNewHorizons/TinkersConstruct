@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.client.modifiers;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.data.AtlasIds;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,7 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.bus.api.IEventBus;
 import slimeknights.mantle.data.listener.IEarlySafeManagerReloadListener;
 import slimeknights.mantle.util.JsonHelper;
@@ -55,8 +57,8 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
   }
 
   /** Called on resource manager build to add the manager */
-  private static void onResourceManagerRegister(RegisterClientReloadListenersEvent manager) {
-    manager.registerReloadListener(INSTANCE);
+  private static void onResourceManagerRegister(AddClientReloadListenersEvent manager) {
+    manager.addListener(TConstruct.getResource("modifier_icons"), INSTANCE);
   }
 
   @Override
@@ -118,18 +120,16 @@ public class ModifierIconManager implements IEarlySafeManagerReloadListener {
    * @param size      Size to render, 16 is default
    */
   public static void renderIcon(GuiGraphics graphics, Modifier modifier, int x, int y, int z, int size) {
-    TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
+    TextureAtlas atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
 
     List<Identifier> icons = modifierIcons.getOrDefault(modifier.getId(), Collections.emptyList());
     if (!icons.isEmpty()) {
       for (Identifier icon : icons) {
-        graphics.blit(x, y, z, size, size, atlas.getSprite(icon));
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, atlas.getSprite(icon), x, y, size, size);
       }
     } else {
-      graphics.blit(x, y, z, size, size, atlas.getSprite(DEFAULT_PAGES));
-      RenderUtils.setColorRGBA(0xFF000000 | modifier.getColor());
-      graphics.blit(x, y, z, size, size, atlas.getSprite(DEFAULT_COVER));
-      RenderUtils.setColorRGBA(-1);
+      graphics.blitSprite(RenderPipelines.GUI_TEXTURED, atlas.getSprite(DEFAULT_PAGES), x, y, size, size);
+      graphics.blitSprite(RenderPipelines.GUI_TEXTURED, atlas.getSprite(DEFAULT_COVER), x, y, size, size, 0xFF000000 | modifier.getColor());
     }
   }
 }

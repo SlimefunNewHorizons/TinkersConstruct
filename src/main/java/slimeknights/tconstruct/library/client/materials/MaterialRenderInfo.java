@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.materials;
 
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
@@ -88,7 +89,7 @@ public record MaterialRenderInfo(MaterialVariantId id, @Nullable Identifier text
    * @return  Material instance
    */
   private static Material getMaterial(Identifier texture, String suffix) {
-    return new Material(InventoryMenu.BLOCK_ATLAS, Identifier.fromNamespaceAndPath(texture.getNamespace(), texture.getPath() + "_" + suffix));
+    return new Material(ModelManager.BLOCK_OR_ITEM, Identifier.fromNamespaceAndPath(texture.getNamespace(), texture.getPath() + "_" + suffix));
   }
 
   /**

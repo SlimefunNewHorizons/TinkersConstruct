@@ -171,7 +171,7 @@ public class GuiFuelModule implements IScreenWithFluidTank, ClickableTankModule 
         tooltip = hasTank ? TOOLTIP_NO_FUEL : TOOLTIP_NO_TANK;
       }
 
-      graphics.renderComponentTooltip(screen.font, tooltip, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(screen.font, tooltip, mouseX, mouseY);
     }
   }
 

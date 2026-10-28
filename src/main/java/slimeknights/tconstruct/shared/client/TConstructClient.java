@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.client;
 
+import slimeknights.tconstruct.library.client.TinkerRenderTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -13,6 +14,7 @@ import slimeknights.tconstruct.shared.TinkerClient;
 public class TConstructClient {
   public TConstructClient(IEventBus bus) {
     TinkerClient.onConstruct();
+    bus.addListener(TinkerRenderTypes::registerPipelines);
     if (ModList.get().isLoaded("jsonthings")) {
       PluginClient.init();
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import net.minecraft.network.chat.FormattedText;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
@@ -66,7 +67,7 @@ public class ContentPageIconList extends PageContent {
       totalHeight -= getTitleHeight();
     }
     if (subText != null) {
-      totalHeight -= 16 + this.parent.parent.parent.fontRenderer.wordWrapHeight(subText, BookScreen.PAGE_WIDTH) * 12 / 9;
+      totalHeight -= 16 + this.parent.parent.parent.fontRenderer.wordWrapHeight(FormattedText.of(subText), BookScreen.PAGE_WIDTH) * 12 / 9;
     }
     return totalHeight / this.height;
   }

@@ -107,7 +107,7 @@ public class GuiMeltingModule {
 
           // draw tooltip if relevant
           if (tooltip != null) {
-            graphics.renderTooltip(screen.font, tooltip, mouseX, mouseY);
+            graphics.setTooltipForNextFrame(screen.font, tooltip, mouseX, mouseY);
           }
 
           // cannot hover two slots, so done

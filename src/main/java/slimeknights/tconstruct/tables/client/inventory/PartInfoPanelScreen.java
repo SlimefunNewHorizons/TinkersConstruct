@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.client.inventory;
 
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -124,7 +125,7 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
 
     // info ? in the top right corner
     if (this.hasTooltips()) {
-      graphics.drawString(this.font, "?", guiRight() - this.border.w - this.font.width("?") / 2f, this.topPos + 5, 0xff5f5f5f, false);
+      graphics.drawString(this.font, "?", (int) (guiRight() - this.border.w - this.font.width("?") / 2f), this.topPos + 5, 0xff5f5f5f, false);
     }
 
     int scaledFontHeight = this.getScaledFontHeight();
@@ -132,7 +133,7 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
       int x2 = this.imageWidth / 2;
       x2 -= this.font.width(this.caption) / 2;
 
-      graphics.drawString(this.font, this.caption.getVisualOrderText(), (float) this.leftPos + x2, y, color, true);
+      graphics.drawString(this.font, this.caption.getVisualOrderText(), (int) ((float) this.leftPos + x2), (int) y, color, true);
       y += scaledFontHeight + 3;
     }
 
@@ -141,7 +142,7 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
       int x2 = this.imageWidth / 2;
       x2 -= this.font.width(this.patternCost) / 2;
 
-      graphics.drawString(this.font, this.patternCost.getVisualOrderText(), (float) this.leftPos + x2, y, color, true);
+      graphics.drawString(this.font, this.patternCost.getVisualOrderText(), (int) ((float) this.leftPos + x2), (int) y, color, true);
       y += scaledFontHeight + 3;
     }
 
@@ -150,7 +151,7 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
       int x2 = this.imageWidth / 2;
       x2 -= this.font.width(this.materialValue) / 2;
 
-      graphics.drawString(this.font, this.materialValue.getVisualOrderText(), (float) this.leftPos + x2, y, color, true);
+      graphics.drawString(this.font, this.materialValue.getVisualOrderText(), (int) ((float) this.leftPos + x2), (int) y, color, true);
       y += scaledFontHeight + 3;
     }
 
@@ -162,9 +163,9 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
     float textHeight = font.lineHeight + 0.5f;
     float lowerBound = (this.topPos + this.imageHeight - 5) / this.textScale;
     //RenderSystem.scalef(this.textScale, this.textScale, 1.0f);
-    PoseStack matrices = graphics.pose();
-    matrices.pushPose();
-    matrices.scale(this.textScale, this.textScale, 1.0f);
+    Matrix3x2fStack matrices = graphics.pose();
+    matrices.pushMatrix();
+    matrices.scale((float) this.textScale, (float) this.textScale);
     x /= this.textScale;
     y /= this.textScale;
 
@@ -176,11 +177,11 @@ public class PartInfoPanelScreen extends InfoPanelScreen<PartBuilderScreen,PartB
       }
 
       FormattedCharSequence line = iter.next();
-      graphics.drawString(this.font, line, x, y, color, true);
+      graphics.drawString(this.font, line, (int) x, (int) y, color, true);
       y += textHeight;
     }
 
-    matrices.popPose();
+    matrices.popMatrix();
     //RenderSystem.scalef(1f / textScale, 1f / textScale, 1.0f);
     this.slider.update(mouseX, mouseY);
     this.slider.draw(graphics);

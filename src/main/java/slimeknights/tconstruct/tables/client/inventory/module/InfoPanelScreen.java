@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.client.inventory.module;
 
+import org.joml.Matrix3x2fStack;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Setter;
@@ -260,7 +261,7 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
     int scaledFontHeight = this.getScaledFontHeight();
     if (this.hasTooltips() && mouseX >= this.guiRight() - this.border.w - this.font.width("?") / 2 && mouseX < this.guiRight()
         && mouseY > this.topPos + 5 && mouseY < this.topPos + 5 + scaledFontHeight) {
-      graphics.renderTooltip(this.font, this.font.split(Component.translatable("gui.tconstruct.general.hover"), 150), mouseX - 155, mouseY);
+      graphics.setTooltipForNextFrame(this.font, this.font.split(Component.translatable("gui.tconstruct.general.hover"), 150), mouseX - 155, mouseY);
     }
 
     // are we hovering over an entry?
@@ -311,7 +312,7 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
 
     List<FormattedCharSequence> lines = this.font.split(this.tooltips.get(i), w);
 
-    graphics.renderTooltip(this.font, lines, mouseX, (mouseY - lines.size() * this.getScaledFontHeight() / 2));
+    graphics.setTooltipForNextFrame(this.font, lines, mouseX, (mouseY - lines.size() * this.getScaledFontHeight() / 2));
   }
 
   /**
@@ -335,7 +336,7 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
 
     // info ? in the top right corner
     if (this.hasTooltips()) {
-      graphics.drawString(this.font, "?", guiRight() - this.border.w - this.font.width("?") / 2f, this.topPos + 5, 0xff5f5f5f, false);
+      graphics.drawString(this.font, "?", (int) (guiRight() - this.border.w - this.font.width("?") / 2f), this.topPos + 5, 0xff5f5f5f, false);
     }
 
     // draw caption
@@ -344,7 +345,7 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
       int x2 = this.imageWidth / 2;
       x2 -= this.font.width(this.caption) / 2;
 
-      graphics.drawString(this.font, this.caption.getVisualOrderText(), (float) this.leftPos + x2, y, color, true);
+      graphics.drawString(this.font, this.caption.getVisualOrderText(), (int) ((float) this.leftPos + x2), (int) y, color, true);
       y += scaledFontHeight + 3;
     }
 
@@ -355,9 +356,9 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
 
     float textHeight = font.lineHeight + 0.5f;
     float lowerBound = (this.topPos + this.imageHeight - 5) / this.textScale;
-    PoseStack matrices = graphics.pose();
-    matrices.pushPose();
-    matrices.scale(this.textScale, this.textScale, 1.0f);
+    Matrix3x2fStack matrices = graphics.pose();
+    matrices.pushMatrix();
+    matrices.scale((float) this.textScale, (float) this.textScale);
     //RenderSystem.scalef(this.textScale, this.textScale, 1.0f);
     x /= this.textScale;
     y /= this.textScale;
@@ -370,11 +371,11 @@ public class InfoPanelScreen<P extends MultiModuleScreen<?>, C extends AbstractC
       }
 
       FormattedCharSequence line = iter.next();
-      graphics.drawString(this.font, line, x, y, color, true);
+      graphics.drawString(this.font, line, (int) x, (int) y, color, true);
       y += textHeight;
     }
 
-    matrices.popPose();
+    matrices.popMatrix();
     //RenderSystem.scalef(1f / textScale, 1f / textScale, 1.0f);
 
     //RenderSystem.setShaderTexture(0, BACKGROUND_IMAGE);

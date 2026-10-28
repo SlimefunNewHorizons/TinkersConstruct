@@ -112,17 +112,13 @@ public class TinkerClient {
         // this is for the most part a clone of the vanilla logic from ScreenEffectRenderer with some changes mentioned below
 
         TextureAtlasSprite texture = minecraft.getBlockRenderer().getBlockModelShaper().getTexture(state, minecraft.level, pos);
-        RenderSystem.setShaderTexture(0, texture.atlasLocation());
         // changed: shader using pos tex
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         // change: handle brightness based on renderWater, and enable blend
         Player player = minecraft.player;
         BlockPos blockpos = BlockPos.containing(player.getX(), player.getEyeY(), player.getZ());
         float brightness = LightTexture.getBrightness(player.level().dimensionType(), player.level().getMaxLocalRawBrightness(blockpos));
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(brightness, brightness, brightness, 1.0f);
 
         // draw the quad
@@ -138,7 +134,6 @@ public class TinkerClient {
         bufferbuilder.addVertex(matrix4f, -1, 1, -0.5f).setUv(u1, v0);
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         // changed: disable blend
-        RenderSystem.disableBlend();
       }
       event.setCanceled(true);
     }

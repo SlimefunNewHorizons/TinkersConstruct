@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.client.book.elements;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,7 +28,7 @@ public class CycleRecipeElement extends ArrowElement {
   public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
     if (this.button != null && this.isHovered(mouseX, mouseY)) {
       this.playDownSound(Minecraft.getInstance().getSoundManager());
-      this.button.onPress();
+      this.button.onPress(new KeyEvent(InputConstants.KEY_RETURN, 0, 0));
     }
   }
 

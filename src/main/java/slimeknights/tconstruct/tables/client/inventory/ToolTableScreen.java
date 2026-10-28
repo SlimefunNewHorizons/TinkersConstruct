@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tables.client.inventory;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -10,7 +13,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag.Default;
@@ -95,10 +99,12 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
    */
   protected void renderArmorStand(GuiGraphics graphics) {
     if (this.armorStandPreview != null) {
-      Quaternionf pose = new Quaternionf().rotationXYZ((float)Math.toRadians(25), 0.0F, (float)Math.PI).rotateY(this.armorStandAngle);
-      InventoryScreen.renderEntityInInventory(graphics, this.armorStandX, this.armorStandY, this.armorStandScale, ARMOR_STAND_TRANSLATION, pose, null, this.armorStandPreview);
+      // shortcut: entities in GUIs only take a yaw and pitch since 1.21.6, so the stand is tilted like the vanilla inventory player instead of the old fixed pose
+      int size = this.armorStandScale;
+      float yaw = (float) Math.toDegrees(this.armorStandAngle) / 20f;
+      InventoryScreen.renderEntityInInventoryFollowsAngle(graphics, this.armorStandX - size, this.armorStandY - size * 2, this.armorStandX + size, this.armorStandY + size / 2, size, 0.0625f, yaw, -0.4f, this.armorStandPreview);
 
-      graphics.blit(ICON_TEXTURE, armorStandX - 16, armorStandY - 16, 0, 184, 32, 32);
+      graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_TEXTURE, armorStandX - 16, armorStandY - 16, 0, 184, 32, 32, 256, 256);
     }
   }
 
@@ -123,9 +129,9 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
 
       if (!stack.isEmpty()) {
         ItemStack copy = stack.copy();
-        Item item = stack.getItem();
-        if (item instanceof ArmorItem armor) {
-          this.armorStandPreview.setItemSlot(armor.getEquipmentSlot(), copy);
+        Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+        if (equippable != null) {
+          this.armorStandPreview.setItemSlot(equippable.slot(), copy);
         } else {
           this.armorStandPreview.setItemSlot(EquipmentSlot.OFFHAND, copy);
         }
@@ -144,8 +150,11 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
     else {
       ItemStack result = lazyToolStack.getStack();
       tinkerInfo.setCaption(result.getHoverName());
-      List<Component> list = new ArrayList<>();
-      result.getItem().appendHoverText(result, Item.TooltipContext.of(Minecraft.getInstance().level), list, Default.NORMAL);
+      // the first line is the name, already shown as the caption
+      List<Component> list = new ArrayList<>(result.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, Default.NORMAL));
+      if (!list.isEmpty()) {
+        list.remove(0);
+      }
       tinkerInfo.setText(list);
     }
   }
@@ -157,7 +166,7 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
     List<Component> modifierTooltip = new ArrayList<>();
     Component title;
     // control displays just traits, bit trickier to do
-    if (hasControlDown()) {
+    if (Minecraft.getInstance().hasControlDown()) {
       title = TRAITS_TEXT;
       Map<Modifier,Integer> upgrades = tool.getUpgrades().getModifiers().stream()
                                            .collect(Collectors.toMap(ModifierEntry::getModifier, ModifierEntry::getLevel, Integer::sum));
@@ -175,7 +184,7 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
     } else {
       // shift is just upgrades/abilities, otherwise all
       List<ModifierEntry> modifiers;
-      if (hasShiftDown()) {
+      if (Minecraft.getInstance().hasShiftDown()) {
         modifiers = tool.getUpgrades().getModifiers();
         title = UPGRADES_TEXT;
       } else {
@@ -196,31 +205,40 @@ public abstract class ToolTableScreen<T extends BlockEntity, C extends TabbedCon
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int mouseButton = event.button();
     int armorStandBoxW = this.armorStandScale + 30;
     int armorStandBoxH = this.armorStandScale * 2;
     int armorStandBoxX = this.armorStandX - armorStandBoxW / 2;
     int armorStandBoxY = this.armorStandY - armorStandBoxH + 5;
     this.clickedOnArmorStand = this.enableArmorStandPreview && GuiUtil.isHovered((int) mouseX, (int) mouseY, armorStandBoxX, armorStandBoxY, armorStandBoxW, armorStandBoxH);
 
-    return super.mouseClicked(mouseX, mouseY, mouseButton);
+    return super.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, event.modifiers())), doubleClick);
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int state) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int state = event.button();
     this.clickedOnArmorStand = false;
     this.armorStandLastMouseX = -1;
 
-    return super.mouseReleased(mouseX, mouseY, state);
+    return super.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, event.modifiers())));
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int clickedMouseButton, double timeSinceLastClick, double unkowwn) {
+  public boolean mouseDragged(MouseButtonEvent event, double timeSinceLastClick, double unkowwn) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int clickedMouseButton = event.button();
     if (this.enableArmorStandPreview && this.clickedOnArmorStand && this.armorStandLastMouseX != -1) {
       this.armorStandAngle += (float) (mouseX - this.armorStandLastMouseX) / 10f;
     }
     this.armorStandLastMouseX = mouseX;
 
-    return super.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick, unkowwn);
+    return super.mouseDragged(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(clickedMouseButton, event.modifiers())), timeSinceLastClick, unkowwn);
   }
 }

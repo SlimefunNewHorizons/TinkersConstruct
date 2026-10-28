@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.smeltery.client.screen;
 
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -148,7 +150,7 @@ public class HeatingStructureScreen extends MultiModuleScreen<HeatingStructureCo
 
     // add the hover text giving info on the button
     if (bucketButtonHovered(mouseX - leftPos, mouseY - topPos)) {
-      graphics.renderTooltip(font, switch (menu.getTransferDirection()) {
+      graphics.setTooltipForNextFrame(font, switch (menu.getTransferDirection()) {
         default -> TOOLTIP_AUTO;
         case EMPTY_ITEM -> TOOLTIP_EMPTY;
         case FILL_ITEM -> TOOLTIP_FILL;
@@ -167,7 +169,10 @@ public class HeatingStructureScreen extends MultiModuleScreen<HeatingStructureCo
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = event.button();
     assert minecraft != null && minecraft.player != null && minecraft.gameMode != null;
     if (!minecraft.player.isSpectator()) {
       int checkX = (int)mouseX - cornerX;
@@ -203,7 +208,7 @@ public class HeatingStructureScreen extends MultiModuleScreen<HeatingStructureCo
         }
       }
     }
-    return super.mouseClicked(mouseX, mouseY, button);
+    return super.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, event.modifiers())), doubleClick);
   }
 
   @Nullable

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
@@ -156,7 +157,7 @@ public abstract class AbstractMaterialContent extends PageContent {
         .filter(recipe -> material.matchesVariant(recipe.getMaterial()))
         // prefer 1 value 1 needed (ingots), then 1 value with higher needed (nuggets), then higher value (blocks)
         .sorted(Comparator.comparing(MaterialRecipe::getValue).thenComparing(MaterialRecipe::getNeeded))
-        .flatMap(recipe -> Arrays.stream(recipe.getIngredient().getItems()))
+        .flatMap(recipe -> IngredientHelper.getDisplayItems(recipe.getIngredient()).stream())
         .collect(Collectors.toList());
       // no repair items? use the fallbacks
       if (repairStacks.isEmpty()) {
@@ -333,7 +334,7 @@ public abstract class AbstractMaterialContent extends PageContent {
                                     .findFirst().orElse(FluidStack.EMPTY);
       elementItem.tooltip = List.of(
         CASTABLE,
-        Component.translatable(CAST_FROM, firstFluid.getDisplayName()).withStyle(ChatFormatting.GRAY)
+        Component.translatable(CAST_FROM, firstFluid.getHoverName()).withStyle(ChatFormatting.GRAY)
       );
       displayTools.add(elementItem);
     }
@@ -355,7 +356,7 @@ public abstract class AbstractMaterialContent extends PageContent {
           FluidStack firstFluid = composite.getFluids().stream().findFirst().orElse(FluidStack.EMPTY);
           elementItem.tooltip = List.of(
             COMPOSITE,
-            Component.translatable(COMPOSITE_FROM, firstFluid.getDisplayName(), MaterialTooltipCache.getDisplayName(inputId)).withStyle(ChatFormatting.GRAY)
+            Component.translatable(COMPOSITE_FROM, firstFluid.getHoverName(), MaterialTooltipCache.getDisplayName(inputId)).withStyle(ChatFormatting.GRAY)
           );
           displayTools.add(elementItem);
         }

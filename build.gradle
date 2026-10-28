@@ -66,22 +66,19 @@ sourceSets.main {
         exclude 'slimeknights/mantle/fluid/tooltip/AbstractFluidTooltipProvider.java'
         exclude 'slimeknights/mantle/fluid/transfer/AbstractFluidContainerTransferProvider.java'
         exclude 'slimeknights/mantle/loot/AbstractLootTableInjectionProvider.java'
-        // PORT-STAGE (1.21.11): client code is excluded while common code is ported, so javac can run Lombok.
-        // Remove this block once the client packages are ported.
+        // PORT-STAGE (1.21.11): Tinkers client packages not ported yet, enabled one at a time
         exclude { details ->
             def path = details.relativePath.pathString
-            def keep = ['slimeknights/mantle/client/TooltipKey.java', 'slimeknights/mantle/client/SafeClientAccess.java',
-                        'slimeknights/mantle/client/ResourceColorManager.java', 'slimeknights/mantle/client/model/connected/ConnectedModelRegistry.java', 'slimeknights/mantle/client/book/BookHelper.java',
-                        'slimeknights/tconstruct/library/client/materials/MaterialTooltipCache.java',
-                        'slimeknights/tconstruct/library/client/model/ModelProperties.java',
-                        'slimeknights/tconstruct/library/client/SafeClient.java']
-            return details.file.isFile() && path.startsWith('slimeknights/tconstruct/') && path.contains('/client/') && !keep.contains(path)
+            def pending = ['slimeknights/tconstruct/library/client/model/', 'slimeknights/tconstruct/library/client/modifiers/',
+                           'slimeknights/tconstruct/smeltery/client/', 'slimeknights/tconstruct/tools/client/', 'slimeknights/tconstruct/world/client/',
+                           'slimeknights/tconstruct/gadgets/client/', 'slimeknights/tconstruct/shared/client/', 'slimeknights/tconstruct/fluids/client/',
+                           'slimeknights/tconstruct/library/client/item/', 'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/library/client/particle/',
+                           'slimeknights/tconstruct/library/client/data/']
+            def events = path.startsWith('slimeknights/tconstruct/') && (path.endsWith('ClientEvents.java') || path.endsWith('ClientEventBase.java'))
+            def keep = ['slimeknights/tconstruct/library/client/model/ModelProperties.java',
+                        'slimeknights/tconstruct/library/client/modifiers/ModifierIconManager.java']
+            return details.file.isFile() && (events || pending.any { path.startsWith(it) } || path == 'slimeknights/tconstruct/shared/TinkerClient.java' || path == 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java') && !keep.contains(path)
         }
-        exclude 'slimeknights/tconstruct/**/*ClientEvents.java'
-        exclude 'slimeknights/**/ClientEventBase.java'
-        exclude 'slimeknights/tconstruct/shared/TinkerClient.java'
-        exclude 'slimeknights/tconstruct/plugin/jsonthings/PluginClient.java'
-        // JEI integration is client code, ported with it
         exclude 'slimeknights/mantle/plugin/jei/**' // ported with the Tinkers JEI plugin
         exclude 'slimeknights/tconstruct/plugin/jei/**'
         // notes of client extensions to register, not compiled

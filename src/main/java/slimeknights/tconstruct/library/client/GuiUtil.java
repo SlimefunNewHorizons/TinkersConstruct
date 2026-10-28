@@ -1,23 +1,15 @@
 package slimeknights.tconstruct.library.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import net.minecraft.client.renderer.RenderPipelines;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.joml.Matrix4f;
+import slimeknights.mantle.client.render.FluidRenderer;
 import slimeknights.mantle.client.screen.ElementScreen;
 import slimeknights.tconstruct.library.recipe.partbuilder.Pattern;
 
@@ -30,7 +22,7 @@ public final class GuiUtil {
    * @param background  Background location
    */
   public static void drawBackground(GuiGraphics graphics, AbstractContainerScreen<?> screen, Identifier background) {
-    graphics.blit(background, screen.getGuiLeft(), screen.getGuiTop(), 0, 0, screen.getXSize(), screen.getYSize());
+    graphics.blit(RenderPipelines.GUI_TEXTURED, background, screen.getGuiLeft(), screen.getGuiTop(), 0, 0, screen.getXSize(), screen.getYSize(), 256, 256);
   }
 
   /**
@@ -71,6 +63,7 @@ public final class GuiUtil {
 
   /**
    * Renders a fluid tank with a partial fluid level
+   * @param graphics  Graphics instance
    * @param screen    Parent screen
    * @param stack     Fluid stack
    * @param capacity  Tank capacity, determines height
@@ -78,14 +71,14 @@ public final class GuiUtil {
    * @param y         Tank Y position
    * @param width     Tank width
    * @param height    Tank height
-   * @param depth     Tank depth
    */
-  public static void renderFluidTank(PoseStack matrices, AbstractContainerScreen<?> screen, FluidStack stack, int capacity, int x, int y, int width, int height, int depth) {
-    renderFluidTank(matrices, screen, stack, stack.getAmount(), capacity, x, y, width, height, depth);
+  public static void renderFluidTank(GuiGraphics graphics, AbstractContainerScreen<?> screen, FluidStack stack, int capacity, int x, int y, int width, int height) {
+    renderFluidTank(graphics, screen, stack, stack.getAmount(), capacity, x, y, width, height);
   }
 
   /**
    * Renders a fluid tank with a partial fluid level and an amount override
+   * @param graphics  Graphics instance
    * @param screen    Parent screen
    * @param stack     Fluid stack
    * @param capacity  Tank capacity, determines height
@@ -93,112 +86,66 @@ public final class GuiUtil {
    * @param y         Tank Y position
    * @param width     Tank width
    * @param height    Tank height
-   * @param depth     Tank depth
    */
-  public static void renderFluidTank(PoseStack matrices, AbstractContainerScreen<?> screen, FluidStack stack, int amount, int capacity, int x, int y, int width, int height, int depth) {
+  public static void renderFluidTank(GuiGraphics graphics, AbstractContainerScreen<?> screen, FluidStack stack, int amount, int capacity, int x, int y, int width, int height) {
     if(!stack.isEmpty() && capacity > 0) {
       int maxY = y + height;
       int fluidHeight = Math.min(height * amount / capacity, height);
-      renderTiledFluid(matrices, screen, stack, x, maxY - fluidHeight, width, fluidHeight, depth);
+      renderTiledFluid(graphics, screen, stack, x, maxY - fluidHeight, width, fluidHeight);
     }
   }
 
   /**
    * Colors and renders a fluid sprite
-   * @param matrices    Matrix instance
-   * @param screen  Parent screen
-   * @param stack   Fluid stack
-   * @param x       Fluid X
-   * @param y       Fluid Y
-   * @param width   Fluid width
-   * @param height  Fluid height
-   * @param depth   Fluid depth
+   * @param graphics  Graphics instance
+   * @param screen    Parent screen
+   * @param stack     Fluid stack
+   * @param x         Fluid X
+   * @param y         Fluid Y
+   * @param width     Fluid width
+   * @param height    Fluid height
    */
-  public static void renderTiledFluid(PoseStack matrices, AbstractContainerScreen<?> screen, FluidStack stack, int x, int y, int width, int height, int depth) {
+  public static void renderTiledFluid(GuiGraphics graphics, AbstractContainerScreen<?> screen, FluidStack stack, int x, int y, int width, int height) {
     if (!stack.isEmpty()) {
       IClientFluidTypeExtensions clientFluid = IClientFluidTypeExtensions.of(stack.getFluid());
-      TextureAtlasSprite fluidSprite = screen.getMinecraft().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(clientFluid.getStillTexture(stack));
-      RenderUtils.setColorRGBA(clientFluid.getTintColor(stack));
-      renderTiledTextureAtlas(matrices, screen, fluidSprite, x, y, width, height, depth, stack.getFluid().getFluidType().isLighterThanAir());
-      RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+      TextureAtlasSprite fluidSprite = FluidRenderer.getBlockSprite(clientFluid.getStillTexture(stack));
+      renderTiledTextureAtlas(graphics, screen, fluidSprite, x, y, width, height, clientFluid.getTintColor(stack), stack.getFluid().getFluidType().isLighterThanAir());
     }
   }
 
   /**
    * Renders a texture atlas sprite tiled over the given area
-   * @param matrices    Matrix instance
+   * @param graphics    Graphics instance
    * @param screen      Parent screen
    * @param sprite      Sprite to render
    * @param x           X position to render
    * @param y           Y position to render
    * @param width       Render width
    * @param height      Render height
-   * @param depth       Render depth
+   * @param color       Color to tint the sprite
    * @param upsideDown  If true, flips the sprite
    */
-  public static void renderTiledTextureAtlas(PoseStack matrices, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth, boolean upsideDown) {
-    // start drawing sprites
-    RenderUtils.bindTexture(sprite.atlasLocation());
-    BufferBuilder builder = Tesselator.getInstance().begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-
-    // tile vertically
-    float u1 = sprite.getU0();
-    float v1 = sprite.getV0();
-    int spriteHeight = sprite.contents().height();
+  public static void renderTiledTextureAtlas(GuiGraphics graphics, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int color, boolean upsideDown) {
     int spriteWidth = sprite.contents().width();
+    int spriteHeight = sprite.contents().height();
+    // blit takes atlas pixels, partial sprites are drawn from their top left corner
+    int atlasWidth = Math.round(spriteWidth / (sprite.getU1() - sprite.getU0()));
+    int atlasHeight = Math.round(spriteHeight / (sprite.getV1() - sprite.getV0()));
+    float u = sprite.getU0() * atlasWidth;
+    float v = sprite.getV0() * atlasHeight;
     int startX = x + screen.getGuiLeft();
     int startY = y + screen.getGuiTop();
-    do {
-      int renderHeight = Math.min(spriteHeight, height);
-      height -= renderHeight;
-      float v2 = sprite.getV((float)renderHeight / spriteHeight);
-
-      // we need to draw the quads per width too
-      int x2 = startX;
-      int widthLeft = width;
-      Matrix4f matrix = matrices.last().pose();
-      // tile horizontally
-      do {
-        int renderWidth = Math.min(spriteWidth, widthLeft);
-        widthLeft -= renderWidth;
-
-        float u2 = sprite.getU((float)renderWidth / spriteWidth);
-        if(upsideDown) {
-          // FIXME: I think this causes tiling errors, look into it
-          buildSquare(matrix, builder, x2, x2 + renderWidth, startY, startY + renderHeight, depth, u1, u2, v2, v1);
+    for (int dy = 0; dy < height; dy += spriteHeight) {
+      int renderHeight = Math.min(spriteHeight, height - dy);
+      for (int dx = 0; dx < width; dx += spriteWidth) {
+        int renderWidth = Math.min(spriteWidth, width - dx);
+        if (upsideDown) {
+          graphics.blit(RenderPipelines.GUI_TEXTURED, sprite.atlasLocation(), startX + dx, startY + dy, u, v + renderHeight, renderWidth, renderHeight, renderWidth, -renderHeight, atlasWidth, atlasHeight, color);
         } else {
-          buildSquare(matrix, builder, x2, x2 + renderWidth, startY, startY + renderHeight, depth, u1, u2, v1, v2);
+          graphics.blit(RenderPipelines.GUI_TEXTURED, sprite.atlasLocation(), startX + dx, startY + dy, u, v, renderWidth, renderHeight, renderWidth, renderHeight, atlasWidth, atlasHeight, color);
         }
-        x2 += renderWidth;
-      } while(widthLeft > 0);
-
-      startY += renderHeight;
-    } while(height > 0);
-
-    // finish drawing sprites
-    BufferUploader.drawWithShader(builder.buildOrThrow());
-    // RenderSystem.enableAlphaTest();
-    RenderSystem.enableDepthTest();
-  }
-
-  /**
-   * Adds a square of texture to a buffer builder
-   * @param builder  Builder instance
-   * @param x1       X start
-   * @param x2       X end
-   * @param y1       Y start
-   * @param y2       Y end
-   * @param z        Depth
-   * @param u1       Texture U start
-   * @param u2       Texture U end
-   * @param v1       Texture V start
-   * @param v2       Texture V end
-   */
-  private static void buildSquare(Matrix4f matrix, BufferBuilder builder, int x1, int x2, int y1, int y2, int z, float u1, float u2, float v1, float v2) {
-    builder.addVertex(matrix, x1, y2, z).setUv(u1, v2);
-    builder.addVertex(matrix, x2, y2, z).setUv(u2, v2);
-    builder.addVertex(matrix, x2, y1, z).setUv(u2, v1);
-    builder.addVertex(matrix, x1, y1, z).setUv(u1, v1);
+      }
+    }
   }
 
   /**
@@ -220,7 +167,7 @@ public final class GuiUtil {
     }
     // amount to offset element by for the height
     int deltaY = element.h - height;
-    graphics.blit(element.texture, x, y + deltaY, element.x, element.y + deltaY, element.w, height, element.texW, element.texH);
+    graphics.blit(RenderPipelines.GUI_TEXTURED, element.texture, x, y + deltaY, element.x, element.y + deltaY, element.w, height, element.texW, element.texH);
   }
 
   /**
@@ -232,16 +179,12 @@ public final class GuiUtil {
    * @param height    Element height
    */
   public static void renderHighlight(GuiGraphics graphics, int x, int y, int width, int height) {
-      RenderSystem.disableDepthTest();
-      RenderSystem.colorMask(true, true, true, false);
-      graphics.fill(x, y, x + width, y + height, 100, 0x80FFFFFF);
-      RenderSystem.colorMask(true, true, true, true);
-      RenderSystem.enableDepthTest();
+    graphics.fill(x, y, x + width, y + height, 0x80FFFFFF);
   }
 
   /** Renders a pattern at the given location */
   public static void renderPattern(GuiGraphics graphics, Pattern pattern, int x, int y) {
-    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(pattern.getTexture());
-    graphics.blit(x, y, 100, 16, 16, sprite);
+    TextureAtlasSprite sprite = FluidRenderer.getBlockSprite(pattern.getTexture());
+    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 16, 16);
   }
 }

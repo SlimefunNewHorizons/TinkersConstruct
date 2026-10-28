@@ -179,7 +179,7 @@ public class GuiTankModule implements IScreenWithFluidTank, ClickableTankModule 
       }
 
       // TODO: renderComponentTooltip->renderTooltip
-      graphics.renderComponentTooltip(screen.font, tooltip, mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(screen.font, tooltip, mouseX, mouseY);
     }
   }
 

@@ -247,6 +247,26 @@ def inputs(text):
   return text
 
 
+FLOATY = re.compile(r'\d+(\.\d+)?[fF]\b|\(float\)|\bfloat\b|\d\.\d')
+
+
+def int_coords(args):
+  """drawString takes int coordinates since 1.21.6"""
+  if len(args) < 5:
+    return None
+  new = list(args)
+  changed = False
+  for i in (2, 3):
+    if FLOATY.search(new[i]):
+      new[i] = '(int) (' + new[i] + ')'
+      changed = True
+  return new if changed else None
+
+
+# GL state calls with no GUI equivalent, color state set back to white is a no-op too
+DEAD_STATE = re.compile(r'^[ \t]*RenderSystem\.(enableBlend|disableBlend|defaultBlendFunc|enableDepthTest|disableDepthTest|setShaderTexture\(0, [^;]*?\)|setShaderColor\(1(\.0)?[fF]?, ?1(\.0)?[fF]?, ?1(\.0)?[fF]?, ?1(\.0)?[fF]?\)|setShader\([^;]*\))(\(\))?;[ \t]*\n', re.M)
+
+
 def convert(text):
   nl = '\r\n' if '\r\n' in text else '\n'
   text = text.replace('\r\n', '\n')
@@ -255,6 +275,9 @@ def convert(text):
   text = re.sub(r'\.blit\(([^;]*?), ([^,;]*?), ([^,;]*?), ([^,;]*?), ([^,;]*?), (\w*[sS]prite\w*)\)', lambda m: '.blitSprite(' + PIPELINE + ', ' + m.group(6) + ', ' + m.group(1) + ', ' + m.group(2) + ', ' + m.group(4) + ', ' + m.group(5) + ')', text)
   text = rewrite_calls(text, 'blitSprite', blit_sprite)
   text = tooltip(text)
+  text = re.sub(r'(?<!super)\.renderTooltip\(((?:this\.)?\w*[fF]ont\w*(?:\(\))?), ', r'.setTooltipForNextFrame(\1, ', text)
+  text = rewrite_calls(text, 'drawString', int_coords)
+  text = DEAD_STATE.sub('', text)
   text = pose(text)
   text = inputs(text)
   if PIPELINE in text and PIPELINE not in orig:

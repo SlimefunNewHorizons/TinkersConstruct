@@ -73,10 +73,10 @@ final class PendingClientExtensions {
               amplifier = 2;
             }
             // Effect icons are stored in the mob-effect atlas, not the GUI atlas
-            // used by GuiGraphics.blitSprite(Identifier).
+            // used by GuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier).
             MobEffectTextureManager textures = mc.getMobEffectTextures();
             TextureAtlasSprite sprite = textures.getSprite(ICONS[amplifier]);
-            graphics.blit(x, y, 0, 18, 18, sprite);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 18, 18);
           }
 
           @Override
@@ -141,7 +141,7 @@ final class PendingClientExtensions {
           // start by drawing the original texture, skip alpha
           MobEffectTextureManager textures = mc.getMobEffectTextures();
           TextureAtlasSprite sprite = textures.get(instance.getEffect());
-          graphics.blit(x + 3, y + 3, 0, 18, 18, sprite);
+          graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + 3, y + 3, 18, 18);
 
           // if the helmet has a drawtime, render the extra bar
           if (mc.player != null) {
@@ -161,7 +161,7 @@ final class PendingClientExtensions {
                 }
                 int yOffset = (18 - height);
                 graphics.enableScissor(x + 3, y + 3 + yOffset, x + 21, y + 21);
-                graphics.blit(x + 3, y + 3, 0, 18, 18, sprite);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + 3, y + 3, 18, 18);
                 graphics.disableScissor();
               }
             }

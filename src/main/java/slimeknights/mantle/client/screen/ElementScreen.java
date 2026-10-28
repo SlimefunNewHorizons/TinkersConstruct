@@ -50,4 +50,15 @@ public class ElementScreen {
   public void draw(GuiGraphics graphics, int xPos, int yPos) {
     this.draw(graphics, xPos, yPos, 0);
   }
+
+  /**
+   * Draws the element tinted with a color, as GUIs have no shader color since 1.21.6
+   *
+   * @param xPos  X-Coordinate on the screen
+   * @param yPos  Y-Coordinate on the screen
+   * @param color ARGB color to multiply in
+   */
+  public void drawColored(GuiGraphics graphics, int xPos, int yPos, int color) {
+    graphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, xPos, yPos, this.x, this.y, this.w, this.h, this.texW, this.texH, color);
+  }
 }

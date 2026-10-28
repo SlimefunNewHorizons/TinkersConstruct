@@ -1,6 +1,8 @@
 package slimeknights.tconstruct.tables.client.inventory.widget;
 
 
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import net.minecraft.client.gui.components.Button;
@@ -89,11 +91,11 @@ public class SideButtonsWidgetPaged<T extends Button> extends SideButtonsWidget<
         if (mouseButton == 0) {
             int button_num = this.buttons.size();
             if (button_num > columns * MAX_ROWS) { // Page button shows
-                if (this.previousPageButton.mouseClicked(mouseX, mouseY, mouseButton)) {
+                if (this.previousPageButton.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, 0)), false)) {
                     this.clickedButtonIndex = 1;
                     return true;
                 }
-                if (this.nextPageButton.mouseClicked(mouseX, mouseY, mouseButton)) {
+                if (this.nextPageButton.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, 0)), false)) {
                     this.clickedButtonIndex = 2;
                     return true;
                 }
@@ -105,12 +107,12 @@ public class SideButtonsWidgetPaged<T extends Button> extends SideButtonsWidget<
     @Override
     public boolean handleMouseReleased(double mouseX, double mouseY, int state) {
         if (this.clickedButtonIndex == 1) {
-            this.previousPageButton.mouseReleased(mouseX, mouseY, state);
+            this.previousPageButton.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, 0)));
             this.clickedButtonIndex = 0;
             return true;
         }
         if (this.clickedButtonIndex == 2) {
-            this.nextPageButton.mouseReleased(mouseX, mouseY, state);
+            this.nextPageButton.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, 0)));
             this.clickedButtonIndex = 0;
             return true;
         }

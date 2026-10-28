@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -131,7 +133,7 @@ public class ContentTool extends PageContent {
       if (this.toolName == null) {
         this.toolName = this.parent.name;
       }
-      Item item = BuiltInRegistries.ITEM.get(Identifier.parse(this.toolName));
+      Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(this.toolName));
       if (item instanceof IModifiableDisplay tool) {
         this.tool = tool;
       } else {
@@ -159,17 +161,18 @@ public class ContentTool extends PageContent {
 
       // get the stacks for the first crafting table recipe, prefer this option over parts as it may not be craftable with said parts
       Recipe<?> recipe = Optional.ofNullable(Minecraft.getInstance().level)
-                                                 .flatMap(world -> {
-                                                   RegistryAccess access = world.registryAccess();
-                                                   return RecipeAccessHelper.getRecipeMap(world).values().stream()
+                                                 .flatMap(world -> RecipeAccessHelper.getRecipeMap(world).values().stream()
                                                         .map(holder -> holder.value())
-                                                        .filter(r -> r.getType() == RecipeType.CRAFTING && r.getResultItem(access).getItem() == tool.asItem())
-                                                        .findFirst();
-                                                 })
+                                                        .filter(r -> r instanceof ShapedRecipe shaped ? shaped.result.is(tool.asItem()) : r instanceof ShapelessRecipe shapeless && shapeless.result.is(tool.asItem()))
+                                                        .findFirst())
                                                  .orElse(null);
       if (recipe != null) {
         // parts is just the items in the recipe
-        this.parts = recipe.getIngredients().stream().map(ingredient -> ItemStackList.of(ingredient.getItems())).collect(Collectors.toList());
+        if (recipe instanceof ShapedRecipe shaped) {
+          this.parts = shaped.getIngredients().stream().map(ingredient -> ItemStackList.of(ingredient.map(IngredientHelper::getItems).orElse(new ItemStack[0]))).collect(Collectors.toList());
+        } else {
+          this.parts = ((ShapelessRecipe) recipe).ingredients.stream().map(ingredient -> ItemStackList.of(IngredientHelper.getItems(ingredient))).collect(Collectors.toList());
+        }
 
         // if we have a shaped recipe, display slots in order
         if (recipe instanceof ShapedRecipe shaped) {
@@ -190,7 +193,7 @@ public class ContentTool extends PageContent {
                                                                             .map(r -> ((ToolBuildingRecipe)r).getExtraRequirements())
                                                                             .findFirst()).orElse(List.of());
         for (Ingredient ingredient : extraRequirements) {
-          partBuilder.add(ItemStackList.of(ingredient.getItems()));
+          partBuilder.add(ItemStackList.of(IngredientHelper.getItems(ingredient)));
         }
         this.parts = partBuilder.build();
       }

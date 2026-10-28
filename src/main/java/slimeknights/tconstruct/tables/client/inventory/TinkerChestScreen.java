@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tables.client.inventory;
 
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,7 +40,10 @@ public class TinkerChestScreen extends BaseTabbedScreen<AbstractChestBlockEntity
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int mouseButton = event.button();
     if (this.scalingChestScreen == null) {
       return false;
     }
@@ -47,11 +52,14 @@ public class TinkerChestScreen extends BaseTabbedScreen<AbstractChestBlockEntity
       return false;
     }
 
-    return super.mouseClicked(mouseX, mouseY, mouseButton);
+    return super.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(mouseButton, event.modifiers())), doubleClick);
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+  public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int button = event.button();
     if (this.scalingChestScreen == null) {
       return false;
     }
@@ -60,7 +68,7 @@ public class TinkerChestScreen extends BaseTabbedScreen<AbstractChestBlockEntity
       return false;
     }
 
-    return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    return super.mouseDragged(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, event.modifiers())), dragX, dragY);
   }
 
   @Override
@@ -77,7 +85,10 @@ public class TinkerChestScreen extends BaseTabbedScreen<AbstractChestBlockEntity
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int state) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int state = event.button();
     if (this.scalingChestScreen == null) {
       return false;
     }
@@ -86,6 +97,6 @@ public class TinkerChestScreen extends BaseTabbedScreen<AbstractChestBlockEntity
       return false;
     }
 
-    return super.mouseReleased(mouseX, mouseY, state);
+    return super.mouseReleased(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(state, event.modifiers())));
   }
 }

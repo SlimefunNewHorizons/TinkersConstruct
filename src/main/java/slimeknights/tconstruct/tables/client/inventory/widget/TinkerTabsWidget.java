@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.client.inventory.widget;
 
+import net.minecraft.client.input.MouseButtonEvent;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -82,7 +83,7 @@ public class TinkerTabsWidget implements Renderable, GuiEventListener, Narratabl
       for (Pair<BlockPos, BlockState> pair : menu.stationBlocks) {
         BlockState state = pair.getRight();
         BlockPos blockPos = pair.getLeft();
-        ItemStack stack = state.getBlock().getCloneItemStack(state, null, level, blockPos, minecraft.player);
+        ItemStack stack = state.getCloneItemStack(level, blockPos, false);
         tabs.add(Pair.of(stack, blockPos));
       }
     }
@@ -128,7 +129,10 @@ public class TinkerTabsWidget implements Renderable, GuiEventListener, Narratabl
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+  public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int mouseButton = event.button();
     if (isMouseOver(mouseX, mouseY)) {
       this.tabs.handleMouseClicked((int) mouseX, (int) mouseY, mouseButton);
       return true;
@@ -138,7 +142,10 @@ public class TinkerTabsWidget implements Renderable, GuiEventListener, Narratabl
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+  public boolean mouseReleased(MouseButtonEvent event) {
+    double mouseX = event.x();
+    double mouseY = event.y();
+    int mouseButton = event.button();
     this.tabs.handleMouseReleased();
 
     return true;
@@ -158,7 +165,6 @@ public class TinkerTabsWidget implements Renderable, GuiEventListener, Narratabl
 
   @Override
   public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     int sel = this.tabs.selected;
     this.tabs.update(mouseX, mouseY);
     this.tabs.draw(graphics);
@@ -186,7 +192,7 @@ public class TinkerTabsWidget implements Renderable, GuiEventListener, Narratabl
       }
 
       // TODO: renderComponentTooltip->renderTooltip
-      graphics.renderComponentTooltip(parent.font, Lists.newArrayList(title), mouseX, mouseY);
+      graphics.setComponentTooltipForNextFrame(parent.font, Lists.newArrayList(title), mouseX, mouseY);
     }
   }
 
