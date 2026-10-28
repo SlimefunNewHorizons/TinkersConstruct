@@ -1,56 +1,49 @@
 package slimeknights.tconstruct.smeltery.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import slimeknights.mantle.client.render.FluidCuboid;
-import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.RenderItem;
-import slimeknights.mantle.client.render.RenderingHelper;
 import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.smeltery.block.entity.ProxyTankBlockEntity;
 import slimeknights.tconstruct.smeltery.block.entity.tank.ProxyItemTank;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-/** Renderer for {@link ProxyTankBlockEntity}. Unlike {@link TankInventoryBlockEntityRenderer}, does not use a {@link slimeknights.tconstruct.library.fluid.FluidTankAnimated} */
-public class ProxyTankBlockEntityRenderer implements BlockEntityRenderer<ProxyTankBlockEntity> {
-  @SuppressWarnings("unused")  // nicer lambda
-  public ProxyTankBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
+/** Renderer for {@link ProxyTankBlockEntity}. Unlike {@link TankInventoryBlockEntityRenderer}, does not animate the fluid. */
+public class ProxyTankBlockEntityRenderer implements BlockEntityRenderer<ProxyTankBlockEntity,TankRenderState> {
+  private final ItemModelResolver itemModelResolver;
+  public ProxyTankBlockEntityRenderer(Context context) {
+    this.itemModelResolver = context.itemModelResolver();
+  }
 
   @Override
-  public void render(ProxyTankBlockEntity proxyTank, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn) {
-    BlockState state = proxyTank.getBlockState();
-    List<FluidCuboid> fluids = Config.CLIENT.tankFluidModel.get() ? List.of() : FluidCuboid.REGISTRY.get(state, List.of());
-    List<RenderItem> renderItems = RenderItem.STATE_REGISTRY.get(state, List.of());
-    if (!fluids.isEmpty() || !renderItems.isEmpty()) {
-      // rotate the matrix
-      boolean isRotated = RenderingHelper.applyRotation(matrices, state.getValue(HORIZONTAL_FACING));
+  public TankRenderState createRenderState() {
+    return new TankRenderState();
+  }
 
-      // render fluids
-      ProxyItemTank<?> itemTank = proxyTank.getItemTank();
-      FluidStack fluid = itemTank.getFluidInTank(0);
-      if (!fluids.isEmpty()) {
-        int capacity = itemTank.getTankCapacity(0);
-        for (FluidCuboid cube : fluids) {
-          FluidRenderer.renderScaledCuboid(matrices, buffer, cube, fluid, 0, capacity, light, true);
-        }
-      }
+  @Override
+  public void extractRenderState(ProxyTankBlockEntity proxyTank, TankRenderState state, float partialTicks, Vec3 camera, @Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(proxyTank, state, partialTicks, camera, breakProgress);
+    ProxyItemTank<?> itemTank = proxyTank.getItemTank();
+    state.fluids = Config.CLIENT.tankFluidModel.get() ? List.of() : FluidCuboid.REGISTRY.get(state.blockState, List.of());
+    state.fluid = itemTank.getFluidInTank(0).copy();
+    state.capacity = itemTank.getTankCapacity(0);
+    state.offset = 0;
+    state.extractItems(itemModelResolver, itemTank::getStackInSlot, proxyTank.getLevel());
+    state.facing = state.blockState.getValue(HORIZONTAL_FACING);
+  }
 
-      // render items
-      for (int i = 0; i < renderItems.size(); i++) {
-        RenderingHelper.renderItem(matrices, buffer, itemTank.getStackInSlot(i), renderItems.get(i), light);
-      }
-
-      // pop back rotation
-      if (isRotated) {
-        matrices.popPose();
-      }
-    }
+  @Override
+  public void submit(TankRenderState state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+    state.submit(matrices, collector, true);
   }
 }

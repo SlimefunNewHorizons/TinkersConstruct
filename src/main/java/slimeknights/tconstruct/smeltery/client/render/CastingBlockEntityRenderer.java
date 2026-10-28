@@ -1,97 +1,110 @@
 package slimeknights.tconstruct.smeltery.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.RenderItem;
 import slimeknights.mantle.client.render.RenderingHelper;
 import slimeknights.tconstruct.library.client.RenderUtils;
 import slimeknights.tconstruct.smeltery.block.entity.CastingBlockEntity;
 import slimeknights.tconstruct.smeltery.block.entity.tank.CastingFluidHandler;
-import slimeknights.tconstruct.smeltery.client.util.CastingItemRenderTypeBuffer;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class CastingBlockEntityRenderer implements BlockEntityRenderer<CastingBlockEntity> {
-  public CastingBlockEntityRenderer(Context context) {}
+public class CastingBlockEntityRenderer implements BlockEntityRenderer<CastingBlockEntity,CastingBlockEntityRenderer.State> {
+  private final ItemModelResolver itemModelResolver;
+  public CastingBlockEntityRenderer(Context context) {
+    this.itemModelResolver = context.itemModelResolver();
+  }
+
+  /** Casting state, adds the fluid fade */
+  public static class State extends TankRenderState {
+    int fluidOpacity = 0xFF;
+    boolean full;
+  }
 
   @Override
-  public void render(CastingBlockEntity casting, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn) {
-    BlockState state = casting.getBlockState();
-    List<FluidCuboid> fluids = FluidCuboid.REGISTRY.get(state, List.of());
-    List<RenderItem> renderItems = RenderItem.STATE_REGISTRY.get(state, List.of());
+  public State createRenderState() {
+    return new State();
+  }
 
-    // rotate the matrix
-    if (!fluids.isEmpty() || !renderItems.isEmpty()) {
-      boolean isRotated = RenderingHelper.applyRotation(matrices, state);
+  @Override
+  public void extractRenderState(CastingBlockEntity casting, State state, float partialTicks, Vec3 camera, @Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(casting, state, partialTicks, camera, breakProgress);
+    state.fluids = FluidCuboid.REGISTRY.get(state.blockState, List.of());
 
-      // if the recipe is in progress, start fading the item away
-      int timer = casting.getTimer();
-      int totalTime = casting.getCoolingTime();
-      int itemOpacity = 0;
-      int fluidOpacity = 0xFF;
-      if (timer > 0 && totalTime > 0) {
-        int opacity = (4 * 0xFF) * timer / totalTime;
-        // fade item in
-        itemOpacity = opacity / 4;
+    // if the recipe is in progress, start fading the item away
+    int timer = casting.getTimer();
+    int totalTime = casting.getCoolingTime();
+    int itemOpacity = 0;
+    state.fluidOpacity = 0xFF;
+    if (timer > 0 && totalTime > 0) {
+      int opacity = (4 * 0xFF) * timer / totalTime;
+      // fade item in
+      itemOpacity = opacity / 4;
 
-        // fade fluid and temperature out during last 10%
-        if (opacity > 3 * 0xFF) {
-          fluidOpacity = (4 * 0xFF) - opacity;
-        }
+      // fade fluid and temperature out during last 10%
+      if (opacity > 3 * 0xFF) {
+        state.fluidOpacity = (4 * 0xFF) - opacity;
       }
+    }
 
-      // render fluids
-      if (!fluids.isEmpty()) {
-        CastingFluidHandler tank = casting.getTank();
-        FluidStack fluidStack = tank.getFluid();
-        int capacity = tank.getCapacity();
+    CastingFluidHandler tank = casting.getTank();
+    state.fluid = tank.getFluid().copy();
+    state.capacity = tank.getCapacity();
+    state.full = state.fluid.getAmount() == state.capacity;
+
+    // output may be the recipe output instead of the current item
+    // shortcut: item models cannot be tinted translucent since 1.21.4, so the recipe output pops in halfway through cooling instead of fading in
+    ItemStack output = casting.getItem(1);
+    if (itemOpacity > 0x7F && output.isEmpty()) {
+      output = casting.getRecipeOutput();
+    }
+    ItemStack finalOutput = output;
+    state.extractItems(itemModelResolver, i -> i == 1 ? finalOutput : casting.getItem(i), casting.getLevel());
+  }
+
+  @Override
+  public void submit(State state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+    if (state.fluids.isEmpty() && state.renderItems.isEmpty()) {
+      return;
+    }
+    boolean isRotated = RenderingHelper.applyRotation(matrices, state.blockState);
+
+    // render fluids
+    if (!state.fluids.isEmpty() && !state.fluid.isEmpty()) {
+      List<FluidCuboid> fluids = state.fluids;
+      FluidStack fluid = state.fluid;
+      int light = state.lightCoords;
+      if (state.full) {
         // if full, start rendering with opacity for progress
-        if (fluidStack.getAmount() == capacity) {
-          for (FluidCuboid fluid : fluids) {
-            RenderUtils.renderTransparentCuboid(matrices, buffer, fluid, fluidStack, fluidOpacity, light);
+        int opacity = state.fluidOpacity;
+        FluidRenderer.submit(collector, matrices, (pose, buffer) -> {
+          for (FluidCuboid cube : fluids) {
+            RenderUtils.renderTransparentCuboid(pose, buffer, cube, fluid, opacity, light);
           }
-        } else {
-          // not strictly useful to scale the fluids down, but who knows what the modeler does
-          for (FluidCuboid fluid : fluids) {
-            FluidRenderer.renderScaledCuboid(matrices, buffer, fluid, fluidStack, 0, capacity, light, false);
-          }
-        }
+        });
+      } else {
+        // not strictly useful to scale the fluids down, but who knows what the modeler does
+        state.submitFluids(matrices, collector, false);
       }
+    }
 
-      // render renderItems
-      if (!renderItems.isEmpty()) {
-        // render renderItems
-        // input is normal
-        RenderingHelper.renderItem(matrices, buffer, casting.getItem(0), renderItems.get(0), light);
+    // render items
+    state.submitItems(matrices, collector);
 
-        // output may be the recipe output instead of the current item
-        if (renderItems.size() >= 2) {
-          RenderItem outputModel = renderItems.get(1);
-          if (!outputModel.isHidden()) {
-            // get output stack
-            ItemStack output = casting.getItem(1);
-            MultiBufferSource outputBuffer = buffer;
-            if (itemOpacity > 0 && output.isEmpty()) {
-              output = casting.getRecipeOutput();
-              // apply a buffer wrapper to tint and add opacity
-              outputBuffer = new CastingItemRenderTypeBuffer(buffer, itemOpacity, fluidOpacity);
-            }
-            RenderingHelper.renderItem(matrices, outputBuffer, output, outputModel, light);
-          }
-        }
-      }
-
-      // pop back rotation
-      if (isRotated) {
-        matrices.popPose();
-      }
+    // pop back rotation
+    if (isRotated) {
+      matrices.popPose();
     }
   }
 }

@@ -2,7 +2,12 @@ package slimeknights.tconstruct.smeltery.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import javax.annotation.Nullable;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,22 +21,45 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.render.ChannelFluids;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 import slimeknights.tconstruct.smeltery.block.ChannelBlock;
 import slimeknights.tconstruct.smeltery.block.ChannelBlock.ChannelConnection;
 import slimeknights.tconstruct.smeltery.block.entity.ChannelBlockEntity;
 
-public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBlockEntity> {
+public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBlockEntity,ChannelBlockEntityRenderer.State> {
   public ChannelBlockEntityRenderer(Context context) {}
 
+	/** Channel state, flow comes from the block entity */
+	public static class State extends BlockEntityRenderState {
+		FluidStack fluid = FluidStack.EMPTY;
+		@Nullable
+		ChannelBlockEntity channel;
+	}
+
 	@Override
-	public void render(ChannelBlockEntity te, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn)  {
-		FluidStack fluid = te.getFluid();
-		if (fluid.isEmpty()) {
+	public State createRenderState() {
+		return new State();
+	}
+
+	@Override
+	public void extractRenderState(ChannelBlockEntity channel, State state, float partialTicks, Vec3 camera, @Nullable CrumblingOverlay breakProgress) {
+		BlockEntityRenderer.super.extractRenderState(channel, state, partialTicks, camera, breakProgress);
+		state.fluid = channel.getFluid().copy();
+		state.channel = channel;
+	}
+
+	@Override
+	public void submit(State renderState, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+		ChannelBlockEntity te = renderState.channel;
+		FluidStack fluid = renderState.fluid;
+		if (te == null || fluid.isEmpty()) {
 			return;
 		}
+		FluidRenderer.submit(collector, matrices, (pose, builder) -> render(te, fluid, pose, builder, renderState.lightCoords));
+	}
 
+	/** Renders the channel fluids */
+	private static void render(ChannelBlockEntity te, FluidStack fluid, PoseStack matrices, VertexConsumer builder, int light) {
 		// fetch model properties
 		Level world = te.getLevel();
 		if (world == null) {
@@ -48,7 +76,6 @@ public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBl
 		IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(fluid.getFluid());
 		TextureAtlasSprite still = FluidRenderer.getBlockSprite(attributes.getStillTexture(fluid));
 		TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(fluid));
-		VertexConsumer builder = buffer.getBuffer(MantleRenderTypes.FLUID);
 		int color = attributes.getTintColor(fluid);
 		light = FluidRenderer.withBlockLight(light, fluid.getFluid().getFluidType().getLightLevel(fluid));
 

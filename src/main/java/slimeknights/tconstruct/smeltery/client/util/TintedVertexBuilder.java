@@ -26,6 +26,11 @@ public class TintedVertexBuilder implements VertexConsumer {
   }
 
   @Override
+  public VertexConsumer setColor(int color) {
+    return setColor(color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF, color >>> 24);
+  }
+
+  @Override
   public VertexConsumer setUv(float u, float v) {
     inner.setUv(u, v);
     return this;
@@ -46,6 +51,12 @@ public class TintedVertexBuilder implements VertexConsumer {
   @Override
   public VertexConsumer setNormal(float x, float y, float z) {
     inner.setNormal(x, y, z);
+    return this;
+  }
+
+  @Override
+  public VertexConsumer setLineWidth(float width) {
+    inner.setLineWidth(width);
     return this;
   }
 }

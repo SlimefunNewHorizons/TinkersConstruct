@@ -70,7 +70,7 @@ sourceSets.main {
         exclude { details ->
             def path = details.relativePath.pathString
             def pending = ['slimeknights/tconstruct/library/client/model/', 'slimeknights/tconstruct/library/client/modifiers/',
-                           'slimeknights/tconstruct/smeltery/client/', 'slimeknights/tconstruct/tools/client/', 'slimeknights/tconstruct/world/client/',
+                           'slimeknights/tconstruct/tools/client/', 'slimeknights/tconstruct/world/client/',
                            'slimeknights/tconstruct/gadgets/client/', 'slimeknights/tconstruct/shared/client/', 'slimeknights/tconstruct/fluids/client/',
                            'slimeknights/tconstruct/library/client/item/', 'slimeknights/tconstruct/library/client/armor/', 'slimeknights/tconstruct/library/client/particle/',
                            'slimeknights/tconstruct/library/client/data/']

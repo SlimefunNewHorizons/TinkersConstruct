@@ -1,76 +1,86 @@
 package slimeknights.tconstruct.smeltery.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 import slimeknights.tconstruct.smeltery.block.FaucetBlock;
 import slimeknights.tconstruct.smeltery.block.entity.FaucetBlockEntity;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Function;
 
-public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBlockEntity> {
+public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBlockEntity,FaucetBlockEntityRenderer.State> {
   public FaucetBlockEntityRenderer(Context context) {}
 
+  /** Faucet state */
+  public static class State extends BlockEntityRenderState {
+    FluidStack fluid = FluidStack.EMPTY;
+    List<FluidCuboid> fluids = List.of();
+    @Nullable
+    Level level;
+  }
+
   @Override
-  public void render(FaucetBlockEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-    FluidStack renderFluid = tileEntity.getRenderFluid();
-    if (!tileEntity.isPouring() || renderFluid.isEmpty()) {
-      return;
-    }
+  public State createRenderState() {
+    return new State();
+  }
 
-    // safety
-    Level world = tileEntity.getLevel();
-    if (world == null) {
-      return;
-    }
-
+  @Override
+  public void extractRenderState(FaucetBlockEntity faucet, State state, float partialTicks, Vec3 camera, @Nullable CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(faucet, state, partialTicks, camera, breakProgress);
+    FluidStack renderFluid = faucet.getRenderFluid();
+    state.level = faucet.getLevel();
     // fetch faucet model to determine where to render fluids
-    BlockState state = tileEntity.getBlockState();
-    List<FluidCuboid> fluids = FluidCuboid.REGISTRY.get(state, List.of());
-    if (!fluids.isEmpty()) {
-      // if side, rotate fluid model
-      Direction direction = state.getValue(FaucetBlock.FACING);
-      boolean isRotated = RenderingHelper.applyRotation(matrices, direction);
+    state.fluids = faucet.isPouring() && !renderFluid.isEmpty() ? FluidCuboid.REGISTRY.get(state.blockState, List.of()) : List.of();
+    state.fluid = renderFluid.copy();
+  }
 
-      // fluid props
-      IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(renderFluid.getFluid());
-      int color = attributes.getTintColor(renderFluid);
-      Function<Identifier, TextureAtlasSprite> spriteGetter = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-      TextureAtlasSprite still = spriteGetter.apply(attributes.getStillTexture(renderFluid));
-      TextureAtlasSprite flowing = spriteGetter.apply(attributes.getFlowingTexture(renderFluid));
-      FluidType fluidType = renderFluid.getFluid().getFluidType();
-      combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, fluidType.getLightLevel(renderFluid));
+  @Override
+  public void submit(State state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+    Level world = state.level;
+    if (state.fluids.isEmpty() || world == null) {
+      return;
+    }
+    // if side, rotate fluid model
+    Direction direction = state.blockState.getValue(FaucetBlock.FACING);
+    boolean isRotated = RenderingHelper.applyRotation(matrices, direction);
 
+    // fluid props
+    FluidStack renderFluid = state.fluid;
+    IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(renderFluid.getFluid());
+    int color = attributes.getTintColor(renderFluid);
+    TextureAtlasSprite still = FluidRenderer.getBlockSprite(attributes.getStillTexture(renderFluid));
+    TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(renderFluid));
+    int light = FluidRenderer.withBlockLight(state.lightCoords, renderFluid.getFluid().getFluidType().getLightLevel(renderFluid));
+    List<FluidCuboid> fluids = state.fluids;
+    BlockPos pos = state.blockPos;
+
+    FluidRenderer.submit(collector, matrices, (pose, buffer) -> {
       // render all cubes in the model
-      VertexConsumer buffer = bufferIn.getBuffer(MantleRenderTypes.FLUID);
       for (FluidCuboid cube : fluids) {
-        FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, false);
+        FluidRenderer.renderCuboid(pose, buffer, cube, 0, still, flowing, color, light, false);
       }
-
       // render into the block(s) below
-      RenderingHelper.renderFaucetFluids(world, tileEntity.getBlockPos(), direction, matrices, buffer, still, flowing, color, combinedLightIn);
+      RenderingHelper.renderFaucetFluids(world, pos, direction, pose, buffer, still, flowing, color, light);
+    });
 
-      // if rotated, pop back rotation
-      if(isRotated) {
-        matrices.popPose();
-      }
+    // if rotated, pop back rotation
+    if (isRotated) {
+      matrices.popPose();
     }
   }
 }
