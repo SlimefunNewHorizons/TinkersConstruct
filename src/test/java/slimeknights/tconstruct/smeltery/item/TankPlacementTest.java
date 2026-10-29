@@ -4,13 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.junit.jupiter.api.Test;
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.tconstruct.library.utils.ItemStackUtil;
 import slimeknights.tconstruct.library.utils.NBTTags;
 import slimeknights.tconstruct.library.utils.RegistryAccessUtil;
@@ -53,7 +53,7 @@ class TankPlacementTest extends BaseMcTest {
     SearedTankBlock block = TinkerSmeltery.searedTank.get(TankType.FUEL_TANK);
     ItemStack stack = new ItemStack(block);
     CompoundTag itemData = new CompoundTag();
-    itemData.put(NBTTags.TANK, new FluidStack(Fluids.WATER, AMOUNT).save(RegistryAccessUtil.BUILTIN));
+    itemData.put(NBTTags.TANK, ValueIOHelper.saveFluid(new FluidStack(Fluids.WATER, AMOUNT), RegistryAccessUtil.BUILTIN));
     ItemStackUtil.setTag(stack, itemData);
 
     assertPlacedFluid(block, roundTrip(stack));
@@ -79,8 +79,7 @@ class TankPlacementTest extends BaseMcTest {
   }
 
   private static ItemStack roundTrip(ItemStack stack) {
-    Tag serialized = stack.save(RegistryAccessUtil.BUILTIN);
-    return ItemStack.parse(RegistryAccessUtil.BUILTIN, serialized).orElseThrow();
+    return ValueIOHelper.parseStack(RegistryAccessUtil.BUILTIN, ValueIOHelper.saveStack(stack, RegistryAccessUtil.BUILTIN));
   }
 
   private static void assertPlacedFluid(SearedTankBlock block, ItemStack stack) {

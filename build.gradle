@@ -143,6 +143,7 @@ sourceSets.test.java {
     // 1.21; these Forge-era fake loading SPI implementations are obsolete.
     exclude 'slimeknights/tconstruct/test/TestModContainer.java'
     exclude 'slimeknights/tconstruct/test/TestModInfo.java'
+    exclude 'slimeknights/tconstruct/plugin/jei/**' // ported with the Tinkers JEI plugin
 }
 
 neoForge {
@@ -217,6 +218,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+    // Gradle 9 no longer bundles the launcher, version matches the JUnit BOM from junit-fml
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
     testImplementation 'org.mockito:mockito-core:5.15.2'
     testImplementation 'org.assertj:assertj-core:3.27.3'
 }

@@ -85,7 +85,7 @@ class MobLootToolEncodingTest extends BaseMcTest {
   /** Encoded length of the longest string in the tag, the value the network length prefix has to hold. */
   private static int longestStringBytes(Tag tag) {
     if (tag instanceof StringTag string) {
-      return encodedLength(string.getAsString());
+      return encodedLength(string.value());
     }
     if (tag instanceof ListTag list) {
       int longest = 0;
@@ -96,7 +96,7 @@ class MobLootToolEncodingTest extends BaseMcTest {
     }
     if (tag instanceof CompoundTag compound) {
       int longest = 0;
-      for (String key : compound.getAllKeys()) {
+      for (String key : compound.keySet()) {
         longest = Math.max(longest, encodedLength(key));
         Tag value = compound.get(key);
         if (value != null) {

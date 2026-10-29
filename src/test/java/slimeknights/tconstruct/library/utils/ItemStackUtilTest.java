@@ -28,8 +28,8 @@ class ItemStackUtilTest extends BaseMcTest {
     ItemStack copy = original.copy();
     ItemStackUtil.getOrCreateTag(copy).putString(KEY, "copy");
 
-    assertThat(ItemStackUtil.getTag(original).getString(KEY)).isEqualTo("original");
-    assertThat(ItemStackUtil.getTag(copy).getString(KEY)).isEqualTo("copy");
+    assertThat(ItemStackUtil.getTag(original).getString(KEY)).contains("original");
+    assertThat(ItemStackUtil.getTag(copy).getString(KEY)).contains("copy");
   }
 
   @Test
@@ -40,7 +40,7 @@ class ItemStackUtilTest extends BaseMcTest {
     ItemStack copy = original.copyWithCount(2);
     ItemStackUtil.getOrCreateTag(copy).putString(KEY, "copy");
 
-    assertThat(ItemStackUtil.getTag(original).getString(KEY)).isEqualTo("original");
+    assertThat(ItemStackUtil.getTag(original).getString(KEY)).contains("original");
   }
 
   @Test

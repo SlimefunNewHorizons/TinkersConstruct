@@ -3,6 +3,7 @@ package slimeknights.tconstruct.library.modifiers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -70,7 +71,7 @@ class EnchantmentGameplayTest extends ToolItemTest {
     addFortune(3);
     LootItemFunction function = ApplyBonusCount.addOreBonusCount(FORTUNE).build();
     LootContext context = mock(LootContext.class);
-    when(context.getParamOrNull(LootContextParams.TOOL)).thenReturn(testItemStack);
+    when(context.getOptionalParameter(LootContextParams.TOOL)).thenReturn(testItemStack);
 
     int largestDrop = 1;
     for (int seed = 0; seed < 100; seed++) {
@@ -87,7 +88,7 @@ class EnchantmentGameplayTest extends ToolItemTest {
   void harvestStack_keepsModifierFortuneAtItsLevelWithoutMutatingHeldTool() {
     addFortune(3);
     RegistryAccess registryAccess = mock(RegistryAccess.class);
-    HolderLookup.RegistryLookup<Enchantment> enchantments = mock(HolderLookup.RegistryLookup.class);
+    Registry<Enchantment> enchantments = mock(Registry.class);
     when(registryAccess.lookupOrThrow(Registries.ENCHANTMENT)).thenReturn(enchantments);
     when(enchantments.getOrThrow(FORTUNE_KEY)).thenReturn(FORTUNE);
     ServerLevel level = mock(ServerLevel.class);

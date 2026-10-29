@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.fixture;
 
 import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
+import slimeknights.tconstruct.library.materials.stats.MaterialStatsId;
 import slimeknights.tconstruct.library.tools.part.ToolPartItem;
+import slimeknights.tconstruct.test.TestHelper;
 import slimeknights.tconstruct.tools.stats.HandleMaterialStats;
 import slimeknights.tconstruct.tools.stats.HeadMaterialStats;
 import slimeknights.tconstruct.tools.stats.StatlessMaterialStats;
@@ -24,16 +24,15 @@ public class MaterialItemFixture {
       return;
     }
     init = true;
-    ((MappedRegistry<Item>)BuiltInRegistries.ITEM).unfreeze(); // yes, I know this is bad, but this is testing so we do bad things sometimes
-    MATERIAL_ITEM = new ToolPartItem(new Item.Properties(), MaterialStatsFixture.STATS_TYPE);
-    MATERIAL_ITEM_2 = new ToolPartItem(new Item.Properties(), MaterialStatsFixture.STATS_TYPE_2);
-    MATERIAL_ITEM_HEAD = new ToolPartItem(new Item.Properties(), HeadMaterialStats.ID);
-    MATERIAL_ITEM_HANDLE = new ToolPartItem(new Item.Properties(), HandleMaterialStats.ID);
-    MATERIAL_ITEM_EXTRA = new ToolPartItem(new Item.Properties(), StatlessMaterialStats.BINDING.getIdentifier());
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "test_material"), MATERIAL_ITEM);
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "test_material_2"), MATERIAL_ITEM_2);
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "test_head"), MATERIAL_ITEM_HEAD);
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "test_handle"), MATERIAL_ITEM_HANDLE);
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "test_extra"), MATERIAL_ITEM_EXTRA);
+    ((MappedRegistry<Item>)BuiltInRegistries.ITEM).unfreeze(false); // yes, I know this is bad, but this is testing so we do bad things sometimes
+    MATERIAL_ITEM = register("test_material", MaterialStatsFixture.STATS_TYPE);
+    MATERIAL_ITEM_2 = register("test_material_2", MaterialStatsFixture.STATS_TYPE_2);
+    MATERIAL_ITEM_HEAD = register("test_head", HeadMaterialStats.ID);
+    MATERIAL_ITEM_HANDLE = register("test_handle", HandleMaterialStats.ID);
+    MATERIAL_ITEM_EXTRA = register("test_extra", StatlessMaterialStats.BINDING.getIdentifier());
+  }
+
+  private static ToolPartItem register(String name, MaterialStatsId statType) {
+    return TestHelper.registerItem(name, properties -> new ToolPartItem(properties, statType));
   }
 }

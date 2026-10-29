@@ -13,7 +13,7 @@ class BookComponentIngredientTest extends BaseMcTest {
   void componentIngredientCreatesDisplayStack() {
     SizedIngredient ingredient = SizedIngredient.LOADABLE.deserialize(JsonParser.parseString("""
       {
-        "type": "neoforge:components",
+        "neoforge:ingredient_type": "neoforge:components",
         "items": ["tconstruct:pickaxe"],
         "components": {
           "minecraft:damage": 0,

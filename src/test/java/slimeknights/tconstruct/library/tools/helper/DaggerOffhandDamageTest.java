@@ -33,7 +33,6 @@ public class DaggerOffhandDamageTest extends ToolItemTest {
   private static LivingEntity createHolder() {
     Map<EquipmentSlot, ItemStack> items = new EnumMap<>(EquipmentSlot.class);
     LivingEntity entity = new LivingEntity(EntityType.PLAYER, null) {
-      @Override public Iterable<ItemStack> getArmorSlots() { return java.util.List.of(); }
       @Override public ItemStack getItemBySlot(EquipmentSlot slot) { return items.getOrDefault(slot, ItemStack.EMPTY); }
       @Override public void setItemSlot(EquipmentSlot slot, ItemStack stack) { items.put(slot, stack); }
       @Override public net.minecraft.world.entity.HumanoidArm getMainArm() { return net.minecraft.world.entity.HumanoidArm.RIGHT; }

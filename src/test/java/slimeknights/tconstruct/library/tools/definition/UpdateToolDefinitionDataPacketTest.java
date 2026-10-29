@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.definition;
 
+import net.neoforged.neoforge.common.ItemAbility;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -83,7 +84,7 @@ class UpdateToolDefinitionDataPacketTest extends BaseMcTest {
       .module(ToolSlotsModule.builder().slots(SlotType.UPGRADE, 5).slots(SlotType.ABILITY, 8).build())
       // traits
       .module(ToolTraitsModule.builder().trait(ModifierFixture.TEST_1, 10).build())
-      .module(ItemAbilitiesModule.of(ItemAbilities.AXE_DIG, ItemAbilities.SHOVEL_FLATTEN))
+      .module(ItemAbilitiesModule.of(ItemAbility.get("axe_dig"), ItemAbilities.SHOVEL_FLATTEN))
       // behavior
       .module(new IsEffectiveModule(BlockPredicate.set(Blocks.GRANITE), true))
       .module(new CircleAOEIterator(7, true))
@@ -166,7 +167,7 @@ class UpdateToolDefinitionDataPacketTest extends BaseMcTest {
     assertThat(actionModule).isInstanceOf(ItemAbilitiesModule.class);
     assertThat(((ItemAbilitiesModule) actionModule).actions()).hasSize(2);
     IToolStackView tool = mock(IToolStackView.class);
-    assertThat(parsed.getHook(ToolHooks.TOOL_ACTION).canPerformAction(tool, ItemAbilities.AXE_DIG)).isTrue();
+    assertThat(parsed.getHook(ToolHooks.TOOL_ACTION).canPerformAction(tool, ItemAbility.get("axe_dig"))).isTrue();
     assertThat(parsed.getHook(ToolHooks.TOOL_ACTION).canPerformAction(tool, ItemAbilities.SHOVEL_FLATTEN)).isTrue();
 
     // harvest

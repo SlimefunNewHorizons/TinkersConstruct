@@ -60,7 +60,7 @@ class TableBlockInventoryDropTest extends BaseMcTest {
       ArgumentCaptor<ItemStack> dropped = ArgumentCaptor.forClass(ItemStack.class);
 
       try (MockedStatic<Containers> containers = Mockito.mockStatic(Containers.class)) {
-        block.onRemove(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState(), false);
+        block.onBlockEntityRemoved(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState());
 
         containers.verify(() -> Containers.dropItemStack(eq(level), anyDouble(), anyDouble(), anyDouble(), dropped.capture()), Mockito.atLeastOnce());
       }
@@ -76,7 +76,7 @@ class TableBlockInventoryDropTest extends BaseMcTest {
     Level level = levelWithTable(new ItemStackHandler(4));
 
     try (MockedStatic<Containers> containers = Mockito.mockStatic(Containers.class)) {
-      block.onRemove(block.defaultBlockState(), level, POS, block.defaultBlockState(), false);
+      block.onBlockEntityRemoved(block.defaultBlockState(), level, POS, block.defaultBlockState());
       containers.verifyNoInteractions();
     }
   }
@@ -90,7 +90,7 @@ class TableBlockInventoryDropTest extends BaseMcTest {
     ArgumentCaptor<ItemStack> dropped = ArgumentCaptor.forClass(ItemStack.class);
 
     try (MockedStatic<Containers> containers = Mockito.mockStatic(Containers.class)) {
-      block.onRemove(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState(), false);
+      block.onBlockEntityRemoved(block.defaultBlockState(), level, POS, Blocks.AIR.defaultBlockState());
 
       // dropped once per slot, including empty slots
       containers.verify(() -> Containers.dropItemStack(eq(level), anyDouble(), anyDouble(), anyDouble(), dropped.capture()), Mockito.atLeastOnce());

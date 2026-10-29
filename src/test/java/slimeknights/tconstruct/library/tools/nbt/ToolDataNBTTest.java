@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.tools.nbt;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NumericTag;
 import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Test;
 import slimeknights.tconstruct.library.tools.SlotType;
@@ -45,11 +45,11 @@ class ToolDataNBTTest extends BaseMcTest {
     modData.put(testKey2, new CompoundTag());
 
     CompoundTag nbt = modData.getData();
-    assertThat(nbt.getInt(SlotType.UPGRADE.getName())).isEqualTo(2);
-    assertThat(nbt.getInt(SlotType.ABILITY.getName())).isEqualTo(3);
-    assertThat(nbt.getInt(SlotType.SOUL.getName())).isEqualTo(4);
-    assertThat(nbt.getInt(testKey.toString())).isEqualTo(1);
-    assertThat(nbt.contains(testKey2.toString(), Tag.TAG_COMPOUND)).isTrue();
+    assertThat(nbt.getInt(SlotType.UPGRADE.getName())).contains(2);
+    assertThat(nbt.getInt(SlotType.ABILITY.getName())).contains(3);
+    assertThat(nbt.getInt(SlotType.SOUL.getName())).contains(4);
+    assertThat(nbt.getInt(testKey.toString())).contains(1);
+    assertThat(nbt.getCompound(testKey2.toString())).isPresent();
   }
 
   @Test
@@ -71,7 +71,7 @@ class ToolDataNBTTest extends BaseMcTest {
 
     tag = modData.getCompound(testKey2);
     assertThat(tag.isEmpty()).isFalse();
-    assertThat(tag.contains("test", Tag.TAG_ANY_NUMERIC)).isTrue();
-    assertThat(tag.getInt("test")).isEqualTo(1);
+    assertThat(tag.get("test")).isInstanceOf(NumericTag.class);
+    assertThat(tag.getInt("test")).contains(1);
   }
 }

@@ -5,7 +5,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.ToolMaterial;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import slimeknights.tconstruct.fixture.MaterialFixture;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ToolStackTest extends ToolItemTest {
   private final StatsNBT testStatsNBT = StatsNBT.builder()
                                                 .set(ToolStats.DURABILITY, 100f)
-                                                .set(ToolStats.HARVEST_TIER, Tiers.NETHERITE)
+                                                .set(ToolStats.HARVEST_TIER, ToolMaterial.NETHERITE)
                                                 .set(ToolStats.ATTACK_DAMAGE, 2f)
                                                 .set(ToolStats.MINING_SPEED, 3f)
                                                 .set(ToolStats.ATTACK_SPEED, 5f)
@@ -128,11 +128,11 @@ class ToolStackTest extends ToolItemTest {
 
     CompoundTag nbt = stack.getNbt();
     assertThat(nbt.contains(ToolStack.TAG_BROKEN)).isTrue();
-    assertThat(nbt.getTagType(ToolStack.TAG_BROKEN)).isEqualTo(Tag.TAG_BYTE);
-    assertThat(nbt.getBoolean(ToolStack.TAG_BROKEN)).isTrue();
+    assertThat(nbt.get(ToolStack.TAG_BROKEN).getId()).isEqualTo(Tag.TAG_BYTE);
+    assertThat(nbt.getBoolean(ToolStack.TAG_BROKEN)).contains(true);
     assertThat(nbt.contains(ToolStack.TAG_DAMAGE)).isTrue();
-    assertThat(nbt.getTagType(ToolStack.TAG_DAMAGE)).isEqualTo(Tag.TAG_INT);
-    assertThat(nbt.getInt(ToolStack.TAG_DAMAGE)).isEqualTo(1);
+    assertThat(nbt.get(ToolStack.TAG_DAMAGE).getId()).isEqualTo(Tag.TAG_INT);
+    assertThat(nbt.getInt(ToolStack.TAG_DAMAGE)).contains(1);
   }
 
   @Test
@@ -372,7 +372,7 @@ class ToolStackTest extends ToolItemTest {
     modData.setSlots(SlotType.UPGRADE, 1);
 
     assertThat(toolStack.getNbt().contains(ToolStack.TAG_PERSISTENT_MOD_DATA)).isTrue();
-    assertThat(toolStack.getNbt().getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA)).isEqualTo(modData.getData());
+    assertThat(toolStack.getNbt().getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA)).contains(modData.getData());
   }
 
   @Test
@@ -393,7 +393,7 @@ class ToolStackTest extends ToolItemTest {
     toolStack.setVolatileModData(modData);
 
     assertThat(toolStack.getNbt().contains(ToolStack.TAG_VOLATILE_MOD_DATA)).isTrue();
-    assertThat(toolStack.getNbt().getCompound(ToolStack.TAG_VOLATILE_MOD_DATA)).isEqualTo(modData.getData());
+    assertThat(toolStack.getNbt().getCompound(ToolStack.TAG_VOLATILE_MOD_DATA)).contains(modData.getData());
   }
 
   @Test

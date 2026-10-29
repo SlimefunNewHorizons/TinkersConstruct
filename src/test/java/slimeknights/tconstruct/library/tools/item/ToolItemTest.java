@@ -1,9 +1,5 @@
 package slimeknights.tconstruct.library.tools.item;
 
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +14,7 @@ import slimeknights.tconstruct.library.tools.helper.ToolBuildHandler;
 import slimeknights.tconstruct.library.tools.helper.ToolDamageUtil;
 import slimeknights.tconstruct.library.tools.nbt.MaterialNBT;
 import slimeknights.tconstruct.test.BaseMcTest;
+import slimeknights.tconstruct.test.TestHelper;
 
 @ExtendWith(MaterialRegistryExtension.class)
 public abstract class ToolItemTest extends BaseMcTest {
@@ -31,8 +28,7 @@ public abstract class ToolItemTest extends BaseMcTest {
     ModifierFixture.init();
     TagFixture.init();
     if (tool == null) {
-      tool = new ModifiableItem(new Item.Properties().stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition());
-      Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "toolcore"), tool);
+      tool = TestHelper.registerItem("toolcore", properties -> new ModifiableItem(properties.stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition()));
     }
     setupTierSorting();
     // ModifierStatsBuilder.disableFilter();

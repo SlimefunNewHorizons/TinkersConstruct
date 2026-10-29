@@ -1,14 +1,16 @@
 package slimeknights.tconstruct.library.tools.layout;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.junit.jupiter.api.Test;
 import slimeknights.tconstruct.library.recipe.partbuilder.Pattern;
 import slimeknights.tconstruct.test.BaseMcTest;
-import slimeknights.tconstruct.library.utils.ItemStackUtil;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,10 +30,9 @@ class StationSlotLayoutTest extends BaseMcTest {
     assertThat(decoded.getY()).isEqualTo(6);
     Ingredient ingredient = decoded.getFilter();
     assertThat(ingredient).isNotNull();
-    ItemStack[] stacks = ingredient.getItems();
-    assertThat(stacks).hasSize(1);
-    assertThat(stacks[0].getItem()).isEqualTo(Items.BOOK);
-    assertThat(ItemStackUtil.getTag(stacks[0])).isNull();
+    List<Holder<Item>> items = ingredient.items().toList();
+    assertThat(items).hasSize(1);
+    assertThat(items.get(0).value()).isEqualTo(Items.BOOK);
   }
 
   @Test

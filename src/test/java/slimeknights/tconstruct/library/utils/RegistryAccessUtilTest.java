@@ -16,6 +16,7 @@ import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.junit.jupiter.api.Test;
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.tconstruct.library.client.SafeClient;
 import slimeknights.tconstruct.library.tools.capability.inventory.InventoryModule;
 import slimeknights.tconstruct.test.BaseMcTest;
@@ -43,11 +44,11 @@ class RegistryAccessUtilTest extends BaseMcTest {
         sides.when(EffectiveSide::get).thenReturn(side);
         RegistryAccess access = side.isServer() ? serverAccess : clientAccess;
         ItemStack stack = new ItemStack(Items.DIAMOND_PICKAXE);
-        stack.enchant(access.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
+        stack.enchant(access.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING), 1);
 
         assertThat(RegistryAccessUtil.get()).isSameAs(access);
         CompoundTag encoded = InventoryModule.writeStack(stack, 0, new CompoundTag());
-        ItemStack decoded = ItemStack.parseOptional(RegistryAccessUtil.get(), encoded);
+        ItemStack decoded = ValueIOHelper.parseStack(RegistryAccessUtil.get(), encoded);
         assertThat(ItemStack.isSameItemSameComponents(stack, decoded)).isTrue();
       }
     }

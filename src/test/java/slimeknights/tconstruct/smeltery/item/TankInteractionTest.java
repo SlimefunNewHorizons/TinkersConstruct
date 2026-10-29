@@ -20,6 +20,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.junit.jupiter.api.Test;
 import slimeknights.mantle.fluid.FluidTransferHelper;
+import slimeknights.mantle.transfer.LegacyFluidResourceHandler;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 import slimeknights.tconstruct.smeltery.block.component.SearedTankBlock;
 import slimeknights.tconstruct.smeltery.block.component.SearedTankBlock.TankType;
@@ -45,7 +46,7 @@ class TankInteractionTest extends BaseMcTest {
     when(level.getBlockState(pos)).thenReturn(block.defaultBlockState());
     TankBlockEntity te = new TankBlockEntity(pos, block.defaultBlockState(), block);
     when(level.getBlockEntity(pos)).thenReturn(te);
-    when(level.getCapability(eq(Capabilities.FluidHandler.BLOCK), eq(pos), any())).thenReturn(te.getFluidHandler());
+    when(level.getCapability(eq(Capabilities.Fluid.BLOCK), eq(pos), any())).thenReturn(new LegacyFluidResourceHandler(te.getFluidHandler()));
     te.setLevel(level);
     return te;
   }

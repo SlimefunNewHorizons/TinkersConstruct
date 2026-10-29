@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import slimeknights.mantle.recipe.helper.IngredientHelper;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.junit.jupiter.api.Test;
 import slimeknights.mantle.recipe.helper.ItemOutput;
@@ -23,7 +23,7 @@ class ItemCastingRecipeTest extends BaseMcTest {
     TypeAwareRecipeSerializer<?> serializer = mock(TypeAwareRecipeSerializer.class);
     doReturn(RecipeType.CRAFTING).when(serializer).getType();
     ItemCastingRecipe recipe = new ItemCastingRecipe(
-      serializer, Identifier.parse("tconstruct:test_casting"), "", Ingredient.EMPTY,
+      serializer, Identifier.parse("tconstruct:test_casting"), "", IngredientHelper.EMPTY,
       mock(FluidIngredient.class), ItemOutput.fromItem(Items.IRON_INGOT), 1, false, false);
 
     ItemStack first = recipe.assemble(null, (HolderLookup.Provider) RegistryAccessUtil.BUILTIN);

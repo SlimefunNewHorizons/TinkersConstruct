@@ -1,9 +1,6 @@
 package slimeknights.tconstruct.library.tools.helper;
 
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +19,7 @@ import slimeknights.tconstruct.library.tools.item.ModifiableItem;
 import slimeknights.tconstruct.library.tools.item.ToolItemTest;
 import slimeknights.tconstruct.library.tools.nbt.MultiplierNBT;
 import slimeknights.tconstruct.library.tools.stat.ToolStats;
+import slimeknights.tconstruct.test.TestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,8 +30,7 @@ class ToolHarvestLogicTest extends ToolItemTest {
   synchronized static void beforeAllToolLogic() {
     MaterialItemFixture.init();
     if (pickaxeTool == null) {
-      pickaxeTool = new ModifiableItem(new Item.Properties().stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition());
-      Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "pickaxe"), pickaxeTool);
+      pickaxeTool = TestHelper.registerItem("pickaxe", properties -> new ModifiableItem(properties.stacksTo(1), ToolDefinitionFixture.getStandardToolDefinition()));
     }
   }
 
@@ -90,8 +87,7 @@ class ToolHarvestLogicTest extends ToolItemTest {
                          .module(new MultiplyStatsModule(MultiplierNBT.builder().set(ToolStats.MINING_SPEED, modifier).build()))
                          .build());
 
-    ModifiableItem toolWithMiningModifier = new ModifiableItem(new Item.Properties(), definition);
-    Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("test", "tool_with_mining_modifier"), toolWithMiningModifier);
+    ModifiableItem toolWithMiningModifier = TestHelper.registerItem("tool_with_mining_modifier", properties -> new ModifiableItem(properties, definition));
     ItemStack tool = buildTestTool(toolWithMiningModifier);
 
     // boosted by correct block

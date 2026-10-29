@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import slimeknights.mantle.util.ValueIOHelper;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
 import slimeknights.tconstruct.library.tools.nbt.IToolStackView;
 import slimeknights.tconstruct.library.tools.nbt.ToolDataNBT;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,8 +58,7 @@ class InventoryModuleTest extends BaseMcTest {
   void failedReplacementPreservesTheOldSlot() {
     inventory.setStack(tool, modifier, 0, new ItemStack(Items.DIAMOND, 3));
     CompoundTag before = data.getCopy();
-    ItemStack invalid = mock(ItemStack.class);
-    when(invalid.save(any(net.minecraft.core.HolderLookup.Provider.class))).thenThrow(new IllegalStateException("codec failed"));
+    ItemStack invalid = new ItemStack(Items.DIAMOND, 100); // count outside the codec range fails to encode
 
     assertThatThrownBy(() -> inventory.setStack(tool, modifier, 0, invalid)).isInstanceOf(IllegalStateException.class);
     assertThat(data.getCopy()).isEqualTo(before);
@@ -68,8 +67,7 @@ class InventoryModuleTest extends BaseMcTest {
 
   @Test
   void failedFirstInsertionDoesNotCreateAnEmptyInventoryTag() {
-    ItemStack invalid = mock(ItemStack.class);
-    when(invalid.save(any(net.minecraft.core.HolderLookup.Provider.class))).thenThrow(new IllegalStateException("codec failed"));
+    ItemStack invalid = new ItemStack(Items.DIAMOND, 100); // count outside the codec range fails to encode
 
     assertThatThrownBy(() -> inventory.setStack(tool, modifier, 0, invalid)).isInstanceOf(IllegalStateException.class);
     assertThat(data.contains(KEY)).isFalse();
@@ -81,7 +79,7 @@ class InventoryModuleTest extends BaseMcTest {
     assertThat(data.contains(KEY)).isFalse();
 
     ListTag entries = new ListTag();
-    CompoundTag invalidSlot = (CompoundTag)new ItemStack(Items.DIAMOND).save(RegistryAccessUtil.BUILTIN);
+    CompoundTag invalidSlot = (CompoundTag)ValueIOHelper.saveStack(new ItemStack(Items.DIAMOND), RegistryAccessUtil.BUILTIN);
     invalidSlot.putInt(InventoryModule.TAG_SLOT, -1);
     entries.add(invalidSlot);
     data.put(KEY, entries);
@@ -90,7 +88,7 @@ class InventoryModuleTest extends BaseMcTest {
     assertThat(inventory.findStack(tool, modifier, stack -> true).stack().isEmpty()).isTrue();
 
     assertThat(inventory.validate(tool, modifier)).isNull();
-    assertThat(data.getList(KEY, Tag.TAG_COMPOUND).getCompound(0).getInt(InventoryModule.TAG_SLOT)).isZero();
+    assertThat(data.getList(KEY, Tag.TAG_COMPOUND).getCompoundOrEmpty(0).getIntOr(InventoryModule.TAG_SLOT, -1)).isZero();
     assertThat(inventory.getStack(tool, modifier, 0).is(Items.DIAMOND)).isTrue();
   }
 }

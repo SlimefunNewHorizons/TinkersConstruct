@@ -99,7 +99,7 @@ class LayoutIconTest extends BaseMcTest {
     assertThat(stack.getItem()).isEqualTo(Items.DIAMOND);
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     assertThat(nbt).isNotNull();
-    assertThat(nbt.getInt("test")).isEqualTo(1);
+    assertThat(nbt.getInt("test")).contains(1);
   }
 
 

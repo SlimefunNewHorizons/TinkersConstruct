@@ -8,21 +8,24 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.junit.jupiter.api.Test;
+import slimeknights.mantle.recipe.helper.RecipeAccessHelper;
 import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
 import slimeknights.tconstruct.library.recipe.alloying.AlloyRecipe;
@@ -50,8 +53,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -90,7 +93,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
     for (JsonElement element : values) {
       String value = element.isJsonPrimitive() ? element.getAsString() : element.getAsJsonObject().get("id").getAsString();
       Fluid fluid = value.startsWith("#") ? resolveTag(value.substring(1), visited)
-        : BuiltInRegistries.FLUID.get(Identifier.parse(value));
+        : BuiltInRegistries.FLUID.getValue(Identifier.parse(value));
       if (fluid != Fluids.EMPTY) return fluid;
     }
     return Fluids.EMPTY;
@@ -128,7 +131,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
   private static Recipe<?> roundTrip(Identifier id, Recipe<?> recipe) {
     var buffer = registryBuffer();
     try {
-      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(id, recipe));
+      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, id), recipe));
       return RecipeHolder.STREAM_CODEC.decode(buffer).value();
     } finally {
       buffer.release();
@@ -136,7 +139,7 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
   }
 
   private static void assertFluid(FluidStack actual, JsonObject expected, int amount) {
-    assertThat(actual.getFluid()).isSameAs(BuiltInRegistries.FLUID.get(Identifier.parse(expected.get("fluid").getAsString())));
+    assertThat(actual.getFluid()).isSameAs(BuiltInRegistries.FLUID.getValue(Identifier.parse(expected.get("fluid").getAsString())));
     assertThat(actual.getAmount()).isEqualTo(amount);
   }
 
@@ -159,35 +162,40 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
     machine.getTank().setCapacity(Integer.MAX_VALUE);
     machine.getMeltingInventory().resize(1, ignored -> {});
     var module = machine.getMeltingInventory().getModule(0);
+    // outside a server level, recipes come from the client recipe map
     Level level = mock(Level.class);
-    RecipeManager manager = mock(RecipeManager.class);
-    when(level.getRecipeManager()).thenReturn(manager);
-    RecipeHolder<IMeltingRecipe> holder = new RecipeHolder<>(Identifier.parse("tconstruct:test_machine_output"), recipe);
-    when(manager.getRecipeFor(TinkerRecipeTypes.MELTING.get(), module, level)).thenReturn(Optional.of(holder));
-    machine.setLevel(level);
-    machine.getMeltingInventory().setStackInSlot(0, stack.copy());
+    RecipeMap recipes = mock(RecipeMap.class);
+    RecipeHolder<IMeltingRecipe> holder = new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, Identifier.parse("tconstruct:test_machine_output")), recipe);
+    when(recipes.getRecipesFor(TinkerRecipeTypes.MELTING.get(), module, level)).thenAnswer(invocation -> Stream.of(holder));
+    RecipeAccessHelper.setClientRecipes(recipes);
+    try {
+      machine.setLevel(level);
+      machine.getMeltingInventory().setStackInSlot(0, stack.copy());
 
-    assertThat(module.getOreRate()).isSameAs(foundry ? Config.COMMON.foundryOreRate : Config.COMMON.smelteryOreRate);
-    assertThat(module.getRequiredTime()).as("machine can heat this recipe").isPositive();
-    module.heatItem(recipe.getTemperature(module), module.getRequiredTime());
-    module.heatItem(recipe.getTemperature(module), 1);
-    assertThat(machine.getMeltingInventory().getStackInSlot(0).isEmpty()).as("successful melting consumes the input").isTrue();
+      assertThat(module.getOreRate()).isSameAs(foundry ? Config.COMMON.foundryOreRate : Config.COMMON.smelteryOreRate);
+      assertThat(module.getRequiredTime()).as("machine can heat this recipe").isPositive();
+      module.heatItem(recipe.getTemperature(module), module.getRequiredTime());
+      module.heatItem(recipe.getTemperature(module), 1);
+      assertThat(machine.getMeltingInventory().getStackInSlot(0).isEmpty()).as("successful melting consumes the input").isTrue();
 
-    Map<Fluid,Integer> expected = new LinkedHashMap<>();
-    expected.put(BuiltInRegistries.FLUID.get(Identifier.parse(result.get("fluid").getAsString())), amount);
-    if (foundry) {
-      for (FluidStack byproduct : byproducts) {
-        if (!byproduct.isEmpty()) expected.merge(byproduct.getFluid(), byproduct.getAmount(), Integer::sum);
+      Map<Fluid,Integer> expected = new LinkedHashMap<>();
+      expected.put(BuiltInRegistries.FLUID.getValue(Identifier.parse(result.get("fluid").getAsString())), amount);
+      if (foundry) {
+        for (FluidStack byproduct : byproducts) {
+          if (!byproduct.isEmpty()) expected.merge(byproduct.getFluid(), byproduct.getAmount(), Integer::sum);
+        }
       }
-    }
-    assertThat(machine.getTank().getContained()).as("%s total output", foundry ? "foundry" : "smeltery")
-      .isEqualTo(expected.values().stream().mapToInt(Integer::intValue).sum());
-    assertThat(machine.getTank().getFluids()).hasSize(expected.size());
-    for (Map.Entry<Fluid,Integer> entry : expected.entrySet()) {
-      assertThat(machine.getTank().getFluids()).anySatisfy(fluid -> {
-        assertThat(fluid.getFluid()).isSameAs(entry.getKey());
-        assertThat(fluid.getAmount()).isEqualTo(entry.getValue());
-      });
+      assertThat(machine.getTank().getContained()).as("%s total output", foundry ? "foundry" : "smeltery")
+        .isEqualTo(expected.values().stream().mapToInt(Integer::intValue).sum());
+      assertThat(machine.getTank().getFluids()).hasSize(expected.size());
+      for (Map.Entry<Fluid,Integer> entry : expected.entrySet()) {
+        assertThat(machine.getTank().getFluids()).anySatisfy(fluid -> {
+          assertThat(fluid.getFluid()).isSameAs(entry.getKey());
+          assertThat(fluid.getAmount()).isEqualTo(entry.getValue());
+        });
+      }
+    } finally {
+      RecipeAccessHelper.setClientRecipes(RecipeMap.EMPTY);
     }
   }
 
@@ -283,8 +291,9 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
           if (json.has("byproducts")) resolveFluids(json.get("byproducts"), source);
           if (type.equals("tconstruct:alloy")) resolveFluids(json.get("inputs"), source);
           if (type.equals("tconstruct:melting_fuel")) resolveFluids(json.get("fluid"), source);
-          if (MELTING.contains(type) && !type.equals("tconstruct:material_melting")) {
-            json.add("ingredient", JsonParser.parseString("{\"item\":\"minecraft:iron_pickaxe\"}"));
+          // inputs are not under test, and tag inputs cannot resolve without loaded tags
+          if (type.startsWith("minecraft:") || MELTING.contains(type) && !type.equals("tconstruct:material_melting")) {
+            json.addProperty("ingredient", "minecraft:iron_pickaxe");
           }
           if (type.equals("tconstruct:entity_melting")) json.add("entity", JsonParser.parseString("{\"type\":\"minecraft:pig\"}"));
           Recipe<?> parsed = Recipe.CODEC.parse(ops, json).getOrThrow();
@@ -303,7 +312,6 @@ class FurnaceRecipeOutputTest extends BaseMcTest {
               JsonObject result = json.getAsJsonObject("result");
               assertThat(BuiltInRegistries.ITEM.getKey(output.getItem()).toString()).isEqualTo(result.get("id").getAsString());
               assertThat(output.getCount()).isEqualTo(result.has("count") ? result.get("count").getAsInt() : 1);
-              assertThat(ItemStack.matches(output, cooking.getResultItem(access))).isTrue();
             } else if (recipe instanceof MeltingFuel fuel) {
               assertThat(fuel.getRate()).isEqualTo(json.get("rate").getAsInt());
               assertThat(fuel.getTemperature()).isEqualTo(json.get("temperature").getAsInt());

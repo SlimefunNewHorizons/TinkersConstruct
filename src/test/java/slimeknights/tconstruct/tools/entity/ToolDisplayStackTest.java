@@ -8,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -52,7 +51,7 @@ class ToolDisplayStackTest extends BaseMcTest {
     ItemStack display = ToolDisplayStack.getDisplayStack(source, ACCESS);
 
     assertThat(encode(display)).isGreaterThan(0);
-    assertThat(persistent(display).getString(LARGE_KEY)).hasSize(ENCODABLE_LENGTH);
+    assertThat(persistent(display).getStringOr(LARGE_KEY, "")).hasSize(ENCODABLE_LENGTH);
   }
 
   @Test
@@ -67,14 +66,14 @@ class ToolDisplayStackTest extends BaseMcTest {
     CompoundTag displayTag = ItemStackUtil.getTag(display);
     assertThat(displayTag).isNotNull();
     // everything the item model reads survives, only the value no packet can carry is shortened
-    assertThat(displayTag.contains(ToolStack.TAG_MATERIALS, Tag.TAG_LIST)).isTrue();
-    assertThat(displayTag.contains(ToolStack.TAG_UPGRADES, Tag.TAG_LIST)).isTrue();
-    assertThat(displayTag.contains(ToolStack.TAG_MODIFIERS, Tag.TAG_LIST)).isTrue();
-    assertThat(displayTag.getCompound(ToolStack.TAG_PERSISTENT_MOD_DATA).getString(LARGE_KEY).length())
+    assertThat(displayTag.getList(ToolStack.TAG_MATERIALS).isPresent()).isTrue();
+    assertThat(displayTag.getList(ToolStack.TAG_UPGRADES).isPresent()).isTrue();
+    assertThat(displayTag.getList(ToolStack.TAG_MODIFIERS).isPresent()).isTrue();
+    assertThat(displayTag.getCompoundOrEmpty(ToolStack.TAG_PERSISTENT_MOD_DATA).getStringOr(LARGE_KEY, "").length())
       .isLessThanOrEqualTo(ToolDisplayStack.MAX_NETWORK_STRING);
     assertThat(encode(display)).isGreaterThan(0);
     // the server keeps the complete value, so gameplay is unaffected
-    assertThat(persistent(source).getString(LARGE_KEY)).hasSize(UNENCODABLE_LENGTH);
+    assertThat(persistent(source).getStringOr(LARGE_KEY, "")).hasSize(UNENCODABLE_LENGTH);
   }
 
   @Test
@@ -86,12 +85,12 @@ class ToolDisplayStackTest extends BaseMcTest {
     ItemStackUtil.getOrCreateTag(source).put(ToolStack.TAG_MATERIALS, materials);
 
     ItemStack display = ToolDisplayStack.getDisplayStack(source, ACCESS);
-    ListTag displayMaterials = ItemStackUtil.getTag(display).getList(ToolStack.TAG_MATERIALS, Tag.TAG_STRING);
+    ListTag displayMaterials = ItemStackUtil.getTag(display).getListOrEmpty(ToolStack.TAG_MATERIALS);
 
     // materials are indexed by tool part, so entries must stay in place
     assertThat(displayMaterials.size()).isEqualTo(2);
-    assertThat(displayMaterials.getString(0).length()).isLessThanOrEqualTo(ToolDisplayStack.MAX_NETWORK_STRING);
-    assertThat(displayMaterials.getString(1)).isEqualTo("tconstruct:wood");
+    assertThat(displayMaterials.getStringOr(0, "").length()).isLessThanOrEqualTo(ToolDisplayStack.MAX_NETWORK_STRING);
+    assertThat(displayMaterials.getString(1)).contains("tconstruct:wood");
     assertThat(encode(display)).isGreaterThan(0);
   }
 
@@ -105,7 +104,7 @@ class ToolDisplayStackTest extends BaseMcTest {
     assertRoundTrip(display);
     assertThat(display.isEmpty()).isFalse();
     assertThat(ItemStackUtil.getTag(display).contains(ToolStack.TAG_MATERIALS)).isTrue();
-    assertThat(persistent(source).getByteArray(LARGE_KEY)).hasSize(2_097_152);
+    assertThat(persistent(source).getByteArray(LARGE_KEY).orElseThrow()).hasSize(2_097_152);
   }
 
   @Test
@@ -120,7 +119,7 @@ class ToolDisplayStackTest extends BaseMcTest {
     assertThatThrownBy(() -> assertRoundTrip(source)).isInstanceOf(RuntimeException.class);
 
     assertRoundTrip(ToolDisplayStack.getDisplayStack(source, ACCESS));
-    assertThat(persistent(source).getList(LARGE_KEY, Tag.TAG_COMPOUND)).hasSize(50_000);
+    assertThat(persistent(source).getListOrEmpty(LARGE_KEY)).hasSize(50_000);
   }
 
   @Test
@@ -190,8 +189,8 @@ class ToolDisplayStackTest extends BaseMcTest {
     // the item model cannot resolve a tool without materials, so the material list must survive the trim
     assertRoundTrip(display);
     assertThat(display.isEmpty()).isFalse();
-    assertThat(ItemStackUtil.getTag(display).getList(ToolStack.TAG_MATERIALS, Tag.TAG_STRING).getString(0))
-      .isEqualTo("test:material");
+    assertThat(ItemStackUtil.getTag(display).getListOrEmpty(ToolStack.TAG_MATERIALS).getString(0))
+      .contains("test:material");
   }
 
   private static void assertRoundTrip(ItemStack stack) {

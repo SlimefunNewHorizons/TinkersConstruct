@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.library.tools.layout;
 
 import com.google.gson.JsonElement;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -79,10 +80,9 @@ class StationSlotLayoutLoaderTest extends BaseMcTest {
 
   /** Checks the given ingredient is just the given item */
   private static void ingredientIsItem(Ingredient ingredient, Item item) {
-    ItemStack[] stacks = ingredient.getItems();
-    assertThat(stacks).hasSize(1);
-    assertThat(stacks[0].getItem()).isEqualTo(item);
-    assertThat(ItemStackUtil.getTag(stacks[0])).isNull();
+    List<Holder<Item>> items = ingredient.items().toList();
+    assertThat(items).hasSize(1);
+    assertThat(items.get(0).value()).isEqualTo(item);
   }
 
   @Test
@@ -99,8 +99,8 @@ class StationSlotLayoutLoaderTest extends BaseMcTest {
     assertThat(stack.getItem()).isEqualTo(Items.IRON_INGOT);
     CompoundTag nbt = ItemStackUtil.getTag(stack);
     assertThat(nbt).isNotNull();
-    assertThat(nbt.getAllKeys()).hasSize(1);
-    assertThat(nbt.getInt("test")).isEqualTo(1);
+    assertThat(nbt.keySet()).hasSize(1);
+    assertThat(nbt.getIntOr("test", 0)).isEqualTo(1);
     // sort key
     assertThat(layout.getSortIndex()).isEqualTo(55);
     assertThat(layout.isMain()).isFalse();

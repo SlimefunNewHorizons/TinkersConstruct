@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
@@ -157,7 +158,7 @@ class RecipeSyncTest extends BaseMcTest {
         }
         RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
         try {
-          RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(id, recipe));
+          RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, id), recipe));
           encoded++;
         } catch (RuntimeException e) {
           failures.add(id + " [" + recipe.getClass().getSimpleName() + " declared as " + serializerName(recipe) + "] -> " + rootCause(e));
@@ -181,7 +182,7 @@ class RecipeSyncTest extends BaseMcTest {
     RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
     JsonObject json = new JsonObject();
     json.addProperty("type", "tconstruct:part_swapping_override");
-    json.add("tools", JsonParser.parseString("{\"item\": \"minecraft:iron_ingot\"}"));
+    json.addProperty("tools", "minecraft:iron_ingot");
     json.addProperty("part", "tconstruct:pick_head");
     json.addProperty("index", 0);
 
@@ -191,7 +192,7 @@ class RecipeSyncTest extends BaseMcTest {
 
     RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
     try {
-      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(Identifier.parse("tconstruct:test_part_swapping"), recipe));
+      RecipeHolder.STREAM_CODEC.encode(buffer, new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, Identifier.parse("tconstruct:test_part_swapping")), recipe));
     } finally {
       buffer.release();
     }
