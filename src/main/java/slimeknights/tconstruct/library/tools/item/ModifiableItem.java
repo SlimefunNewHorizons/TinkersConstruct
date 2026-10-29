@@ -92,7 +92,8 @@ public class ModifiableItem extends Item implements IModifiableDisplay {
   }
 
   public ModifiableItem(Properties properties, ToolDefinition toolDefinition, int maxStackSize) {
-    super(properties);
+    // TieredItem used to add the max damage component, vanilla only damages and shows durability for items with it
+    super(properties.durability(0));
     this.toolDefinition = toolDefinition;
     this.maxStackSize = maxStackSize;
   }

@@ -227,7 +227,10 @@ public class TankItem extends BlockTooltipItem {
       // copyWithCount), so mutate a private copy to avoid corrupting the shared instance
       CompoundTag nbt = ItemStackUtil.getTag(stack);
       nbt = nbt == null ? new CompoundTag() : nbt.copy();
-      nbt.put(NBTTags.TANK, ValueIOHelper.writeTank(tank, RegistryAccessUtil.BUILTIN, new CompoundTag()));
+      // scaled tanks store the fluid of a single tank in the stack
+      nbt.put(NBTTags.TANK, tank instanceof ScaledFluidTank scaled
+                            ? scaled.writeToNBT(RegistryAccessUtil.BUILTIN, new CompoundTag())
+                            : ValueIOHelper.writeTank(tank, RegistryAccessUtil.BUILTIN, new CompoundTag()));
       ItemStackUtil.setTag(stack, nbt);
     }
     return stack;
