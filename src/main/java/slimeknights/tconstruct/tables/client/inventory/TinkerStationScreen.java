@@ -321,7 +321,7 @@ public class TinkerStationScreen extends ToolTableScreen<TinkerStationBlockEntit
 
   @Override
   protected void drawContainerName(GuiGraphics graphics) {
-    graphics.drawString(this.font, this.getTitle(), 8, 8, 4210752, false);
+    graphics.drawString(this.font, this.getTitle(), 8, 8, 0xFF404040, false);
   }
 
   public static void renderIcon(GuiGraphics graphics, LayoutIcon icon, int x, int y) {

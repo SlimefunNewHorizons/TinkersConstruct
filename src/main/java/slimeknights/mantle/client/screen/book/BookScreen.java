@@ -1,5 +1,6 @@
 package slimeknights.mantle.client.screen.book;
 
+import net.minecraft.util.ARGB;
 import net.minecraft.client.gui.font.glyphs.EffectGlyph;
 import net.minecraft.client.gui.GlyphSource;
 import net.minecraft.network.chat.FontDescription;
@@ -279,7 +280,7 @@ public class BookScreen extends Screen {
 
       matrixStack.scale((float) scale, (float) scale);
 
-      graphics.drawString(this.font, this.book.appearance.title, (int)((this.width / 2F) / scale + 3 - width / 2F), (int)((this.height / 2F - fontRenderer.lineHeight / 2F) / scale - 4), this.book.appearance.getCoverTextColor(), true);
+      graphics.drawString(this.font, this.book.appearance.title, (int)((this.width / 2F) / scale + 3 - width / 2F), (int)((this.height / 2F - fontRenderer.lineHeight / 2F) / scale - 4), ARGB.opaque(this.book.appearance.getCoverTextColor()), true);
       matrixStack.popMatrix();
     }
 
@@ -290,7 +291,7 @@ public class BookScreen extends Screen {
       float scale = Mth.clamp((float)PAGE_WIDTH / width, 0F, 1.5F);
 
       matrixStack.scale((float) scale, (float) scale);
-      graphics.drawString(this.font, this.book.appearance.subtitle, (int)((this.width / 2F) / scale + 7 - width / 2F), (int)((this.height / 2F + 100 - fontRenderer.lineHeight * 2) / scale), this.book.appearance.getCoverTextColor(), true);
+      graphics.drawString(this.font, this.book.appearance.subtitle, (int)((this.width / 2F) / scale + 7 - width / 2F), (int)((this.height / 2F + 100 - fontRenderer.lineHeight * 2) / scale), ARGB.opaque(this.book.appearance.getCoverTextColor()), true);
       matrixStack.popMatrix();
     }
   }

@@ -1,5 +1,6 @@
 package slimeknights.mantle.client.screen.book;
 
+import net.minecraft.util.ARGB;
 import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -173,7 +174,7 @@ public class TextDataRenderer {
       }
 
       if (atY >= y + boxHeight) {
-        graphics.drawString(fr, "...", atX, atY, 0, item.dropshadow);
+        graphics.drawString(fr, "...", atX, atY, 0xFF000000, item.dropshadow);
         break;
       }
       y = atY;
@@ -254,7 +255,7 @@ public class TextDataRenderer {
     poseStack.translate((float) x, (float) y);
     poseStack.scale((float) scale, (float) scale);
 
-    graphics.drawString(font, text, 0, 0, color, dropShadow);
+    graphics.drawString(font, text, 0, 0, ARGB.opaque(color), dropShadow);
 
     poseStack.popMatrix();
   }

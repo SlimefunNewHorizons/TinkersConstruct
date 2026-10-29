@@ -151,7 +151,42 @@ public class IngredientData implements IDataElement {
       }
 
       JsonObject object = json.getAsJsonObject();
+      if (!object.has("ingredient")) {
+        // book JSON still uses the 1.21.1 format, sized ingredients wrap the ingredient since 1.21.2
+        JsonObject ingredient = object.deepCopy();
+        JsonElement amount = ingredient.remove("amount_needed");
+        object = new JsonObject();
+        object.add("ingredient", convertLegacy(ingredient));
+        if (amount != null) {
+          object.add("amount_needed", amount);
+        }
+      }
       return SizedIngredient.deserialize(object);
+    }
+
+    /** Converts a 1.21.1 ingredient: {"item": "x"} to "x", {"tag": "x"} to "#x" and custom ingredients use "neoforge:ingredient_type" */
+    private static JsonElement convertLegacy(JsonElement json) {
+      if (json.isJsonArray()) {
+        JsonArray array = new JsonArray();
+        json.getAsJsonArray().forEach(element -> array.add(convertLegacy(element)));
+        return array;
+      }
+      if (!json.isJsonObject()) {
+        return json;
+      }
+      JsonObject object = json.getAsJsonObject();
+      if (object.has("item") && object.get("item").isJsonPrimitive()) {
+        return object.get("item");
+      }
+      if (object.has("tag") && object.get("tag").isJsonPrimitive()) {
+        return new JsonPrimitive("#" + object.get("tag").getAsString());
+      }
+      if (object.has("type") && !object.has("neoforge:ingredient_type")) {
+        JsonObject converted = object.deepCopy();
+        converted.add("neoforge:ingredient_type", converted.remove("type"));
+        return converted;
+      }
+      return object;
     }
   }
 }

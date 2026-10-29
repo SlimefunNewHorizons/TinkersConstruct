@@ -123,13 +123,13 @@ public class MultiModuleScreen<CONTAINER extends MultiModuleContainerMenu<?>> ex
   }
 
   protected void drawContainerName(GuiGraphics graphics) {
-    graphics.drawString(this.font, this.getTitle().getVisualOrderText(), 8, 6, 0x404040, false);
+    graphics.drawString(this.font, this.getTitle().getVisualOrderText(), 8, 6, 0xFF404040, false);
   }
 
   protected void drawPlayerInventoryName(GuiGraphics graphics) {
     assert Minecraft.getInstance().player != null;
     Component localizedName = Minecraft.getInstance().player.getInventory().getDisplayName();
-    graphics.drawString(this.font, localizedName.getVisualOrderText(), 8, this.imageHeight - 96 + 2, 0x404040, false);
+    graphics.drawString(this.font, localizedName.getVisualOrderText(), 8, this.imageHeight - 96 + 2, 0xFF404040, false);
   }
 
   @Override
