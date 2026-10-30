@@ -10,7 +10,7 @@ Each Minecraft version has its own branch.
 | Branch | Minecraft | NeoForge | Status |
 | :--- | :---: | :---: | :--- |
 | `1.21.1` | 1.21.1 | 21.1.241 | Builds and loads. Base of the newer ports |
-| `1.21.11` | 1.21.11 | 21.11.48 | Port in progress, does not build yet |
+| `1.21.11` | 1.21.11 | 21.11.48 | Port in progress: builds, server and client start. Some models, armor rendering and JEI pending, see [PORTING_1.21.11.md](PORTING_1.21.11.md) |
 
 ## Contents
 
@@ -35,7 +35,7 @@ Requires JDK 21.
 ./gradlew build
 ```
 
-The jar is written to `build/libs/`. On the `1.21.11` branch, `./gradlew compileJava` shows the remaining porting errors.
+The jar is written to `build/libs/`. On the `1.21.11` branch, unported client files are excluded from the build in the `PORT-STAGE` block of `build.gradle`.
 
 ## Credits and license
 
